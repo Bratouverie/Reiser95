@@ -1,0 +1,34 @@
+.about{
+    border-bottom: 1px solid #636363;
+}
+
+.about__inner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.about__text{
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-top: 3rem;
+    color: #e5e8eb;
+    text-align: center;
+}
+
+@media(max-width: 768px){
+    .about__text{
+        margin-top: 2rem;
+        font-size: 1.6rem;
+    }
+
+    .persons__content{
+        margin-top: 3rem;
+    }
+}
+@media(max-width: 480px){
+    .brand__bg{
+        height: 100px;
+    }
+}
