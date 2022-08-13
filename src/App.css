@@ -129,10 +129,21 @@ input::-webkit-inner-spin-button{
 }
 
 .title{
+	width: 100%;
     color: #e5e8eb;
     text-align: center;
     font-weight: 600;
     font-size: 4rem;
+}
+
+.main__bg{
+	z-index: -1;
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+	max-height: 100%;
+	width: 100%;
 }
 
 /* Шапка */
@@ -165,9 +176,13 @@ input::-webkit-inner-spin-button{
 	.title{
 		font-size: 3rem;
 	}
+
+	.modal__inner{
+		max-width: 90%;
+	}
 }
 @media(max-width: 480px){
 	.container{
-		max-width: 300px;
+		max-width: 90%;
 	}
 }

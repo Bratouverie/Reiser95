@@ -1,15 +1,15 @@
-.about{
+.aboutblock{
     border-bottom: 1px solid #636363;
 }
 
-.about__inner{
+.aboutblock__inner{
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.about__text{
+.aboutblock__text{
     font-size: 1.8rem;
     font-weight: 500;
     margin-top: 3rem;
@@ -18,7 +18,7 @@
 }
 
 @media(max-width: 768px){
-    .about__text{
+    .aboutblock__text{
         margin-top: 2rem;
         font-size: 1.6rem;
     }

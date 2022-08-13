@@ -2,10 +2,10 @@ import React from 'react';
 
 import './index.css';
 
-const BrandBg = () => {
+const BrandBg = ({src = "/assets/img/brand-bg.png"}) => {
     return(
         <div className="brand__bg">
-            <img src="/assets/img/brand-bg.png" alt="bg" className="brand__bg--img" />
+            <img src={src} alt="bg" className="brand__bg--img" />
         </div>
     )
 }

@@ -26,8 +26,7 @@
 
 .header__nav--link{
     color: #fff;
-    font-size: 1.8rem;
-    margin-right: 3rem;
+    margin-right: 2.5rem;
 }
 
 .header__nav--link:last-child{
@@ -38,13 +37,32 @@
     color: #999;
 }
 
+.header__wallet--inner{
+    display: flex;
+    align-items: center;
+}
+
+.header__wallet--button{
+    display: flex;
+    margin-right: 1.5rem;
+    width: 30px;
+    padding: 0;
+}
+
+.header__wallet--icon{
+    width: 100%;
+}
+
+.header__wallet--button:last-child{
+    margin-right: 0;
+}
+
 @media(max-width: 768px){
     .header__nav--link{
         margin-right: 2rem;
         font-size: 1.6rem;
     }
-}
-@media(max-width: 480px){
+
     .header__inner{
         flex-direction: column;
         align-items: flex-start;
@@ -52,5 +70,6 @@
 
     .header__nav{
         margin-top: 1.5rem;
+        flex-wrap: wrap;
     }
 }
