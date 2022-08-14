@@ -56,7 +56,8 @@ body{
 	overflow-x: hidden;
 	font-size: 1.6rem;
 	font-family: 'Gilroy', sans-serif;
-	background: #191a1a;
+	background: #101010;
+	margin-top: 7rem;
 }
 
 *,
@@ -177,8 +178,8 @@ input::-webkit-inner-spin-button{
 		font-size: 3rem;
 	}
 
-	.modal__inner{
-		max-width: 90%;
+	body{
+		margin-top: 6rem;
 	}
 }
 @media(max-width: 480px){

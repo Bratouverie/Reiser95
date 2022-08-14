@@ -161,204 +161,648 @@ const Collection = () => {
                             <div className="collection__item">
                                 <div className="collection__item--img--inner"></div>
 
-                                <div className="collection__item--data">
-                                    <div className="collection__item--points">
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Unique card #001
-                                            </p>
-
-                                            <p className="collection__item--info--text">
-                                                Price
-                                            </p>
-                                        </div>
-
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Versace NFT Certificates
-                                            </p>
-
-                                            <p className="collection__item--info--text bold">
-                                                <img
-                                                    src="/assets/img/eth.svg"
-                                                    alt="eth"
-                                                    className="collection__item--info--icon"
-                                                />
-                                                \\\
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="collection__item--button--inner">
-                                        <p className="collection__item--button--title">
-                                            For auction
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #002
                                         </p>
 
-                                        <p className="collection__item--info--text bold">
-                                            Investor's royalty 5%
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
                                         </p>
                                     </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            \\\
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <div className="collection__item--text bold">
+                                        For auction
+                                    </div>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 10%
+                                    </p>
                                 </div>
                             </div>
 
                             <div className="collection__item">
                                 <div className="collection__item--img--inner"></div>
 
-                                <div className="collection__item--data">
-                                    <div className="collection__item--points">
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Unique card #001
-                                            </p>
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #001
+                                        </p>
 
-                                            <p className="collection__item--info--text">
-                                                Price
-                                            </p>
-                                        </div>
-
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Versace NFT Certificates
-                                            </p>
-
-                                            <p className="collection__item--info--text bold">
-                                                <img
-                                                    src="/assets/img/eth.svg"
-                                                    alt="eth"
-                                                    className="collection__item--info--icon"
-                                                />
-                                                0.01
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="collection__item--button--inner">
-                                        <button className="button collection__item--button green">
-                                            Book
-                                        </button>
-
-                                        <p className="collection__item--info--text bold">
-                                            Investor's royalty 4.5%
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
                                         </p>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div className="collection__item">
-                                <div className="collection__item--img--inner"></div>
-
-                                <div className="collection__item--data">
-                                    <div className="collection__item--points">
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Unique card #001
-                                            </p>
-
-                                            <p className="collection__item--info--text">
-                                                Price
-                                            </p>
-                                        </div>
-
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Versace NFT Certificates
-                                            </p>
-
-                                            <p className="collection__item--info--text bold">
-                                                <img
-                                                    src="/assets/img/eth.svg"
-                                                    alt="eth"
-                                                    className="collection__item--info--icon"
-                                                />
-                                                0.01
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="collection__item--button--inner">
-                                        <button className="button collection__item--button white default__hover">
-                                            Booked
-                                        </button>
-
-                                        <p className="collection__item--info--text bold">
-                                            Investor's royalty 4.5%
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
                                         </p>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div className="collection__item">
-                                <div className="collection__item--img--inner"></div>
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
 
-                                <div className="collection__item--data">
-                                    <div className="collection__item--points">
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Unique card #001
-                                            </p>
-
-                                            <p className="collection__item--info--text">
-                                                Price
-                                            </p>
-                                        </div>
-
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Versace NFT Certificates
-                                            </p>
-
-                                            <p className="collection__item--info--text bold">
-                                                <img
-                                                    src="/assets/img/eth.svg"
-                                                    alt="eth"
-                                                    className="collection__item--info--icon"
-                                                />
-                                                0.01
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="collection__item--button--inner">
-                                        <button className="button collection__item--button blue__button">
-                                            Mint
-                                        </button>
-
-                                        <p className="collection__item--info--text bold">
-                                            Investor's royalty 5%
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="collection__item">
-                                <div className="collection__item--img--inner"></div>
-
-                                <div className="collection__item--data">
-                                    <div className="collection__item--points">
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Unique card #001
-                                            </p>
-                                        </div>
-
-                                        <div className="collection__item--info">
-                                            <p className="collection__item--info--title">
-                                                Versace NFT Certificates
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="collection__item--button--inner">
-                                        <p className="collection__item--info--text bold">
-                                            Last
-                                            <img
-                                                src="/assets/img/eth.svg"
-                                                alt="eth"
-                                                className="collection__item--info--icon"
-                                            />
                                             0.01
                                         </p>
                                     </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button green">
+                                        Book
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #003
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button white">
+                                        Booked
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #004
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button blue__button">
+                                        Mint
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #005
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner end">
+                                    <p className="collection__item--text right bold">
+                                        Last
+
+                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                        0.01
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #005
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner end">
+                                    <p className="collection__item--text right bold">
+                                        Last
+
+                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                        0.01
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #002
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            \\\
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <div className="collection__item--text bold">
+                                        For auction
+                                    </div>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 10%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #001
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button green">
+                                        Book
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #003
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button white">
+                                        Booked
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #004
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button blue__button">
+                                        Mint
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #005
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner end">
+                                    <p className="collection__item--text right bold">
+                                        Last
+
+                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                        0.01
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #005
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner end">
+                                    <p className="collection__item--text right bold">
+                                        Last
+
+                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                        0.01
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #002
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            \\\
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <div className="collection__item--text bold">
+                                        For auction
+                                    </div>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 10%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #001
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button green">
+                                        Book
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #003
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button white">
+                                        Booked
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #004
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner">
+                                    <button className="button collection__item--button blue__button">
+                                        Mint
+                                    </button>
+
+                                    <p className="collection__item--button--text">
+                                        Investor&rsquo;s royalty 4.5%
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #005
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner end">
+                                    <p className="collection__item--text right bold">
+                                        Last
+
+                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                        0.01
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="collection__item">
+                                <div className="collection__item--img--inner"></div>
+
+                                <div className="collection__item--data--inner">
+                                    <div className="collection__item--data--card">
+                                        <p className="collection__item--title">
+                                            Unique card #005
+                                        </p>
+
+                                        <p className="collection__item--text">
+                                            Versace NFT Certificates
+                                        </p>
+                                    </div>
+
+                                    <div className="collection__item--data--price">
+                                        <p className="collection__item--text right">
+                                            Price
+                                        </p>
+
+                                        <p className="collection__item--text right bold">
+                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                            0.01
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="collection__item--button--inner end">
+                                    <p className="collection__item--text right bold">
+                                        Last
+
+                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
+
+                                        0.01
+                                    </p>
                                 </div>
                             </div>
                         </div>

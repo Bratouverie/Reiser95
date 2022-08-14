@@ -1,6 +1,11 @@
 .header{
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
     padding: 1.5rem 0;
     background: #151817;
+    z-index: 101;
 }
 
 .header__inner{
@@ -57,19 +62,26 @@
     margin-right: 0;
 }
 
+.menu{
+    display: none;
+    cursor: pointer;
+}
+
 @media(max-width: 768px){
     .header__nav--link{
         margin-right: 2rem;
         font-size: 1.6rem;
     }
 
-    .header__inner{
-        flex-direction: column;
-        align-items: flex-start;
+    .menu{
+        display: flex;
     }
 
-    .header__nav{
-        margin-top: 1.5rem;
-        flex-wrap: wrap;
+    .header__wallet--inner, .header__nav{
+        display: none;
+    }
+
+    .header__logo{
+        width: 30px;
     }
 }

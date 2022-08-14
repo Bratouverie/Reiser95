@@ -4,9 +4,11 @@ import { Link } from "react-router-dom";
 import "./index.css";
 
 import Modal from '../Modal';
+import MenuMobile from '../MenuMobile';
 
 const Header = () => {
     const [modal, setModal] = React.useState(false);
+    const [menu, setMenu] = React.useState(false);
 
     return (
         <>
@@ -67,11 +69,15 @@ const Header = () => {
                                 />
                             </button>
                         </div>
+
+                        <img src={`/assets/img/${menu ? 'cross' : 'menu'}.svg`} alt="menu" className="menu" onClick={() => setMenu(!menu)} />
                     </div>
                 </div>
             </header>
 
             <Modal active={modal} setActive={setModal} />
+        
+            <MenuMobile active={menu} setActive={setMenu} />
         </>
     );
 };
