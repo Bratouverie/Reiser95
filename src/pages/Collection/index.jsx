@@ -6,12 +6,14 @@ const Collection = () => {
     return (
         <>
             <div className="collection__header">
-                <div className="collection__avatar--inner">
-                    <img
-                        src="/assets/img/brand1.png"
-                        alt="avatar"
-                        className="collection__avatar"
-                    />
+                <div className="container collection__container posr">
+                    <div className="collection__avatar--inner">
+                        <img
+                            src="/assets/img/brand1.png"
+                            alt="avatar"
+                            className="collection__avatar"
+                        />
+                    </div>
                 </div>
             </div>
 
@@ -178,8 +180,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             \\\
                                         </p>
                                     </div>
@@ -216,8 +221,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -254,8 +262,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -292,8 +303,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -328,9 +342,11 @@ const Collection = () => {
                                 <div className="collection__item--button--inner end">
                                     <p className="collection__item--text right bold">
                                         Last
-
-                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                        <img
+                                            src="/assets/img/eth.svg"
+                                            alt="eth"
+                                            className="eth"
+                                        />
                                         0.01
                                     </p>
                                 </div>
@@ -356,8 +372,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -366,9 +385,11 @@ const Collection = () => {
                                 <div className="collection__item--button--inner end">
                                     <p className="collection__item--text right bold">
                                         Last
-
-                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                        <img
+                                            src="/assets/img/eth.svg"
+                                            alt="eth"
+                                            className="eth"
+                                        />
                                         0.01
                                     </p>
                                 </div>
@@ -394,8 +415,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             \\\
                                         </p>
                                     </div>
@@ -432,8 +456,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -470,8 +497,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -508,8 +538,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -544,9 +577,11 @@ const Collection = () => {
                                 <div className="collection__item--button--inner end">
                                     <p className="collection__item--text right bold">
                                         Last
-
-                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                        <img
+                                            src="/assets/img/eth.svg"
+                                            alt="eth"
+                                            className="eth"
+                                        />
                                         0.01
                                     </p>
                                 </div>
@@ -572,8 +607,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -582,9 +620,11 @@ const Collection = () => {
                                 <div className="collection__item--button--inner end">
                                     <p className="collection__item--text right bold">
                                         Last
-
-                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                        <img
+                                            src="/assets/img/eth.svg"
+                                            alt="eth"
+                                            className="eth"
+                                        />
                                         0.01
                                     </p>
                                 </div>
@@ -610,8 +650,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             \\\
                                         </p>
                                     </div>
@@ -648,8 +691,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -686,8 +732,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -724,8 +773,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -760,9 +812,11 @@ const Collection = () => {
                                 <div className="collection__item--button--inner end">
                                     <p className="collection__item--text right bold">
                                         Last
-
-                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                        <img
+                                            src="/assets/img/eth.svg"
+                                            alt="eth"
+                                            className="eth"
+                                        />
                                         0.01
                                     </p>
                                 </div>
@@ -788,8 +842,11 @@ const Collection = () => {
                                         </p>
 
                                         <p className="collection__item--text right bold">
-                                            <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                            <img
+                                                src="/assets/img/eth.svg"
+                                                alt="eth"
+                                                className="eth"
+                                            />
                                             0.01
                                         </p>
                                     </div>
@@ -798,9 +855,11 @@ const Collection = () => {
                                 <div className="collection__item--button--inner end">
                                     <p className="collection__item--text right bold">
                                         Last
-
-                                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-
+                                        <img
+                                            src="/assets/img/eth.svg"
+                                            alt="eth"
+                                            className="eth"
+                                        />
                                         0.01
                                     </p>
                                 </div>

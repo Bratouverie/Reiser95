@@ -147,6 +147,10 @@ input::-webkit-inner-spin-button{
 	width: 100%;
 }
 
+.posr{
+	position: relative;
+}
+
 /* Шапка */
 
 /* Адаптив */
@@ -185,5 +189,9 @@ input::-webkit-inner-spin-button{
 @media(max-width: 480px){
 	.container{
 		max-width: 90%;
+	}
+	
+	.title{
+		font-size: 2.5rem;
 	}
 }

@@ -180,7 +180,6 @@
 .collection__items--value{
     font-size: 1.8rem;
     color: #fff;
-    margin-top: 2.5rem;
 }
 
 .collection__items--content{
@@ -314,9 +313,10 @@
     text-align: right;
 }
 
-@media(max-width: 1200px){
-
+.collection__container{
+    height: 100%;
 }
+
 @media(max-width: 998px){
     .collection__avatar--inner{
         width: 100px;
@@ -353,6 +353,19 @@
     .collection__header{
         height: 130px;
     }
+
+    .collection__avatar--inner{
+        left: 0;
+        transform: translate(0, -50%);
+    }
+
+    .collection__desc, .collection__text, .collection__title{
+        text-align: left;
+    }
+
+    .collection__inner{
+        align-items: flex-start;
+    }
 }
 @media(max-width: 480px){
     .collection__link--inner{
@@ -368,9 +381,19 @@
         flex-wrap: wrap;
     }
 
+    .collection__data--text{
+        text-align: left;
+    }
+
     .collection__data--item{
-        width: 50%;
-        border-bottom: 1px solid #585b59;
+        width: 33%;
+        border: none;
+        align-items: flex-start;
+        padding: 1rem 0;
+    }
+
+    .collection__data{
+        border: none;
     }
 
     .collection__data--item:nth-child(2n){

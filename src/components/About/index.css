@@ -28,7 +28,7 @@
     }
 }
 @media(max-width: 480px){
-    .brand__bg{
-        height: 100px;
+    .aboutblock__text{
+        font-size: 1.4rem;
     }
 }
