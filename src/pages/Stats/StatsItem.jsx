@@ -1,7 +1,10 @@
 import React from "react";
 
 const StatsItem = ({ data, id }) => {
-    const { avatar, collection, volume, day, week, price, owners, items } = data;
+    const { avatar, collection, volume, day, week, price, owners, items } =
+        data;
+
+    const [fade, setFade] = React.useState(false);
 
     return (
         <div className="stats__item--values">
@@ -16,7 +19,11 @@ const StatsItem = ({ data, id }) => {
                     />
                 </div>
 
-                <p className="stats__item--value">{collection}</p>
+                <div className="stats__item--wrapper">
+                    <p className="stats__item--value">{collection}</p>
+
+                    <button className="button stats__item--more" onClick={() => setFade(!fade)}>{fade ? '-Less' : '+More'}</button>
+                </div>
             </div>
 
             <div className="stats__item--volume stats__item--item">
@@ -29,30 +36,60 @@ const StatsItem = ({ data, id }) => {
                 <p className="stats__item--value">{volume}</p>
             </div>
 
-            <div className="stats__item--day stats__item--item stats__item--value loss">
-                {day}
-            </div>
+            <div className={`stats__item--fade${fade ? ' active' : ''}`}>
+                <div className="stats__item--day stats__item--wrap">
+                    <p className="stats__item--wrap--title">24h %</p>
 
-            <div className="stats__item--week stats__item--item stats__item--value profit">
-                {week}
-            </div>
+                    <div
+                        className={`stats__item--item stats__item--value ${
+                            day[0] === "-" ? "loss" : "profit"
+                        }`}
+                    >
+                        {day}
+                    </div>
+                </div>
 
-            <div className="stats__item--price stats__item--item">
-                <img
-                    src="/assets/img/eth.svg"
-                    alt="eth"
-                    className="stats__item--eth"
-                />
+                <div className="stats__item--week stats__item--wrap">
+                    <p className="stats__item--wrap--title">7d %</p>
 
-                <p className="stats__item--value">{price}</p>
-            </div>
+                    <div
+                        className={`stats__item--item stats__item--value ${
+                            week[0] === "-" ? "loss" : "profit"
+                        }`}
+                    >
+                        {week}
+                    </div>
+                </div>
 
-            <div className="stats__item--owners stats__item--item stats__item--value">
-                {owners}
-            </div>
+                <div className="stats__item--price stats__item--wrap">
+                    <p className="stats__item--wrap--title">Floor Price</p>
 
-            <div className="stats__item--items stats__item--item stats__item--value">
-                {items}
+                    <div className="stats__item--item">
+                        <img
+                            src="/assets/img/eth.svg"
+                            alt="eth"
+                            className="stats__item--eth"
+                        />
+
+                        <p className="stats__item--value">{price}</p>
+                    </div>
+                </div>
+
+                <div className="stats__item--owners stats__item--wrap">
+                    <p className="stats__item--wrap--title">Owners</p>
+
+                    <div className="stats__item--item stats__item--value">
+                        {owners}
+                    </div>
+                </div>
+
+                <div className="stats__item--items stats__item--wrap">
+                    <p className="stats__item--wrap--title">Items</p>
+
+                    <div className="stats__item--item stats__item--value">
+                        {items}
+                    </div>
+                </div>
             </div>
         </div>
     );

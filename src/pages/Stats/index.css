@@ -23,7 +23,6 @@
     width: 100%;
     padding: 3rem 0;
     display: flex;
-    align-items: center;
 }
 
 .stats__item--values{
@@ -55,23 +54,30 @@
 
 .stats__item--collection{
     width: 32%;
+    flex-shrink: 0;
 }
 
 .stats__item--volume{
     width: 16%;
+    flex-shrink: 0;
 }
 
-.stats__item--day, .stats__item--week{
-    width: 11%;
+.stats__item--price, .stats__item--owners, .stats__item--items, .stats__item--day, .stats__item--week{
+    width: 20%;
 }
 
-.stats__item--price, .stats__item--owners, .stats__item--items{
-    width: 10%;
+.stats__item--wrap{
+    display: flex;
+    justify-content: flex-start;
 }
 
 .stats__item--owners, .stats__item--items{
     text-align: right;
-    display: inline-block;
+    justify-content: center;
+}
+
+.stats__item--items{
+    justify-content: flex-end;
 }
 
 .stats__item--eth{
@@ -100,27 +106,92 @@
     object-fit: cover;
 }
 
+.stats__item--more{
+    display: none;
+    margin: 0.7rem 0 0 0;
+    color: #fff;
+    font-size: 1.2rem;
+    padding: 0;
+}
+
+.stats__item--wrap--title{
+    display: none;
+}
+
+.stats__item--fade{
+    width: 100%;
+    display: flex;
+}
+
 @media(max-width: 998px){
     .stats__item--name, .stats__item--value{
         font-size: 1.4rem;
     }
 }
 @media(max-width: 768px){
-    .stats__item--values, .stats__item--names{
-        flex-direction: column;
-        align-items: center;
-        padding: 1rem 0;
+    .stats__item--names{
+        display: none;
     }
 
-    .stats__item--collection, .stats__item--volume, .stats__item--day, .stats__item--week,
-    .stats__item--price, .stats__item--owners, .stats__item--items{
-        width: 100%;
+    .stats__item--more{
+        display: flex;
+    }
+
+    .stats__item--collection, .stats__item--volume{
+        width: 50%;
+    }
+
+    .stats__item--volume{
+        justify-content: flex-end;
+    }
+
+    .stats__item--values{
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .stats__item--values:nth-child(2){
+        margin-top: 0;
+    }
+
+    .stats__item--day, .stats__item--week, .stats__item--price, .stats__item--owners, .stats__item--items{
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #636363;
+        width: 20%;
+    }
+
+    .stats__item--wrap{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stats__item--wrap--title{
+        display: block;
+        color: #fff;
+        margin-bottom: 1rem;
+        font-size: 1.4rem;
         text-align: center;
-        justify-content: center;
-        margin-top: 0.5rem;
     }
 
     .stats__item--collection{
-        margin-top: 0;
+        width: 65%;
+    }
+
+    .stats__item--volume{
+        width: 35%;
+    }
+
+    .stats__item--avatar--inner{
+        width: 35px;
+        height: 35px;
+    }
+
+    .stats__item--fade{
+        display: none;
+    }
+
+    .stats__item--fade.active{
+        display: flex;
     }
 }

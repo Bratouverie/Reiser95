@@ -77,6 +77,36 @@ const Collection = () => {
                             </div>
                         </div>
 
+                        <div className="collection__social--mobile">
+                            <a href="https://google.com" className="collection__social--link--mobile">
+                                <img src="/assets/img/insta.svg" alt="instagram" className="collection__social--img" />
+                            </a>
+
+                            <a href="https://google.com" className="collection__social--link--mobile">
+                                <img src="/assets/img/opensea.svg" alt="opensea" className="collection__social--img" />
+                            </a>
+
+                            <a href="https://google.com" className="collection__social--link--mobile">
+                                <img src="/assets/img/discord-white.svg" alt="discord" className="collection__social--img" />
+                            </a>
+
+                            <a href="https://google.com" className="collection__social--link--mobile line">
+                                <img src="/assets/img/twitter.svg" alt="twitter" className="collection__social--img" />
+                            </a>
+
+                            <a href="https://google.com" className="collection__social--link--mobile">
+                                <img src="/assets/img/star.svg" alt="twitter" className="collection__social--img" />
+                            </a>
+
+                            <a href="https://google.com" className="collection__social--link--mobile">
+                                <img src="/assets/img/give.svg" alt="twitter" className="collection__social--img" />
+                            </a>
+
+                            <a href="https://google.com" className="collection__social--link--mobile">
+                                <img src="/assets/img/dots-white.svg" alt="twitter" className="collection__social--img" />
+                            </a>
+                        </div>
+
                         <h2 className="title collection__title">
                             Versace NTF Certificates
                         </h2>

@@ -2,6 +2,19 @@ import React from "react";
 
 import "./index.css";
 
+import StatsItem from './StatsItem';
+
+const data = {
+    avatar: '/assets/img/avatar.png',
+    collection: 'Collection name',
+    volume: '18,531.52',
+    day: '-81.93%',
+    week: '+119.08%',
+    price: '1.45',
+    owners: '10.3K',
+    items: '20.2K'
+}
+
 const Stats = () => {
     return (
         <div className="stats default__padding">
@@ -45,161 +58,9 @@ const Stats = () => {
                             </div>
                         </div>
 
-                        <div className="stats__item--values">
-                            <div className="stats__item--collection stats__item--item">
-                                <p className="stats__item--value">
-                                    1
-                                </p>
-
-                                <div className="stats__item--avatar--inner">
-                                    <img src="/assets/img/avatar.png" alt="avatar" className="stats__item--avatar" />
-                                </div>
-
-                                <p className="stats__item--value">
-                                    Collection name
-                                </p>
-                            </div>
-
-                            <div className="stats__item--volume stats__item--item">
-                                <img
-                                    src="/assets/img/eth.svg"
-                                    alt="eth"
-                                    className="stats__item--eth"
-                                />
-
-                                <p className="stats__item--value">18,531.52</p>
-                            </div>
-
-                            <div className="stats__item--day stats__item--item stats__item--value loss">
-                                -81.93%
-                            </div>
-
-                            <div className="stats__item--week stats__item--item stats__item--value profit">
-                                +119.08%
-                            </div>
-
-                            <div className="stats__item--price stats__item--item">
-                                <img
-                                    src="/assets/img/eth.svg"
-                                    alt="eth"
-                                    className="stats__item--eth"
-                                />
-
-                                <p className="stats__item--value">1.45</p>
-                            </div>
-
-                            <div className="stats__item--owners stats__item--item stats__item--value">
-                                10.3K
-                            </div>
-
-                            <div className="stats__item--items stats__item--item stats__item--value">
-                                20.2K
-                            </div>
-                        </div>
-
-                        <div className="stats__item--values">
-                            <div className="stats__item--collection stats__item--item">
-                                <p className="stats__item--value">
-                                    2
-                                </p>
-
-                                <div className="stats__item--avatar--inner">
-                                    <img src="/assets/img/avatar.png" alt="avatar" className="stats__item--avatar" />
-                                </div>
-
-                                <p className="stats__item--value">
-                                    Collection name
-                                </p>
-                            </div>
-
-                            <div className="stats__item--volume stats__item--item">
-                                <img
-                                    src="/assets/img/eth.svg"
-                                    alt="eth"
-                                    className="stats__item--eth"
-                                />
-
-                                <p className="stats__item--value">18,531.52</p>
-                            </div>
-
-                            <div className="stats__item--day stats__item--item stats__item--value loss">
-                                
-                            </div>
-
-                            <div className="stats__item--week stats__item--item stats__item--value">
-                                ---
-                            </div>
-
-                            <div className="stats__item--price stats__item--item">
-                                <img
-                                    src="/assets/img/eth.svg"
-                                    alt="eth"
-                                    className="stats__item--eth"
-                                />
-
-                                <p className="stats__item--value">1.45</p>
-                            </div>
-
-                            <div className="stats__item--owners stats__item--item stats__item--value">
-                                10.3K
-                            </div>
-
-                            <div className="stats__item--items stats__item--item stats__item--value">
-                                20.2K
-                            </div>
-                        </div>
-
-                        <div className="stats__item--values">
-                            <div className="stats__item--collection stats__item--item">
-                                <p className="stats__item--value">
-                                    3
-                                </p>
-
-                                <div className="stats__item--avatar--inner">
-                                    <img src="/assets/img/avatar.png" alt="avatar" className="stats__item--avatar" />
-                                </div>
-
-                                <p className="stats__item--value">
-                                    Collection name
-                                </p>
-                            </div>
-
-                            <div className="stats__item--volume stats__item--item">
-                                <img
-                                    src="/assets/img/eth.svg"
-                                    alt="eth"
-                                    className="stats__item--eth"
-                                />
-
-                                <p className="stats__item--value">18,531.52</p>
-                            </div>
-
-                            <div className="stats__item--day stats__item--item stats__item--value loss">
-                                -81.93%
-                            </div>
-
-                            <div className="stats__item--week stats__item--item stats__item--value profit">
-                                +119.08%
-                            </div>
-
-                            <div className="stats__item--price stats__item--item">
-                                <img
-                                    src="/assets/img/eth.svg"
-                                    alt="eth"
-                                    className="stats__item--eth"
-                                />
-
-                                <p className="stats__item--value">1.45</p>
-                            </div>
-
-                            <div className="stats__item--owners stats__item--item stats__item--value">
-                                10.3K
-                            </div>
-
-                            <div className="stats__item--items stats__item--item stats__item--value">
-                                20.2K
-                            </div>
-                        </div>
+                        <StatsItem data={data} id="1" />
+                        <StatsItem data={data} id="2" />
+                        <StatsItem data={data} id="3" />
                     </div>
                 </div>
             </div>
