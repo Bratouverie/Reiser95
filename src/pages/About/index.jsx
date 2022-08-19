@@ -117,16 +117,16 @@ const About = () => {
                                 Launch of platform
                             </p>
 
-                            <p className="text left">
-                                Process optimization
+                            <p className="text left inprogress">
+                                Marketing events
                             </p>
 
                             <p className="text m0 left">
                                 Minting of NFT certificates
                             </p>
 
-                            <p className="text m0 left inprogress">
-                                Marketing events
+                            <p className="text m0 left">
+                                Process optimization
                             </p>
                         </div>
 

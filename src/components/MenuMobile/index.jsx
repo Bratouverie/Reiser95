@@ -27,16 +27,20 @@ const MenuMobile = ({ active, setActive }) => {
                             Brands
                         </Link>
 
-                        <Link to="/collection" className="mobile__nav--link" onClick={closeMenu}>
-                            Collection
-                        </Link>
-
-                        <Link to="/stats" className="mobile__nav--link" onClick={closeMenu}>
-                            Stats
+                        <Link to="/alco" className="mobile__nav--link" onClick={closeMenu}>
+                            Alcohol
                         </Link>
 
                         <Link to="/watches" className="mobile__nav--link" onClick={closeMenu}>
                             Watches
+                        </Link>
+
+                        <Link to="/cars" className="mobile__nav--link" onClick={closeMenu}>
+                            Cars
+                        </Link>
+
+                        <Link to="/stats" className="mobile__nav--link" onClick={closeMenu}>
+                            Stats
                         </Link>
 
                         <Link to="/about" className="mobile__nav--link" onClick={closeMenu}>

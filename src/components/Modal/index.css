@@ -103,12 +103,20 @@
     color: #fff;
     font-weight: 600;
     border-radius: 8px;
-    background: #44b044;
     padding: 1.2rem 2rem;
+    background: #1868B7;
 }
 
 .modal__button:hover{
-    background: #158715;
+    background: #0C5093;
+}
+
+.modal__button.confirm{
+    background: #44b044;
+}
+
+.modal__button.confirm:hover{
+    background: #346736;
 }
 
 @media(max-width: 768px){

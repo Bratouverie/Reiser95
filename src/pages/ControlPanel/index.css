@@ -1,0 +1,81 @@
+.control__inner, .control__wrapper{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.control__wrapper{
+    margin-top: 2.5rem;
+}
+
+.control__wrapper:first-child{
+    margin-top: 0;
+}
+
+.control__text{
+    font-size: 1.4rem;
+    color: #fff;
+}
+
+.control__item{
+    width: 100%;
+    display: flex;
+    margin-top: 1.5rem;
+}
+
+.control__input{
+    padding: 1.5rem 1.3rem;
+    border-radius: 7px;
+    background: #313232;
+    color: #fff;
+    font-size: 1.7rem;
+    width: 100%;
+}
+
+.control__input::placeholder{
+    color: #e5e8eb;
+}
+
+.control__item--confirm{
+    min-width: 105px;
+    flex-shrink: 0;
+    background: #313232;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1.7rem;
+}
+
+.control__item--confirm.delete{
+    color: #c94750;
+}
+
+.control__item--confirm.save{
+    color: #2081e2;
+}
+
+.control__item--settings{
+    margin: 0rem 2rem;
+    flex-shrink: 0;
+    background: #313232;
+    width: 76px;
+    border-radius: 5px;
+    padding: .8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.control__item--settings--icon{
+    width: 34px;
+}
+
+.control__add{
+    margin-top: 1.5rem;
+    border-radius: 6px;
+    border: 1px solid #182f46;
+    background: #5a5c5d;
+    color: #fff;
+    font-size: 1.7rem;
+    padding: 1.4rem 2.7rem;
+}

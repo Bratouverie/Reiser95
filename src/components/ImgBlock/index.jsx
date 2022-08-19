@@ -12,7 +12,7 @@ const ImgBlock = ({title, data}) => {
                     <h2 className="imgblock__title">{title}</h2>
 
                     <div className="imgblock__content">
-                        {data.map((data, id) => <ImgBlockItem key={id} path={data.path} />)}
+                        {data.map((data, id) => <ImgBlockItem key={id} path={data.path} id={id} />)}
                     </div>
                 </div>
             </div>

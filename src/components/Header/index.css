@@ -58,7 +58,7 @@
     width: 100%;
 }
 
-.header__wallet--button:last-child{
+.header__wallet--button:nth-last-child(2){
     margin-right: 0;
 }
 
@@ -77,11 +77,15 @@
         display: flex;
     }
 
-    .header__wallet--inner, .header__nav{
+    .header__nav{
         display: none;
     }
 
     .header__logo{
         width: 30px;
+    }
+
+    .header__wallet--button:nth-child(2){
+        margin-right: 1.5rem;
     }
 }
