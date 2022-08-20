@@ -8,6 +8,10 @@
     z-index: 101;
 }
 
+.header.admin{
+    padding: 0;
+}
+
 .header__inner{
     width: 100%;
     display: flex;

@@ -60,14 +60,14 @@
     background: #313232;
     width: 76px;
     border-radius: 5px;
-    padding: .8rem;
+    padding: 1.2rem 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .control__item--settings--icon{
-    width: 34px;
+    width: 26px;
 }
 
 .control__add{
@@ -78,4 +78,31 @@
     color: #fff;
     font-size: 1.7rem;
     padding: 1.4rem 2.7rem;
+}
+
+@media(max-width: 768px){
+    .control__input{
+        font-size: 1.6rem;
+    }
+
+    .control__item--settings{
+        margin: 0rem 1rem;
+    }
+}
+@media(max-width: 480px){
+    .control__item{
+        flex-wrap: wrap;
+    }
+
+    .control__input{
+        font-size: 1.4rem;
+    }
+
+    .control__item--settings{
+        margin: 1rem 1rem 0rem 0rem;
+    }
+
+    .control__item--confirm{
+        margin: 1rem 0rem 0rem 0rem;
+    }
 }

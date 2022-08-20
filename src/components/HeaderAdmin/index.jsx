@@ -12,7 +12,7 @@ const HeaderAdmin = () => {
 
     return (
         <>
-            <header className="header">
+            <header className="header admin">
                 <div className="container">
                     <div className="header__inner">
                         <Link to="/" className="header__logo">
@@ -25,85 +25,118 @@ const HeaderAdmin = () => {
 
                         <div className="header__wallet--inner">
                             <nav className="header__nav header__admin--nav">
-                                <Link to="/" className="header__admin--nav--link">
+                                <Link
+                                    to="/"
+                                    className="header__admin--nav--link"
+                                >
                                     Control page
                                 </Link>
 
-                                <Link to="/brands" className="header__admin--nav--link">
+                                <Link
+                                    to="/brands"
+                                    className="header__admin--nav--link"
+                                >
                                     Stats
-
                                     <span className="header__admin--nav--drop">
-                                        <Link to="/" className="header__admin--nav--drop--link">
+                                        <Link
+                                            to="/"
+                                            className="header__admin--nav--drop--link"
+                                        >
                                             White List
                                         </Link>
 
-                                        <Link to="/" className="header__admin--nav--drop--link">
+                                        <Link
+                                            to="/"
+                                            className="header__admin--nav--drop--link"
+                                        >
                                             Activity
                                         </Link>
 
-                                        <Link to="/" className="header__admin--nav--drop--link">
+                                        <Link
+                                            to="/"
+                                            className="header__admin--nav--drop--link"
+                                        >
                                             Statistics
                                         </Link>
                                     </span>
                                 </Link>
 
-                                <Link to="/alco" className="header__admin--nav--link">
+                                <Link
+                                    to="/alco"
+                                    className="header__admin--nav--link"
+                                >
                                     Create
-
                                     <span className="header__admin--nav--drop">
-                                        <Link to="/" className="header__admin--nav--drop--link">
+                                        <Link
+                                            to="/"
+                                            className="header__admin--nav--drop--link"
+                                        >
                                             Create Page
                                         </Link>
 
-                                        <Link to="/" className="header__admin--nav--drop--link">
+                                        <Link
+                                            to="/"
+                                            className="header__admin--nav--drop--link"
+                                        >
                                             Create Account
                                         </Link>
 
-                                        <Link to="/" className="header__admin--nav--drop--link">
+                                        <Link
+                                            to="/"
+                                            className="header__admin--nav--drop--link"
+                                        >
                                             Create Collection
                                         </Link>
 
-                                        <Link to="/" className="header__admin--nav--drop--link">
+                                        <Link
+                                            to="/"
+                                            className="header__admin--nav--drop--link"
+                                        >
                                             Create Pack
                                         </Link>
 
-                                        <Link to="/" className="header__admin--nav--drop--link">
+                                        <Link
+                                            to="/"
+                                            className="header__admin--nav--drop--link"
+                                        >
                                             Create Item
                                         </Link>
                                     </span>
                                 </Link>
                             </nav>
 
-                            <Link
-                                to="/profile"
-                                className="button header__wallet--button"
-                            >
-                                <img
-                                    src="/assets/img/profile-icon.png"
-                                    alt="Profile"
-                                    className="header__wallet--icon"
-                                />
-                            </Link>
+                            <div className="header__wallet--inner">
+                                <Link
+                                    to="/profile"
+                                    className="button header__wallet--button"
+                                >
+                                    <img
+                                        src="/assets/img/profile-icon.png"
+                                        alt="Profile"
+                                        className="header__wallet--icon"
+                                    />
+                                </Link>
 
-                            <button
-                                className="button header__wallet--button"
-                                onClick={() => setModal(true)}
-                            >
-                                <img
-                                    src="/assets/img/wallet.png"
-                                    alt="Wallet"
-                                    className="header__wallet--icon"
-                                />
-                            </button>
+                                <button
+                                    className="button header__wallet--button"
+                                    onClick={() => setModal(true)}
+                                >
+                                    <img
+                                        src="/assets/img/wallet.png"
+                                        alt="Wallet"
+                                        className="header__wallet--icon"
+                                    />
+                                </button>
 
-                            <img
-                                src={`/assets/img/${
-                                    menu ? "cross" : "menu"
-                                }.svg`}
-                                alt="menu"
-                                className="menu"
-                                onClick={() => setMenu(!menu)}
-                            />
+                                <img
+                                    src={`/assets/img/${
+                                        menu ? "cross" : "menu"
+                                    }.svg`}
+                                    alt="menu"
+                                    className="menu"
+                                    onClick={() => setMenu(!menu)}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
