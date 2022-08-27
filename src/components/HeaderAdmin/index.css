@@ -7,6 +7,7 @@
     font-size: 1.8rem;
     color: #fff;
     position: relative;
+    cursor: pointer;
 }
 
 .header__admin--nav--link:before{

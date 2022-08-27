@@ -46,6 +46,10 @@ const MenuMobile = ({ active, setActive }) => {
                         <Link to="/about" className="mobile__nav--link" onClick={closeMenu}>
                             About
                         </Link>
+
+                        <Link to="/admin" className="mobile__nav--link" onClick={closeMenu}>
+                            Admin
+                        </Link>
                     </nav>
                 </div>
             </div>

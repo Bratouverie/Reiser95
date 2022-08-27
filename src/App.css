@@ -181,6 +181,10 @@ input::-webkit-inner-spin-button{
     margin-top: 0;
 }
 
+.file{
+	display: none;
+}
+
 /* Шапка */
 
 /* Адаптив */

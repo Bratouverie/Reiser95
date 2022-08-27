@@ -17,6 +17,9 @@ import Alco from "./pages/Alco";
 import Profile from "./pages/Profile";
 
 import ControlPanel from "./pages/ControlPanel";
+import CreatePage from "./pages/CreatePage";
+import CreateAccount from './pages/CreateAccount';
+import CreateCollection from './pages/CreateCollection';
 
 const App = () => {
     return (
@@ -39,6 +42,9 @@ const App = () => {
 
                 <Route path="/admin" element={<WrapperAdmin />}>
                     <Route index element={<ControlPanel />} />
+                    <Route path="createpage" element={<CreatePage />} />
+                    <Route path="createaccount" element={<CreateAccount />} />
+                    <Route path="createcollection" element={<CreateCollection />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Route>
             </Routes>

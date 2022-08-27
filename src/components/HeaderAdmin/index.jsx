@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "./index.css";
 
 import Modal from "../Modal";
-import MenuMobile from "../MenuMobile";
+import MenuMobileAdmin from '../MenuMobileAdmin';
 
 const HeaderAdmin = () => {
     const [modal, setModal] = React.useState(false);
@@ -26,16 +26,13 @@ const HeaderAdmin = () => {
                         <div className="header__wallet--inner">
                             <nav className="header__nav header__admin--nav">
                                 <Link
-                                    to="/"
+                                    to=""
                                     className="header__admin--nav--link"
                                 >
                                     Control page
                                 </Link>
 
-                                <Link
-                                    to="/brands"
-                                    className="header__admin--nav--link"
-                                >
+                                <div className="header__admin--nav--link">
                                     Stats
                                     <span className="header__admin--nav--drop">
                                         <Link
@@ -59,30 +56,27 @@ const HeaderAdmin = () => {
                                             Statistics
                                         </Link>
                                     </span>
-                                </Link>
+                                </div>
 
-                                <Link
-                                    to="/alco"
-                                    className="header__admin--nav--link"
-                                >
+                                <div className="header__admin--nav--link">
                                     Create
                                     <span className="header__admin--nav--drop">
                                         <Link
-                                            to="/"
+                                            to="createpage"
                                             className="header__admin--nav--drop--link"
                                         >
                                             Create Page
                                         </Link>
 
                                         <Link
-                                            to="/"
+                                            to="createaccount"
                                             className="header__admin--nav--drop--link"
                                         >
                                             Create Account
                                         </Link>
 
                                         <Link
-                                            to="/"
+                                            to="createcollection"
                                             className="header__admin--nav--drop--link"
                                         >
                                             Create Collection
@@ -102,7 +96,7 @@ const HeaderAdmin = () => {
                                             Create Item
                                         </Link>
                                     </span>
-                                </Link>
+                                </div>
                             </nav>
 
                             <div className="header__wallet--inner">
@@ -144,7 +138,7 @@ const HeaderAdmin = () => {
 
             <Modal active={modal} setActive={setModal} />
 
-            <MenuMobile active={menu} setActive={setMenu} />
+            <MenuMobileAdmin active={menu} setActive={setMenu} />
         </>
     );
 };

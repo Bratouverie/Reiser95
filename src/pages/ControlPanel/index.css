@@ -64,10 +64,31 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .control__item--settings--icon{
     width: 26px;
+}
+
+.control__button--confirm{
+    position: absolute;
+    text-align: center;
+    background: #3d3e3f;
+    border-radius: 5px;
+    color: #2081e2;
+    font-weight: 500;
+    font-size: 1.8rem;
+    padding: 1.3rem 3rem;
+    min-width: 130px;
+    left: 50%;
+    top: 50%;
+    cursor: pointer;
+    transition: .2s linear;
+}
+
+.control__button--confirm:hover{
+    background: #2e2f30;
 }
 
 .control__add{

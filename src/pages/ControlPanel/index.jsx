@@ -3,6 +3,8 @@ import React from 'react';
 import './index.css'
 
 const ControlPanel = () => {
+    const [confirm, setConfirm] = React.useState(false);
+
     return(
         <div className="default__padding control">
             <div className="container">
@@ -41,8 +43,12 @@ const ControlPanel = () => {
                         <div className="control__item">
                             <input type="text" className="input control__input" placeholder="Super admin wallet address" />
 
-                            <button className="button control__item--settings default__hover">
+                            <button className="button control__item--settings default__hover" onClick={() => setConfirm(!confirm)}>
                                 <img src="/assets/img/settings-white.svg" alt="settings" className="control__item--settings--icon" />
+
+                                {confirm && <span className="control__button--confirm">
+                                    Edit
+                                </span>}
                             </button>
 
                             <button className="button control__item--confirm default__hover">
