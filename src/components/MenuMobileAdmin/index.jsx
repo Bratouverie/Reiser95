@@ -25,11 +25,11 @@ const MenuMobileAdmin = ({ active, setActive }) => {
                             White List
                         </Link>
 
-                        <Link to="alco" className="mobile__nav--link" onClick={closeMenu}>
+                        <Link to="activity" className="mobile__nav--link" onClick={closeMenu}>
                             Activity
                         </Link>
 
-                        <Link to="watches" className="mobile__nav--link" onClick={closeMenu}>
+                        <Link to="statistics" className="mobile__nav--link" onClick={closeMenu}>
                             Statistics
                         </Link>
 
@@ -45,11 +45,11 @@ const MenuMobileAdmin = ({ active, setActive }) => {
                             Create Collection
                         </Link>
 
-                        <Link to="about" className="mobile__nav--link" onClick={closeMenu}>
+                        <Link to="createpack" className="mobile__nav--link" onClick={closeMenu}>
                             Create Pack
                         </Link>
 
-                        <Link to="about" className="mobile__nav--link" onClick={closeMenu}>
+                        <Link to="createitem" className="mobile__nav--link" onClick={closeMenu}>
                             Create Item
                         </Link>
                     </nav>

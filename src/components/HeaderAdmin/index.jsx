@@ -43,14 +43,14 @@ const HeaderAdmin = () => {
                                         </Link>
 
                                         <Link
-                                            to="/"
+                                            to="activity"
                                             className="header__admin--nav--drop--link"
                                         >
                                             Activity
                                         </Link>
 
                                         <Link
-                                            to="/"
+                                            to="statistics"
                                             className="header__admin--nav--drop--link"
                                         >
                                             Statistics
@@ -83,14 +83,14 @@ const HeaderAdmin = () => {
                                         </Link>
 
                                         <Link
-                                            to="/"
+                                            to="createpack"
                                             className="header__admin--nav--drop--link"
                                         >
                                             Create Pack
                                         </Link>
 
                                         <Link
-                                            to="/"
+                                            to="createitem"
                                             className="header__admin--nav--drop--link"
                                         >
                                             Create Item

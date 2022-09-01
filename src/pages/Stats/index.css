@@ -98,6 +98,7 @@
     border-radius: 50%;
     margin: 0rem 1rem;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .stats__item--avatar{

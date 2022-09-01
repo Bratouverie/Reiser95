@@ -1,0 +1,72 @@
+.activity__inner{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.activity__content{
+    width: 100%;
+    margin-top: 4rem;
+    padding: 1rem 0;
+    overflow-x: auto;
+}
+
+.activity__item{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1.5fr 2fr 1fr 1fr 2fr 1fr 1fr;
+    padding: 1.5rem 0;
+}
+
+.activity__item.titles{
+    border-bottom: 1px solid #5d5e5e;
+    padding: 0 0 3rem 0;
+}
+
+.activity__item--icon--inner{
+    display: flex;
+    align-items: center;
+}
+
+.activity__item--icon{
+    margin-right: 0.8rem;
+}
+
+.activity__item--icon--title{
+    color: #fff;
+    font-weight: 500;
+}
+
+.activity__item--price{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.activity__item--price--wrapper{
+    display: flex;
+    align-items: center;
+}
+
+.activity__item--price--val{
+    font-size: 1.7rem;
+    font-weight: 500;
+    color: #fff;
+}
+
+.activity__item--price--dollars{
+    font-size: 1.4rem;
+    color: #fff;
+    margin-top: 0.5rem;
+}
+
+.expired{
+    color: #f38154;
+}
+
+@media(max-width: 1200px){
+    .activity__item{
+        width: 1100px;
+    }
+}

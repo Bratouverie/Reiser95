@@ -185,7 +185,9 @@ input::-webkit-inner-spin-button{
 	display: none;
 }
 
-/* Шапка */
+.stats__chart{
+	width: 100%;
+}
 
 /* Адаптив */
 @media(max-width: 1260px){
