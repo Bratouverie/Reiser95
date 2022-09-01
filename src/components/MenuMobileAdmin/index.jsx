@@ -21,7 +21,7 @@ const MenuMobileAdmin = ({ active, setActive }) => {
                             Control Page
                         </Link>
 
-                        <Link to="brands" className="mobile__nav--link" onClick={closeMenu}>
+                        <Link to="whitelist" className="mobile__nav--link" onClick={closeMenu}>
                             White List
                         </Link>
 

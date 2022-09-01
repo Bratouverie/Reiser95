@@ -36,7 +36,7 @@ const HeaderAdmin = () => {
                                     Stats
                                     <span className="header__admin--nav--drop">
                                         <Link
-                                            to="/"
+                                            to="whitelist"
                                             className="header__admin--nav--drop--link"
                                         >
                                             White List
