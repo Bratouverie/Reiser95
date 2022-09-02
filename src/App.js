@@ -43,11 +43,11 @@ const App = () => {
                     <Route path="*" element={<Navigate to="/" />} />
                 </Route>
 
-                <Route path="/admin" element={<WrapperAdmin />}>
+                <Route path="/admin/" element={<WrapperAdmin />}>
                     <Route index element={<ControlPanel />} />
                     <Route path="whitelist" element={<WhiteList />} />
                     <Route path="activity" element={<Activity />} />
-                    <Route path="statistics" element={<Statistics />} />
+                    <Route path="statistics/*" element={<Statistics />} />
                     <Route path="createpage" element={<CreatePage />} />
                     <Route path="createaccount" element={<CreateAccount />} />
                     <Route path="createcollection" element={<CreateCollection />} />

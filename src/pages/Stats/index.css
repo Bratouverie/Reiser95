@@ -35,7 +35,7 @@
 }
 
 .stats__item--name, .stats__item--value{
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     color: #fff;
     font-weight: 600;
     display: flex;
