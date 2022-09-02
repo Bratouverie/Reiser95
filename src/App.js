@@ -23,6 +23,8 @@ import ControlPanel from "./pages/ControlPanel";
 import CreatePage from "./pages/CreatePage";
 import CreateAccount from './pages/CreateAccount';
 import CreateCollection from './pages/CreateCollection';
+import CreatePack from './pages/CreatePack';
+import CreateItem from './pages/CreateItem';
 
 const App = () => {
     return (
@@ -51,6 +53,8 @@ const App = () => {
                     <Route path="createpage" element={<CreatePage />} />
                     <Route path="createaccount" element={<CreateAccount />} />
                     <Route path="createcollection" element={<CreateCollection />} />
+                    <Route path="createpack" element={<CreatePack />} />
+                    <Route path="createitem" element={<CreateItem />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Route>
             </Routes>

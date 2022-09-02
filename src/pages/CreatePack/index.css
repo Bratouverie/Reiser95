@@ -1,0 +1,11 @@
+.control__input--mini{
+    max-width: 130px;
+    flex-shrink: 0;
+    margin-right: 2rem;
+}
+
+@media(max-width: 768px){
+    .control__input--mini{
+        margin: 0rem 0rem 1rem 0;
+    }
+}

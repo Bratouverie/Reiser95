@@ -94,6 +94,12 @@
     border-radius: 50%;
 }
 
+.create__item--label.img{
+    width: 250px;
+    height: 250px;
+    border-radius: 10px;
+}
+
 .create__item--label.cover{
     width: 220px;
     height: 220px;
@@ -212,6 +218,11 @@
         height: 130px;
     }
 
+    .create__item--label.img{
+        width: 150px;
+        height: 150px;
+    }
+
     .create__item--label.cover{
         width: 160px;
         height: 160px;
@@ -219,5 +230,10 @@
 
     .create__item--link--input{
         font-size: 1.6rem;
+    }
+}
+@media(max-width: 480px){
+    .create__button--wrapper .create__button{
+        width: 100%;
     }
 }

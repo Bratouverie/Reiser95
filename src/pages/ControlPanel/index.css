@@ -34,7 +34,7 @@
 }
 
 .control__input::placeholder{
-    color: #e5e8eb;
+    color: #b6b8ba;
 }
 
 .control__item--confirm{
@@ -109,14 +109,9 @@
     .control__item--settings{
         margin: 0rem 1rem;
     }
-}
-@media(max-width: 480px){
+
     .control__item{
         flex-wrap: wrap;
-    }
-
-    .control__input{
-        font-size: 1.4rem;
     }
 
     .control__item--settings{
@@ -125,5 +120,10 @@
 
     .control__item--confirm{
         margin: 1rem 0rem 0rem 0rem;
+    }
+}
+@media(max-width: 480px){
+    .control__input{
+        font-size: 1.4rem;
     }
 }

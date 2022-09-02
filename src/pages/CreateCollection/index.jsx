@@ -338,9 +338,11 @@ const CreateCollection = () => {
                             </button>
                         </div>
 
-                        <button className="button create__button default__hover">
-                            Submit changes
-                        </button>
+                        <div className="create__button--wrapper">
+                            <button className="button create__button default__hover">
+                                Submit changes
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
