@@ -15,6 +15,7 @@ import About from "./pages/About";
 import Cars from "./pages/Cars";
 import Alco from "./pages/Alco";
 import Profile from "./pages/Profile";
+import TokenCard from "./pages/TokenCard";
 
 import WhiteList from './pages/WhiteList';
 import Activity from './pages/Activity';
@@ -42,6 +43,7 @@ const App = () => {
                     <Route path="about" element={<About />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="collection/:id" element={<Collection />} />
+                    <Route path="token/:id" element={<TokenCard />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Route>
 

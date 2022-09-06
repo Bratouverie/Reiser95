@@ -1,4 +1,5 @@
 import React from "react";
+import {Link} from 'react-router-dom';
 
 import "./index.css";
 
@@ -191,7 +192,7 @@ const Collection = () => {
 
                         <div className="collection__items--content">
                             <div className="collection__item">
-                                <div className="collection__item--img--inner"></div>
+                                <Link to="/token/1" className="collection__item--img--inner"></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
@@ -232,7 +233,7 @@ const Collection = () => {
                             </div>
 
                             <div className="collection__item">
-                                <div className="collection__item--img--inner"></div>
+                                <Link to="/token/1" className="collection__item--img--inner"></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
@@ -260,7 +261,7 @@ const Collection = () => {
                             </div>
 
                             <div className="collection__item">
-                                <div className="collection__item--img--inner"></div>
+                                <Link to="/token/1" className="collection__item--img--inner"></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
@@ -303,7 +304,7 @@ const Collection = () => {
                             </div>
 
                             <div className="collection__item">
-                                <div className="collection__item--img--inner"></div>
+                                <Link to="/token/1" className="collection__item--img--inner"></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
@@ -344,7 +345,7 @@ const Collection = () => {
                             </div>
 
                             <div className="collection__item">
-                                <div className="collection__item--img--inner"></div>
+                                <Link to="/token/1" className="collection__item--img--inner"></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">

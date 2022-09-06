@@ -66,7 +66,7 @@ body{
 	box-sizing: border-box;
 }
 
-a, button, input, textarea{
+a, button, input, textarea, select{
 	transition: .2s linear;
 	font-size: 1.6rem;
 	font-family: 'Gilroy', sans-serif;
@@ -89,6 +89,12 @@ li{
 h1, h2, h3, h4, h5, h5, p{
 	margin: 0;
 	font-weight: normal;
+}
+
+select{
+	outline: none;
+	border: none;
+	appearance: none;
 }
 
 input::-webkit-outer-spin-button,

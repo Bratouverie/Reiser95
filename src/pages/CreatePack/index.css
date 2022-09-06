@@ -4,8 +4,218 @@
     margin-right: 2rem;
 }
 
+.create__loading{
+    width: 100%;
+    border: 1px solid #5a5a5a;
+    padding: 1rem;
+    border-radius: 7px;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.create__loading--button{
+    margin-top: 2rem;
+    font-size: 2rem;
+    color: #fff;
+    font-weight: 600;
+    padding: 1.3rem 3rem;
+    border: 1px solid #2081e2;
+    border-radius: 6px;
+}
+
+.create__loading--content{
+    width: 100%;
+    max-width: 1218px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-height: 350px;
+    overflow: auto;
+    padding: 0rem 1rem 1rem 0;
+}
+
+.create__loading--item{
+    width: 1191px;
+    display: grid;
+    grid-gap: 10px;
+    grid-template-columns: 0.25fr 1fr 1fr 1fr 1fr 1fr 0.5fr;
+    margin-top: 0.5rem;
+}
+
+.create__loading--item:first-child{
+    margin-top: 0;
+}
+
+.create__loading--title{
+    color: #2081e2;
+}
+
+.create__loading--text{
+    color: #fff;
+}
+
+.green__c{
+    color: #78c67f;
+}
+
+.create__item--select--inner{
+    width: 100%;
+    margin-top: 1.5rem;
+    position: relative;
+}
+
+.create__item--select--inner.small{
+    width: 140px;
+    flex-shrink: 0;
+    margin: 0 0 0 2rem;
+}
+
+.create__item--select{
+    width: 100%;
+    padding: 1.2rem 4.5rem 1.2rem 2rem;
+    border-radius: 7px;
+    background: #313232;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.8rem;
+}
+
+.create__item--select--icon{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 20px;
+}
+
+.create__item--checkbox--inner{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.create__item--checkbox--wrapper{
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+}
+
+.create__item--checkbox--text{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.create__item--checkbox--text--title{
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.8rem;
+}
+
+.create__item--checkbox--text--text{
+    color: #fff;
+    font-size: 1.4rem;
+    margin-top: 0.5rem;
+}
+
+.create__item--checkbox{
+    display: none;
+}
+
+.create__item--checkbox--box{
+    width: 52px;
+    flex-shrink: 0;
+    margin-left: 2rem;
+}
+
+.create__item--checkbox--label{
+    position: relative;
+    cursor: pointer;
+}
+
+.create__item--checkbox--label:after{
+    content: "";
+    display: block;
+    width: 52px;
+    height: 28px;
+    border-radius: 25px;
+    border: 1px solid #323435;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: .3s ease-in-out;
+}
+
+.create__item--checkbox--label:before{
+    content: "";
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #fff;
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    z-index: 2;
+    transition: .3s ease-in-out;
+}
+
+.create__item--checkbox:checked + .create__item--checkbox--label:before{
+    left: 29px;
+}
+
+.create__item--checkbox:checked + .create__item--checkbox--label:after{
+    background: #172531;
+}
+
+.create__item--def--button{
+    margin-top: 1.5rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    border: 1px solid #323435;
+    padding: 1.3rem 2rem;
+    color: #fff;
+    border-radius: 8px;
+}
+
+.create__item--def--button:hover{
+    background: rgba(255, 255, 255, .1);
+}
+
+.create__item--checkbox--wrapper--icon{
+    flex-shrink: 0;
+    margin-right: 1.5rem;
+    width: 20px;
+    display: flex;
+}
+
+.create__item--add{
+    background: #313232;
+    width: 55px;
+    height: 55px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.create__item--add:hover{
+    background: rgba(255, 255, 255, .1);
+}
+
 @media(max-width: 768px){
     .control__input--mini{
         margin: 0rem 0rem 1rem 0;
+    }
+
+    .create__loading--content{
+        max-height: 200px;
+    }
+
+    .create__item--select--inner.small{
+        margin: 1.5rem 0rem 0rem 0;
     }
 }
