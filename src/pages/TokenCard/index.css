@@ -45,21 +45,9 @@
     justify-content: space-between;
 }
 
-.token__card--copy, .token__card--fav{
+.token__card--copy{
     padding: 0;
     display: flex;
-}
-
-.token__card--fav{
-    display: flex;
-    align-items: center;
-    font-size: 1.5rem;
-    color: #858585;
-    font-weight: 500;
-}
-
-.token__card--fav--icon{
-    margin-right: 0.5rem;
 }
 
 .token__card--img{
@@ -308,7 +296,7 @@ button.token__card--item--top:hover{
 .token__card--content--subtitle{
     font-size: 1.9rem;
     font-weight: 700;
-    color: #0082E6;
+    color: #fff;
 }
 
 .token__card--content--title{
@@ -329,7 +317,6 @@ button.token__card--item--top:hover{
     color: #fff;
     font-weight: 700;
     font-size: 1.9rem;
-    margin-right: 5rem;
 }
 
 .token__card--content--fav{
@@ -370,7 +357,6 @@ button.token__card--item--top:hover{
 .token__card--price--text{
     color: #fff;
     font-size: 1.9rem;
-    font-weight: 700;
 }
 
 .token__card--price--timer--inner{
@@ -412,8 +398,7 @@ button.token__card--item--top:hover{
 }
 
 .token__card--content--price--buy{
-    width: 100%;
-    max-width: 470px;
+    min-width: 170px;
     margin-top: 1rem;
     background: #0082E6;
     padding: 1.5rem 2rem;

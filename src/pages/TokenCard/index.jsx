@@ -18,19 +18,10 @@ const TokenCard = () => {
                                 <div className="token__card--img--box">
                                     <button className="button token__card--copy">
                                         <img
-                                            src="/assets/img/link.svg"
-                                            alt="copy"
+                                            src="/assets/img/eth.svg"
+                                            alt="eth"
                                             className="token__card--copy--icon"
                                         />
-                                    </button>
-
-                                    <button className="button token__card--fav">
-                                        <img
-                                            src="/assets/img/heart.svg"
-                                            alt="heart"
-                                            className="token__card--fav--icon"
-                                        />
-                                        5
                                     </button>
                                 </div>
 
@@ -38,6 +29,38 @@ const TokenCard = () => {
                             </div>
 
                             <div className="token__card--wrap">
+                                <div className="token__card--item">
+                                    <button className="button token__card--item--top">
+                                        <span className="token__card--item--top--title--inner">
+                                            <img
+                                                src="/assets/img/dates.svg"
+                                                alt="dates"
+                                                className="token__card--item--top--title--icon"
+                                            />
+
+                                            <p className="token__card--item--top--title">
+                                                Description
+                                            </p>
+                                        </span>
+
+                                        <img
+                                            src="/assets/img/arrow-select.png"
+                                            alt="arrow"
+                                            className="token__card--item--open"
+                                        />
+                                    </button>
+
+                                    <div className="token__card--item--bottom">
+                                        <p className="token__card--item--about--text">
+                                            Created by <span className="blueC">Account brand name</span>
+                                        </p>
+
+                                        <p className="token__card--item--about--text">
+                                            Information about the collection Information about the collection Information about the collection Information about the collection Information about the collection Information about the collection Information about the collection Information about the collection
+                                        </p>
+                                    </div>
+                                </div>
+
                                 <div className="token__card--item">
                                     <button
                                         onClick={() => setProp(!prop)}
@@ -145,40 +168,6 @@ const TokenCard = () => {
                                     <button className="button token__card--item--top">
                                         <span className="token__card--item--top--title--inner">
                                             <img
-                                                src="/assets/img/dates.svg"
-                                                alt="dates"
-                                                className="token__card--item--top--title--icon"
-                                            />
-
-                                            <p className="token__card--item--top--title">
-                                                Dates
-                                            </p>
-                                        </span>
-
-                                        <img
-                                            src="/assets/img/arrow-select.png"
-                                            alt="arrow"
-                                            className="token__card--item--open"
-                                        />
-                                    </button>
-
-                                    <div className="token__card--item--bottom">
-                                        <div className="token__card--item--dates">
-                                            <p className="token__card--item--dates--text">
-                                                Birhday
-                                            </p>
-
-                                            <p className="token__card--item--dates--text">
-                                                Tuesday, February 1st, 2022
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="token__card--item">
-                                    <button className="button token__card--item--top">
-                                        <span className="token__card--item--top--title--inner">
-                                            <img
                                                 src="/assets/img/about.svg"
                                                 alt="about"
                                                 className="token__card--item--top--title--icon"
@@ -202,8 +191,7 @@ const TokenCard = () => {
                                                 <div className="token__card--item--about--img"></div>
 
                                                 <p className="token__card--item--about--text">
-                                                    The NFT hourse racing game,
-                                                    Zed Run, on Matiс network.
+                                                    Information about the token Information about the token Information about the token Information about the token Information about the token Information about the token Information about the token Information about the token Information about the token Information about the token
                                                 </p>
                                             </div>
 
@@ -304,7 +292,17 @@ const TokenCard = () => {
                                                 </p>
 
                                                 <p className="token__card--item--details--item--text">
-                                                    Polygon
+                                                    Ethereum
+                                                </p>
+                                            </div>
+
+                                            <div className="token__card--item--details--item">
+                                                <p className="token__card--item--details--item--text">
+                                                    Investor/Creator Earnings 
+                                                </p>
+
+                                                <p className="token__card--item--details--item--text">
+                                                    3/2%
                                                 </p>
                                             </div>
                                         </div>
@@ -363,15 +361,6 @@ const TokenCard = () => {
                                     Owned by{" "}
                                     <span className="blueC">Ollie27nl</span>
                                 </p>
-
-                                <div className="token__card--content--fav">
-                                    <img
-                                        src="/assets/img/heart-white.svg"
-                                        alt="heart"
-                                        className="token__card--content--fav--icon"
-                                    />
-                                    5 favorites
-                                </div>
                             </div>
 
                             <div className="token__card--price">
@@ -446,15 +435,16 @@ const TokenCard = () => {
                                     </div>
 
                                     <button className="button token__card--content--price--buy">
-                                        <img
+                                        {/* <img
                                             src="/assets/img/wallet.svg"
                                             alt="wallet"
                                             className="token__card--content--price--buy--icon"
                                         />
-                                        Buy now
+                                        Buy now */}
+                                        Book
                                     </button>
 
-                                    <div className="token__card--content--buttons">
+                                    {/* <div className="token__card--content--buttons">
                                         <button className="button token__card--content--button--card">
                                             <img
                                                 src="/assets/img/card.svg"
@@ -472,7 +462,7 @@ const TokenCard = () => {
                                             />
                                             Make offer
                                         </button>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
 
@@ -568,7 +558,7 @@ const TokenCard = () => {
                                             </p>
 
                                             <button className="button token__card--content--listing--item--button">
-                                                Buy
+                                                Book
                                             </button>
                                         </div>
 
@@ -595,7 +585,7 @@ const TokenCard = () => {
                                             </p>
 
                                             <button className="button token__card--content--listing--item--button">
-                                                Buy
+                                                Book
                                             </button>
                                         </div>
                                     </div>
