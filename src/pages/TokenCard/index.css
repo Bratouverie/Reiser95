@@ -61,6 +61,10 @@
     margin-top: 2.2rem;
 }
 
+.token__card--wrap.mobile{
+    display: none;
+}
+
 .token__card--wrap.full .token__card--item{
     border-radius: 10px;
 }
@@ -81,12 +85,24 @@
     border-top: 1px solid #585B59;
 }
 
-.token__card--item:first-child{
+.token__card--item:first-child, .token__card--item:first-child .token__card--item--top{
     border-radius: 10px 10px 0 0;
 }
 
-.token__card--item:last-child{
+.full .token__card--item .token__card--item--top:first-child{
+    border-radius: 10px 10px 0 0;
+}
+
+.full .token__card--item .token__card--item--top:last-child{
+    border-radius: 10px;
+}
+
+.token__card--item:last-child, .token__card--item:last-child .token__card--item--top{
     border-radius: 0 0 10px 10px;
+}
+
+.full .token__card--item .token__card--item--top{
+    border-radius: 10px;
 }
 
 .token__card--item--top{
@@ -108,12 +124,13 @@ button.token__card--item--top:hover{
 
 .token__card--item--top--title--icon{
     margin-right: 1rem;
+    max-height: 21px;
 }
 
 .token__card--item--top--title{
     font-size: 1.8rem;
     color: #fff;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .token__card--item--open{
@@ -219,8 +236,11 @@ button.token__card--item--top:hover{
 
 .token__card--item--details--item--text{
     font-size: 1.8rem;
-    font-weight: 500;
     color: #fff;
+}
+
+.token__card--item--details--item--text.bold{
+    font-weight: 500;
 }
 
 .blueC, .token__card--content--listing--item--title.blueC{
@@ -259,7 +279,7 @@ button.token__card--item--top:hover{
 }
 
 .token__card--item--social--link{
-    padding: 1.1rem 1.4rem;
+    padding: 1rem .7rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -315,7 +335,6 @@ button.token__card--item--top:hover{
 
 .token__card--content--name{
     color: #fff;
-    font-weight: 700;
     font-size: 1.9rem;
 }
 
@@ -342,12 +361,16 @@ button.token__card--item--top:hover{
 }
 
 .token__card--price--timer, .token__card--price--box{
-    padding: 2.3rem 2.4rem;
+    padding: 2.3rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     border-bottom: 1px solid #585B59;
     width: 100%;
+}
+
+.token__card--price--timer{
+    padding: 1.3rem 2rem;
 }
 
 .token__card--price--box{
@@ -360,7 +383,6 @@ button.token__card--item--top:hover{
 }
 
 .token__card--price--timer--inner{
-    margin-top: 1.2rem;
     width: 100%;
     display: flex;
     align-items: flex-start;
@@ -375,8 +397,7 @@ button.token__card--item--top:hover{
 
 .token__card--price--timer--item--num{
     margin-bottom: 0.4rem;
-    font-size: 2.2rem;
-    font-weight: 600;
+    font-size: 2rem;
     color: #fff;
 }
 
@@ -395,6 +416,12 @@ button.token__card--item--top:hover{
     color: #fff;
     font-size: 3.7rem;
     font-weight: 700;
+}
+
+.token__card--price--wrap--text{
+    width: 100%;
+    padding: 1.4rem 2rem;
+    border-bottom: 1px solid #585B59;
 }
 
 .token__card--content--price--buy{
@@ -511,6 +538,21 @@ button.token__card--item--top:hover{
     grid-gap: 15px;
 }
 
+.profile__owned{
+    color: #fff;
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.mobile__profile--inner{
+    width: 100%;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 3rem;
+}
+
 @media(max-width: 1200px){
     .token__card--left{
         max-width: 420px;
@@ -518,6 +560,18 @@ button.token__card--item--top:hover{
 
     .token__card--img{
         height: 420px;
+    }
+
+    .token__card--list{
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+    }
+
+    .token__card--list .collection__item{
+        width: 309px;
+        flex-shrink: 0;
     }
 }
 @media(max-width: 998px){
@@ -539,8 +593,20 @@ button.token__card--item--top:hover{
     .token__card--content--right{
         margin-top: 2.5rem;
     }
+
+    .token__card--wrap.mobileoff, .token__card--content--name--inner, .token__card--item--social{
+        display: none;
+    }
+
+    .token__card--wrap.mobile, .mobile__profile--inner{
+        display: flex;
+    }
 }
 @media(max-width: 768px){
+    .token__card--list .collection__item{
+        width: calc(41vw + 10px);
+    }
+
     .token__card--item--dates--text, .token__card--item--top--title, .token__card--item--details--item--text,
     .token__card--price--text, .token__card--content--button--card{
         font-size: 1.6rem;
@@ -616,5 +682,18 @@ button.token__card--item--top:hover{
 
     .token__card--img{
         height: calc(70vw + 60px);
+    }
+
+    .token__card--item--about--item{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .token__card--item--about--img{
+        margin: 0rem 0rem 1rem 0;
+    }
+
+    .token__card--item--about--text{
+        font-size: 1.4rem;
     }
 }
