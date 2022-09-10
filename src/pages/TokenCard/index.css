@@ -97,12 +97,16 @@
     border-radius: 10px;
 }
 
-.token__card--item:last-child, .token__card--item:last-child .token__card--item--top{
+.stack .token__card--item:last-child .token__card--item--top:first-child{
+    border-radius: 0;
+}
+
+.stack .token__card--item:last-child .token__card--item--top:last-child{
     border-radius: 0 0 10px 10px;
 }
 
-.full .token__card--item .token__card--item--top{
-    border-radius: 10px;
+.token__card--item:last-child, .token__card--item:last-child .token__card--item--top{
+    border-radius: 0 0 10px 10px;
 }
 
 .token__card--item--top{

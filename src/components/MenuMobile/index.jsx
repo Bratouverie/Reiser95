@@ -19,7 +19,7 @@ const MenuMobile = ({ active, setActive }) => {
             <div className="container">
                 <div className="mobile__menu--content">
                     <nav className="mobile__nav">
-                        <Link to="/" className="mobile__nav--link" onClick={closeMenu}>
+                        <Link to="/persons" className="mobile__nav--link" onClick={closeMenu}>
                             Persons
                         </Link>
 

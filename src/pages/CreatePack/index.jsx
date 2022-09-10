@@ -812,6 +812,16 @@ const CreatePack = () => {
                             <input
                                 type="text"
                                 className="input create__item--input"
+                                placeholder="Enter common name"
+                            />
+
+                            <p className="create__item--text">
+                                Token name = filename.ext - token name copies the token filename.
+                            </p>
+
+                            <input
+                                type="text"
+                                className="input create__item--input"
                                 placeholder="Token name = filename.ext"
                             />
                         </div>
@@ -862,6 +872,22 @@ const CreatePack = () => {
                                         className="create__item--select--icon"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="create__item--select--prop">
+                                <button className="button create__item--option active">
+                                    Auction
+
+                                    <img src="/assets/img/check.svg" alt="icon" className="create__item--icon" />
+                                </button>
+                            </div>
+
+                            <div className="create__item--select--prop">
+                                <button className="button create__item--option active">
+                                    No price
+
+                                    <img src="/assets/img/check.svg" alt="icon" className="create__item--icon" />
+                                </button>
                             </div>
                         </div>
 

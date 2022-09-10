@@ -25,7 +25,7 @@ const CreateAccount = () => {
                                 Select the page on which the account will be created.
                             </p>
 
-                            <div className="create__item--select">
+                            <div className="create__item--select--prop">
                                 <button className="button create__item--option">
                                     Brands
                                 </button>

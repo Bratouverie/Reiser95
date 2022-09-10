@@ -24,7 +24,7 @@ const Header = () => {
                         </Link>
 
                         <nav className="header__nav">
-                            <Link to="/" className="header__nav--link">
+                            <Link to="/persons" className="header__nav--link">
                                 Persons
                             </Link>
 

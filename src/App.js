@@ -6,6 +6,7 @@ import "./App.css";
 import Wrapper from "./components/Wrapper";
 import WrapperAdmin from "./components/WrapperAdmin";
 
+import Main from "./pages/Main";
 import Persons from "./pages/Persons";
 import Brands from "./pages/Brands";
 import Stats from "./pages/Stats";
@@ -34,7 +35,8 @@ const App = () => {
 
             <Routes>
                 <Route path="/" element={<Wrapper />}>
-                    <Route index element={<Persons />} />
+                    <Route index element={<Main />} />
+                    <Route path="persons" element={<Persons />} />
                     <Route path="brands" element={<Brands />} />
                     <Route path="alco" element={<Alco />} />
                     <Route path="watches" element={<Watches />} />

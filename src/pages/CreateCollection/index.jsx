@@ -121,7 +121,7 @@ const CreateCollection = () => {
                                 Adding a category will help make your item discoverable on OpenSea.
                             </p>
 
-                            <div className="create__item--select">
+                            <div className="create__item--select--prop">
                                 <button className="button create__item--option active">
                                     Art
 
@@ -163,7 +163,7 @@ const CreateCollection = () => {
                                 Select the page that hosts the account where you want to create the collection.
                             </p>
 
-                            <div className="create__item--select">
+                            <div className="create__item--select--prop">
                                 <button className="button create__item--option active">
                                     Brands
 
@@ -197,7 +197,91 @@ const CreateCollection = () => {
                                 Choose an account to place the collection.
                             </p>
 
+                            <div className="create__item--account--inner">
+                                
 
+                                <div className="create__item--account--content">
+                                    <div className="create__item--account--item">
+                                        <input type="radio" name="accounts" className="create__item--account--checkbox" id="account1" />
+
+                                        <label htmlFor="account1" className="create__item--account--item--label">
+                                            <span className="create__item--account--item--label--wrap">
+                                                <p className="create__item--account--item--num">
+                                                    1
+                                                </p>
+
+                                                <span className="create__item--account--item--img"></span>
+
+                                                <p className="create__item--account--item--name">
+                                                    Account name
+                                                </p>
+                                            </span>
+
+                                            <span className="create__item--account--item--circle"></span>
+                                        </label>
+                                    </div>
+
+                                    <div className="create__item--account--item">
+                                        <input type="radio" name="accounts" className="create__item--account--checkbox" id="account2" />
+
+                                        <label htmlFor="account2" className="create__item--account--item--label">
+                                            <span className="create__item--account--item--label--wrap">
+                                                <p className="create__item--account--item--num">
+                                                    2
+                                                </p>
+
+                                                <span className="create__item--account--item--img"></span>
+
+                                                <p className="create__item--account--item--name">
+                                                    Versace
+                                                </p>
+                                            </span>
+
+                                            <span className="create__item--account--item--circle"></span>
+                                        </label>
+                                    </div>
+
+                                    <div className="create__item--account--item">
+                                        <input type="radio" name="accounts" className="create__item--account--checkbox" id="account3" />
+
+                                        <label htmlFor="account3" className="create__item--account--item--label">
+                                            <span className="create__item--account--item--label--wrap">
+                                                <p className="create__item--account--item--num">
+                                                    3
+                                                </p>
+
+                                                <span className="create__item--account--item--img"></span>
+
+                                                <p className="create__item--account--item--name">
+                                                    Armani
+                                                </p>
+                                            </span>
+
+                                            <span className="create__item--account--item--circle"></span>
+                                        </label>
+                                    </div>
+
+                                    <div className="create__item--account--item">
+                                        <input type="radio" name="accounts" className="create__item--account--checkbox" id="account4" />
+
+                                        <label htmlFor="account4" className="create__item--account--item--label">
+                                            <span className="create__item--account--item--label--wrap">
+                                                <p className="create__item--account--item--num">
+                                                    4
+                                                </p>
+
+                                                <span className="create__item--account--item--img"></span>
+
+                                                <p className="create__item--account--item--name">
+                                                    Gucci
+                                                </p>
+                                            </span>
+
+                                            <span className="create__item--account--item--circle"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="create__item">
@@ -257,7 +341,21 @@ const CreateCollection = () => {
                                 Select the blockchain where you&rsquo;d like new items from this collection to be added by default.
                             </p>
 
+                            <div className="create__item--select--inner">
+                                <select className="select create__item--select">
+                                    <option>Ethereum</option>
+                                    <option>Ethereum 2</option>
+                                    <option>Ethereum 3</option>
+                                    <option>Ethereum 4</option>
+                                    <option>Ethereum 5</option>
+                                </select>
 
+                                <img
+                                    src="/assets/img/arrow-select.png"
+                                    alt="arrow"
+                                    className="create__item--select--icon"
+                                />
+                            </div>
                         </div>
 
                         <div className="create__item">
@@ -269,7 +367,51 @@ const CreateCollection = () => {
                                 These tokens can used to buy and sell your items.
                             </p>
 
+                            <div className="create__item--select--prop">
+                                <button className="button create__item--pay--button">
+                                    <img src="/assets/img/eth.svg" alt="eth" className="create__item--pay--icon" />
 
+                                    <span className="create__item--pay--button--wrap">
+                                        <p className="create__item--pay--button--title">
+                                            Eth
+                                        </p>
+
+                                        <p className="create__item--pay--button--text">
+                                            Ethereum
+                                        </p>
+                                    </span>
+                                </button>
+
+                                <button className="button create__item--pay--button">
+                                    <img src="/assets/img/cat.png" alt="eth" className="create__item--pay--icon" />
+
+                                    <span className="create__item--pay--button--wrap">
+                                        <p className="create__item--pay--button--title">
+                                            Eth
+                                        </p>
+
+                                        <p className="create__item--pay--button--text">
+                                            Ethereum
+                                        </p>
+                                    </span>
+                                </button>
+                            </div>
+
+                            <div className="create__item--select--inner">
+                                <select className="select create__item--select">
+                                    <option>Add token</option>
+                                    <option>Add token 2</option>
+                                    <option>Add token 3</option>
+                                    <option>Add token 4</option>
+                                    <option>Add token 5</option>
+                                </select>
+
+                                <img
+                                    src="/assets/img/arrow-select.png"
+                                    alt="arrow"
+                                    className="create__item--select--icon"
+                                />
+                            </div>
                         </div>
 
                         <div className="create__item">
@@ -283,7 +425,7 @@ const CreateCollection = () => {
 
                             <div className="create__item--theme--inner">
                                 <button className="button create__item--theme--item">
-
+                                    <img src="/assets/img/display1.png" alt="theme" className="create__item--theme--item--img" />
 
                                     <p className="create__item--theme--item--title">
                                         Padded
@@ -295,7 +437,7 @@ const CreateCollection = () => {
                                 </button>
 
                                 <button className="button create__item--theme--item">
-
+                                    <img src="/assets/img/display2.png" alt="theme" className="create__item--theme--item--img" />
 
                                     <p className="create__item--theme--item--title">
                                         Contained
@@ -307,7 +449,7 @@ const CreateCollection = () => {
                                 </button>
 
                                 <button className="button create__item--theme--item active">
-
+                                    <img src="/assets/img/display3.png" alt="theme" className="create__item--theme--item--img" />
 
                                     <p className="create__item--theme--item--title">
                                         Covered

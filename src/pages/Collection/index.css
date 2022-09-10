@@ -12,9 +12,10 @@
     overflow: hidden;
     border: 1px solid #fff;
     position: absolute;
-    left: 50%;
+    left: 0;
     top: 100%;
-    transform: translate(-50%, -50%);
+    transform: translateY(-50%);
+    background: linear-gradient(180deg,#fec83d,#ff9c43 84.93%);
 }
 
 .collection__avatar{
@@ -31,15 +32,19 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .collection__link--inner{
     width: 100%;
     margin-top: 1.5rem;
     display: flex;
-    flex-direction: column-reverse;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.collections__links--wrap{
+    display: flex;
 }
 
 .collection__button--icon{
@@ -48,15 +53,14 @@
 }
 
 .collection__get--whitelist{
-    padding: 1rem 2.5rem;
+    padding: 1.8rem 3rem;
     border-radius: 10px;
     border: 1px solid #585b59;
     font-size: 1.8rem;
-    font-weight: 600;
     color: #fff;
     display: flex;
     align-items: center;
-    margin-top: 1rem;
+    background: rgba(255, 255, 255, .05);
 }
 
 .collection__social--inner{
@@ -66,21 +70,22 @@
 }
 
 .collection__social--link{
-    padding: 1rem 1.61rem;
+    padding: 1rem;
     border-right: 1px solid #585b59;
     min-width: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(255, 255, 255, .05);
 }
 
 .collection__social--link:first-child{
-    border-radius: 8px 0 0 8px;
+    border-radius: 5px 0 0 5px;
 }
 
 .collection__social--link:last-child{
     border-right: none;
-    border-radius: 0 8px 8px 0;
+    border-radius: 0 5px 5px 0;
 }
 
 .collection__social--icon{
@@ -88,7 +93,8 @@
 }
 
 .collection__title{
-    margin-top: 2rem;
+    width: auto;
+    margin-left: 16rem;
 }
 
 .collection__text{
@@ -107,10 +113,11 @@
     align-items: center;
     color: #fff;
     font-size: 1.7rem;
-    padding: 1.2rem 1.8rem;
-    margin-top: 2rem;
-    border-radius: 15px;
+    padding: 1.3rem 1.5rem;
+    margin-right: 1.5rem;
+    border-radius: 8px;
     border: 1px solid #585b59;
+    background: rgba(255, 255, 255, .05);
 }
 
 .collection__discord--icon{
@@ -128,13 +135,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: .7rem 1.5rem;
+    padding: 1.8rem;
     min-width: 162px;
     border-right: 1px solid #585b59;
+    background: rgba(33, 34, 34, .5);
+}
+
+.collection__data--item:first-child{
+    border-radius: 12px 0 0 12px;
 }
 
 .collection__data--item:last-child{
     border-right: none;
+    border-radius: 0 12px 12px 0;
 }
 
 .collection__data--title{
@@ -154,15 +167,22 @@
 .collection__data--text{
     color: #fff;
     font-size: 1.8rem;
-    margin-top: 1rem;
+    margin-top: .3rem;
     text-align: center;
 }
 
-.collection__desc{
-    text-align: center;
+.collection__desc--inner{
+    width: 100%;
     margin-top: 2.5rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.collection__desc{
     color: #fff;
     font-size: 1.9rem;
+    max-width: 60%;
 }
 
 .collection__items{
@@ -353,10 +373,17 @@
     .collection__item--img--inner{
         height: 276px;
     }
-}
-@media(max-width: 1260px){
     .collection__item--img--inner{
         height: 309px;
+    }
+}
+@media(max-width: 1200px){
+    .collection__title{
+        margin-left: 0;
+    }
+
+    .collection__link--inner{
+        margin-top: 7rem;
     }
 }
 @media(max-width: 998px){
@@ -373,6 +400,15 @@
 
     .collection__item--img--inner{
         height: 361px;
+    }
+
+    .collection__link--inner{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .collections__links--wrap{
+        margin-top: 1.5rem;
     }
 }
 @media(max-width: 768px){
@@ -424,6 +460,7 @@
         border: none;
         align-items: flex-start;
         padding: 1rem 0;
+        background: none;
     }
 
     .collection__data{
@@ -477,6 +514,19 @@
 
     .collection__item--img--inner{
         height: calc(41vw + 10px);
+    }
+
+    .collection__desc--inner{
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .collection__desc{
+        max-width: 100%;
+    }
+
+    .collection__get--whitelist{
+        margin-top: 1.5rem;
     }
 }
 @media(max-width: 555px){
@@ -539,7 +589,7 @@
     }
 
     .collection__get--whitelist{
-        margin: 0rem 0rem 1rem 0;
+        padding: 1.2rem 2rem;
     }
 
     .collection{

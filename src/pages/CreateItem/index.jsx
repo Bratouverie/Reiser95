@@ -18,7 +18,7 @@ const CreateItem = () => {
                     <div className="create__content">
                         <div className="create__item half">
                             <p className="create__item--title required">
-                                Item
+                                Pack
                             </p>
 
                             <p className="create__item--text">
@@ -27,11 +27,11 @@ const CreateItem = () => {
 
                             <div className="create__item--select--inner">
                                 <select className="select create__item--select">
-                                    <option>Item name</option>
-                                    <option>Item name 2</option>
-                                    <option>Item name 3</option>
-                                    <option>Item name 4</option>
-                                    <option>Item name 5</option>
+                                    <option>Pack name</option>
+                                    <option>Pack name 2</option>
+                                    <option>Pack name 3</option>
+                                    <option>Pack name 4</option>
+                                    <option>Pack name 5</option>
                                 </select>
 
                                 <img
@@ -171,6 +171,16 @@ const CreateItem = () => {
                             <input
                                 type="text"
                                 className="input create__item--input"
+                                placeholder="Enter common name"
+                            />
+
+                            <p className="create__item--text">
+                                Token name = filename.ext - token name copies the token filename.
+                            </p>
+
+                            <input
+                                type="text"
+                                className="input create__item--input"
                                 placeholder="Token name = filename.ext"
                             />
                         </div>
@@ -221,6 +231,22 @@ const CreateItem = () => {
                                         className="create__item--select--icon"
                                     />
                                 </div>
+                            </div>
+
+                            <div className="create__item--select--prop">
+                                <button className="button create__item--option active">
+                                    Auction
+
+                                    <img src="/assets/img/check.svg" alt="icon" className="create__item--icon" />
+                                </button>
+                            </div>
+
+                            <div className="create__item--select--prop">
+                                <button className="button create__item--option active">
+                                    No price
+
+                                    <img src="/assets/img/check.svg" alt="icon" className="create__item--icon" />
+                                </button>
                             </div>
                         </div>
 

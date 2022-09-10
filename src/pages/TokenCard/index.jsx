@@ -6,14 +6,15 @@ import "./index.css";
 import StatChart from "../../components/StatChart";
 
 const TokenCard = () => {
-    const [prop, setProp] = React.useState(false);
-    const [desc, setDesc] = React.useState(false);
-    const [about, setAbout] = React.useState(false);
-    const [details, setDetails] = React.useState(false);
-    const [history, setHistory] = React.useState(false);
-    const [list, setList] = React.useState(false);
-    const [offers, setOffers] = React.useState(false);
+    const [prop, setProp] = React.useState(true);
+    const [desc, setDesc] = React.useState(true);
+    const [about, setAbout] = React.useState(true);
+    const [details, setDetails] = React.useState(true);
+    const [history, setHistory] = React.useState(true);
+    const [list, setList] = React.useState(true);
+    const [offers, setOffers] = React.useState(true);
     const [more, setMore] = React.useState(true);
+    const [act, setAct] = React.useState(true);
 
     return (
         <div className="token__card">
@@ -67,7 +68,7 @@ const TokenCard = () => {
                                 <div className="token__card--img"></div>
                             </div>
 
-                            <div className="token__card--wrap mobileoff">
+                            <div className="token__card--wrap stack mobileoff">
                                 <div className="token__card--item">
                                     <button onClick={() => setDesc(!desc)} className="button token__card--item--top">
                                         <span className="token__card--item--top--title--inner">
@@ -815,7 +816,7 @@ const TokenCard = () => {
                                 </div>
                             </div>
 
-                            <div className="token__card--wrap mobile">
+                            <div className="token__card--wrap stack mobile">
                                 <div className="token__card--item">
                                     <button onClick={() => setDesc(!desc)} className="button token__card--item--top">
                                         <span className="token__card--item--top--title--inner">
@@ -1404,7 +1405,7 @@ const TokenCard = () => {
 
                     <div className="token__card--wrap full">
                         <div className="token__card--item">
-                            <div className="token__card--item--top">
+                            <button onClick={() => setAct(!act)} className="button token__card--item--top">
                                 <span className="token__card--item--top--title--inner">
                                     <img
                                         src="/assets/img/activity.svg"
@@ -1416,9 +1417,15 @@ const TokenCard = () => {
                                         Item Activity
                                     </p>
                                 </span>
-                            </div>
 
-                            <div className="token__card--item--bottom nop">
+                                <img
+                                    src="/assets/img/arrow-select.png"
+                                    alt="arrow"
+                                    className={`token__card--item--open${act ? " active" : ""}`}
+                                />
+                            </button>
+
+                            {act && <div className="token__card--item--bottom nop">
                                 <div className="token__card--content--listing--item titles">
                                     <p className="token__card--content--listing--item--title">
                                         Event
@@ -1582,7 +1589,7 @@ const TokenCard = () => {
                                         2 monts ago
                                     </p>
                                 </div>
-                            </div>
+                            </div>}
                         </div>
                     </div>
 

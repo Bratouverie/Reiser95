@@ -1,5 +1,5 @@
 import React from "react";
-import {Link} from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 import "./index.css";
 
@@ -9,11 +9,11 @@ const Collection = () => {
             <div className="collection__header">
                 <div className="container collection__container posr">
                     <div className="collection__avatar--inner">
-                        <img
+                        {/* <img
                             src="/assets/img/brand1.png"
                             alt="avatar"
                             className="collection__avatar"
-                        />
+                        /> */}
                     </div>
                 </div>
             </div>
@@ -22,112 +22,149 @@ const Collection = () => {
                 <div className="container">
                     <div className="collection__inner">
                         <div className="collection__link--inner">
-                            <button className="button collection__get--whitelist default__hover">
-                                <img
-                                    src="/assets/img/star.svg"
-                                    alt="star"
-                                    className="collection__button--icon"
-                                />
-                                Get on White List
-                            </button>
+                            <h2 className="title collection__title">
+                                Versace NTF Certificates
+                            </h2>
 
-                            <div className="collection__social--inner">
+                            <div className="collections__links--wrap">
                                 <a
                                     href="https://google.com"
-                                    className="collection__social--link default__hover"
+                                    className="collection__discord--link default__hover"
                                 >
                                     <img
-                                        src="/assets/img/twitter.svg"
-                                        alt="twitter"
-                                        className="collection__social--icon"
+                                        src="/assets/img/discord.svg"
+                                        alt="discord"
+                                        className="collection__discord--icon"
                                     />
+                                    Discord support
                                 </a>
 
-                                <a
-                                    href="https://google.com"
-                                    className="collection__social--link default__hover"
-                                >
-                                    <img
-                                        src="/assets/img/opensea.svg"
-                                        alt="opensea"
-                                        className="collection__social--icon"
-                                    />
-                                </a>
+                                <div className="collection__social--inner">
+                                    <a
+                                        href="https://google.com"
+                                        className="collection__social--link default__hover"
+                                    >
+                                        <img
+                                            src="/assets/img/twitter.svg"
+                                            alt="twitter"
+                                            className="collection__social--icon"
+                                        />
+                                    </a>
 
-                                <a
-                                    href="https://google.com"
-                                    className="collection__social--link default__hover"
-                                >
-                                    <img
-                                        src="/assets/img/insta.svg"
-                                        alt="instagram"
-                                        className="collection__social--icon"
-                                    />
-                                </a>
+                                    <a
+                                        href="https://google.com"
+                                        className="collection__social--link default__hover"
+                                    >
+                                        <img
+                                            src="/assets/img/opensea.svg"
+                                            alt="opensea"
+                                            className="collection__social--icon"
+                                        />
+                                    </a>
 
-                                <a
-                                    href="https://google.com"
-                                    className="collection__social--link default__hover"
-                                >
-                                    <img
-                                        src="/assets/img/dots.svg"
-                                        alt="more"
-                                        className="collection__social--icon"
-                                    />
-                                </a>
+                                    <a
+                                        href="https://google.com"
+                                        className="collection__social--link default__hover"
+                                    >
+                                        <img
+                                            src="/assets/img/insta.svg"
+                                            alt="instagram"
+                                            className="collection__social--icon"
+                                        />
+                                    </a>
+
+                                    <a
+                                        href="https://google.com"
+                                        className="collection__social--link default__hover"
+                                    >
+                                        <img
+                                            src="/assets/img/dots.svg"
+                                            alt="more"
+                                            className="collection__social--icon"
+                                        />
+                                    </a>
+                                </div>
                             </div>
                         </div>
 
                         <div className="collection__social--mobile">
-                            <a href="https://google.com" className="collection__social--link--mobile">
-                                <img src="/assets/img/insta.svg" alt="instagram" className="collection__social--img" />
+                            <a
+                                href="https://google.com"
+                                className="collection__social--link--mobile"
+                            >
+                                <img
+                                    src="/assets/img/insta.svg"
+                                    alt="instagram"
+                                    className="collection__social--img"
+                                />
                             </a>
 
-                            <a href="https://google.com" className="collection__social--link--mobile">
-                                <img src="/assets/img/opensea.svg" alt="opensea" className="collection__social--img" />
+                            <a
+                                href="https://google.com"
+                                className="collection__social--link--mobile"
+                            >
+                                <img
+                                    src="/assets/img/opensea.svg"
+                                    alt="opensea"
+                                    className="collection__social--img"
+                                />
                             </a>
 
-                            <a href="https://google.com" className="collection__social--link--mobile">
-                                <img src="/assets/img/discord-white.svg" alt="discord" className="collection__social--img" />
+                            <a
+                                href="https://google.com"
+                                className="collection__social--link--mobile"
+                            >
+                                <img
+                                    src="/assets/img/discord-white.svg"
+                                    alt="discord"
+                                    className="collection__social--img"
+                                />
                             </a>
 
-                            <a href="https://google.com" className="collection__social--link--mobile line">
-                                <img src="/assets/img/twitter.svg" alt="twitter" className="collection__social--img" />
+                            <a
+                                href="https://google.com"
+                                className="collection__social--link--mobile line"
+                            >
+                                <img
+                                    src="/assets/img/twitter.svg"
+                                    alt="twitter"
+                                    className="collection__social--img"
+                                />
                             </a>
 
-                            <a href="https://google.com" className="collection__social--link--mobile">
-                                <img src="/assets/img/star.svg" alt="twitter" className="collection__social--img" />
+                            <a
+                                href="https://google.com"
+                                className="collection__social--link--mobile"
+                            >
+                                <img
+                                    src="/assets/img/star.svg"
+                                    alt="twitter"
+                                    className="collection__social--img"
+                                />
                             </a>
 
-                            <a href="https://google.com" className="collection__social--link--mobile">
-                                <img src="/assets/img/give.svg" alt="twitter" className="collection__social--img" />
+                            <a
+                                href="https://google.com"
+                                className="collection__social--link--mobile"
+                            >
+                                <img
+                                    src="/assets/img/give.svg"
+                                    alt="twitter"
+                                    className="collection__social--img"
+                                />
                             </a>
 
-                            <a href="https://google.com" className="collection__social--link--mobile">
-                                <img src="/assets/img/dots-white.svg" alt="twitter" className="collection__social--img" />
+                            <a
+                                href="https://google.com"
+                                className="collection__social--link--mobile"
+                            >
+                                <img
+                                    src="/assets/img/dots-white.svg"
+                                    alt="twitter"
+                                    className="collection__social--img"
+                                />
                             </a>
                         </div>
-
-                        <h2 className="title collection__title">
-                            Versace NTF Certificates
-                        </h2>
-
-                        <div className="collection__text">
-                            Created by{" "}
-                            <span className="blue">CheckBrandcom</span>
-                        </div>
-
-                        <a
-                            href="https://google.com"
-                            className="collection__discord--link default__hover"
-                        >
-                            <img
-                                src="/assets/img/discord.svg"
-                                alt="discord"
-                                className="collection__discord--icon"
-                            />
-                            Discord support
-                        </a>
 
                         <div className="collection__data">
                             <div className="collection__data--item">
@@ -173,14 +210,20 @@ const Collection = () => {
                             </div>
                         </div>
 
-                        <p className="collection__desc">
-                            'Unique cards designed to certify branded items.
-                            Each NFT is associated with a real tangible brand
-                            item. Before minting a token, we authenticate the
-                            thing with which it will be associated. In case of
-                            authentication confirmation, the user gets access to
-                            the NFT certificate creation service.
-                        </p>
+                        <div className="collection__desc--inner">
+                            <p className="collection__desc">
+                                Unique cards designed to certify branded items. Each NFT is associated with a real tangible brand item. Before minting a token, we authenticate the thing with which it will be associated. In case of authentica... confirmation, the user gets access to the NFT certificate creation service. Collection minting is produced by releases. Collection release means 100 NFTs. Each token has...
+                            </p>
+
+                            <button className="button collection__get--whitelist default__hover">
+                                <img
+                                    src="/assets/img/star.svg"
+                                    alt="star"
+                                    className="collection__button--icon"
+                                />
+                                Get on WhiteList
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -192,7 +235,10 @@ const Collection = () => {
 
                         <div className="collection__items--content">
                             <div className="collection__item">
-                                <Link to="/token/1" className="collection__item--img--inner"></Link>
+                                <Link
+                                    to="/token/1"
+                                    className="collection__item--img--inner"
+                                ></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
@@ -233,7 +279,10 @@ const Collection = () => {
                             </div>
 
                             <div className="collection__item">
-                                <Link to="/token/1" className="collection__item--img--inner"></Link>
+                                <Link
+                                    to="/token/1"
+                                    className="collection__item--img--inner"
+                                ></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
@@ -261,7 +310,10 @@ const Collection = () => {
                             </div>
 
                             <div className="collection__item">
-                                <Link to="/token/1" className="collection__item--img--inner"></Link>
+                                <Link
+                                    to="/token/1"
+                                    className="collection__item--img--inner"
+                                ></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
@@ -304,7 +356,10 @@ const Collection = () => {
                             </div>
 
                             <div className="collection__item">
-                                <Link to="/token/1" className="collection__item--img--inner"></Link>
+                                <Link
+                                    to="/token/1"
+                                    className="collection__item--img--inner"
+                                ></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
@@ -345,7 +400,10 @@ const Collection = () => {
                             </div>
 
                             <div className="collection__item">
-                                <Link to="/token/1" className="collection__item--img--inner"></Link>
+                                <Link
+                                    to="/token/1"
+                                    className="collection__item--img--inner"
+                                ></Link>
 
                                 <div className="collection__item--data--inner">
                                     <div className="collection__item--data--card">
