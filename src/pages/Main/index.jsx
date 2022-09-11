@@ -30,7 +30,19 @@ const Main = () => {
                         <div className="main__item"></div>
                     </div>
 
+                    <div className="main__grid">
+                        <div className="main__grid--content horiz">
+                            <div className="main__grid--item"></div>
+                            <div className="main__grid--item"></div>
+                            <div className="main__grid--item"></div>
+                        </div>
 
+                        <div className="main__grid--content verti">
+                            <div className="main__grid--item"></div>
+                            <div className="main__grid--item"></div>
+                            <div className="main__grid--item"></div>
+                        </div>
+                    </div>
 
                     <p className="main__text">
                         Besides the NFT certificate, you will receive a QR code that will give you a shortcut to all of the above-mentioned places
@@ -57,7 +69,11 @@ const Main = () => {
                         So, you need to contact the Discord moderator and go through the authentication process:
                     </p>
 
-
+                    <div className="main__three">
+                        <div className="main__item--three"></div>
+                        <div className="main__item--three"></div>
+                        <div className="main__item--three"></div>
+                    </div>
 
                     <p className="main__text">
                         Our next step: You will receive the NFT certificate as soon as you buy a branded item
@@ -65,6 +81,26 @@ const Main = () => {
 
                     <div className="main__content">
                         <div className="main__item"></div>
+                    </div>
+
+                    <div className="main__footer">
+                        <div className="main__footer--content">
+                            <div className="main__footer--logo--wrap">
+                                <div className="main__footer--logo">
+                                    Choose your brand now
+                                </div>
+                            </div>
+
+                            <div className="main__footer--social">
+                                <a href="https://google.com" className="main__footer--social--link">
+                                    <img src="/assets/img/twitter-gold.png" alt="twitter" className="main__footer--social--icon" />
+                                </a>
+
+                                <a href="https://google.com" className="main__footer--social--link">
+                                    <img src="/assets/img/discord-gold.png" alt="discord" className="main__footer--social--icon" />
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

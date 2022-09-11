@@ -71,3 +71,235 @@
     height: 200px;
     background: linear-gradient(180deg,#fec83d,#ff9c43 84.93%);
 }
+
+.main__footer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin: 6rem 0rem 5rem 0;
+}
+
+.main__footer--content{
+    width: 65%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.main__footer--logo--wrap{
+    padding: .4rem;
+    background: linear-gradient(180deg,#fec83d,#ff9c43 84.93%);
+    border-radius: 0 10px 10px 0;
+}
+
+.main__footer--logo{
+    padding: 1.8rem 2.8rem;
+    background: #191a1a;
+    color: #fff;
+    font-size: 2.9rem;
+    font-weight: 600;
+    border-radius: 0 8px 8px 0;
+}
+
+.main__footer--social{
+    display: flex;
+    align-items: center;
+}
+
+.main__footer--social--link{
+    display: flex;
+    margin-right: 2rem;
+    width: 78px;
+}
+
+.main__footer--social--icon{
+    width: 100%;
+}
+
+.main__footer--social--link:last-child{
+    margin-right: 0;
+}
+
+.main__three{
+    width: 100%;
+    margin-top: 2.5rem;
+    display: grid;
+    grid-gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.main__item--three, .main__grid--item{
+    height: 200px;
+    background: linear-gradient(180deg,#fec83d,#ff9c43 84.93%);
+    cursor: pointer;
+    transition: .3s ease-in-out;
+}
+
+.main__grid--item{
+    height: auto;
+    min-height: 200px;
+}
+
+.main__item--three:first-child, .verti .main__grid--item:first-child{
+    transform-origin: left center;
+}
+
+.main__item--three:last-child, .verti .main__grid--item:last-child{
+    transform-origin: right center;
+}
+
+.horiz .main__grid--item:first-child{
+    transform-origin: center top;
+}
+
+.horiz .main__grid--item:last-child{
+    transform-origin: center bottom;
+}
+
+.main__item--three:hover{
+    transform: scaleX(2);
+}
+
+.main__grid{
+    width: 100%;
+    margin-top: 2.5rem;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 25px;
+}
+
+.main__grid--content{
+    display: grid;
+    grid-gap: 10px;
+}
+
+.main__grid--content.horiz{
+    grid-template-columns: 1fr;
+}
+
+.main__grid--content.verti{
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
+
+.verti .main__grid--item{
+    grid-row-start: 1;
+    grid-row-end: 4;
+}
+
+.verti .main__grid--item:hover{
+    transform: scaleX(2);
+}
+
+.horiz .main__grid--item:hover{
+    transform: scaleY(2);
+}
+
+@media(max-width: 998px){
+    .main__grid{
+        grid-template-columns: 1fr;
+    }
+
+    .main__grid--content.verti{
+        grid-template-rows: repeat(3, 200px);
+    }
+
+    .main__square--item{
+        height: 179px;
+    }
+
+    .main__three{
+        grid-gap: 15px;
+        grid-template-columns: repeat(auto-fill, minmax(235px, 1fr));
+    }
+
+    .main__footer--content{
+        width: 100%;
+    }
+
+    .main__footer--social--link{
+        width: 61px;
+    }
+
+    .main__footer--logo{
+        font-size: 2.1rem;
+    }
+
+    .main__banner{
+        height: 170px;
+    }
+
+    .main__title{
+        font-size: 4rem;
+    }
+
+    .main__subtitle{
+        font-size: 2.1rem;
+    }
+
+    .main__text{
+        font-size: 1.8rem;
+    }
+
+    .main__grid--content.verti{
+        grid-template-rows: repeat(3, 140px);
+    }
+
+    .main__item--three:hover{
+        transform: scale(1);
+    }
+
+    .main__item{
+        height: 150px;
+    }
+
+    .main__grid--item{
+        height: auto;
+        min-height: 150px;
+    }
+}
+@media(max-width: 768px){
+    .main__footer--content{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .main__footer--social{
+        margin-top: 1.5rem;
+    }
+
+    .main__footer{
+        margin: 3rem 0;
+    }
+
+
+    .main__title{
+        font-size: 3.5rem;
+    }
+}
+@media(max-width: 480px){
+    .main__title{
+        font-size: 3.1rem;
+    }
+
+    .main__banner{
+        height: 110px;
+    }
+
+    .main__footer--logo{
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .main__footer{
+        margin: 2.5rem 0rem 0rem 0rem;
+    }
+
+    .main__item--three{
+        height: 150px;
+    }
+
+    .main__grid--content.verti{
+        grid-template-rows: repeat(3, 100px);
+    }
+}
