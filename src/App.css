@@ -121,10 +121,6 @@ input::-webkit-inner-spin-button{
 	color: #000;
 }
 
-.input:focus::placeholder{
-	opacity: 0;	
-}
-
 .container{
 	width: 100%;
 	max-width: 1240px;
@@ -193,6 +189,12 @@ input::-webkit-inner-spin-button{
 
 .stats__chart{
 	width: 100%;
+}
+
+.loading{
+	color: #fff;
+	font-size: 1.8rem;
+	margin-top: 1.5rem;
 }
 
 /* Адаптив */

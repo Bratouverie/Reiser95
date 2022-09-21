@@ -1,13 +1,8 @@
-import React from "react";
+import React from 'react';
 
-import api from "../../api";
+import api from '../../api';
 
-import "./index.css";
-
-import Input from "../../common/Input";
-import File from "../../common/File";
-
-const CreatePage = () => {
+const PageCommon = () => {
     const [name, setName] = React.useState("");
     const [number, setNumber] = React.useState("");
     const [url, setUrl] = React.useState("");
@@ -135,6 +130,6 @@ const CreatePage = () => {
             </div>
         </div>
     );
-};
+}
 
-export default CreatePage;
+export default PageCommon;

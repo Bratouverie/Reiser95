@@ -3,8 +3,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import "./App.css";
 
-import Wrapper from "./components/Wrapper";
-import WrapperAdmin from "./components/WrapperAdmin";
+import Wrapper from "./common/Wrapper";
+import WrapperAdmin from "./common/WrapperAdmin";
 
 import Main from "./pages/Main";
 import Persons from "./pages/Persons";
@@ -55,6 +55,7 @@ const App = () => {
                     <Route path="activity" element={<Activity />} />
                     <Route path="statistics/*" element={<Statistics />} />
                     <Route path="createpage" element={<CreatePage />} />
+                    <Route path="changepage" element={<CreatePage />} />
                     <Route path="createaccount" element={<CreateAccount />} />
                     <Route path="createcollection" element={<CreateCollection />} />
                     <Route path="createpack" element={<CreatePack />} />

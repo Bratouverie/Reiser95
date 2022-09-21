@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import "./index.css";
 
-import Modal from "../Modal";
+import Modal from "../../common/Modal";
 import MenuMobile from "../MenuMobile";
 
 const Header = () => {

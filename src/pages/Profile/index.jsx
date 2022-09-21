@@ -2,7 +2,7 @@ import React from "react";
 
 import "./index.css";
 
-import ModalChange from "../../components/ModalChange";
+import ModalChange from "../../common/ModalChange";
 
 const Profile = () => {
     const [modal, setModal] = React.useState(false);

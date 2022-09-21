@@ -1,12 +1,12 @@
 import React from 'react';
 import { Outlet } from "react-router-dom";
 
-import Header from '../Header';
+import HeaderAdmin from '../../components/HeaderAdmin';
 
 const Wrapper = () => {
     return(
         <>
-            <Header />
+            <HeaderAdmin />
 
             <Outlet />
         </>

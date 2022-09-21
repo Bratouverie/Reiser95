@@ -1,22 +1,18 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-import './index.css';
+import "./index.css";
 
 const Main = () => {
-    return(
+    return (
         <section className="main">
             <div className="main__banner"></div>
 
             <div className="container">
                 <div className="main__inner">
-                    <h1 className="main__title">
-                        CHECKBRANDCOM
-                    </h1>
+                    <h1 className="main__title">CHECKBRANDCOM</h1>
 
-                    <p className="main__subtitle">
-                        NFT Minting Platform
-                    </p>
+                    <p className="main__subtitle">NFT Minting Platform</p>
 
                     <p className="main__text">
                         You can mint an NFT certificate with new features:
@@ -45,7 +41,9 @@ const Main = () => {
                     </div>
 
                     <p className="main__text">
-                        Besides the NFT certificate, you will receive a QR code that will give you a shortcut to all of the above-mentioned places
+                        Besides the NFT certificate, you will receive a QR code
+                        that will give you a shortcut to all of the
+                        above-mentioned places
                     </p>
 
                     <div className="main__content">
@@ -53,7 +51,8 @@ const Main = () => {
                     </div>
 
                     <p className="main__text">
-                        To get an NFT certificate, you need to have one of the items of the brands listed on our platform
+                        To get an NFT certificate, you need to have one of the
+                        items of the brands listed on our platform
                     </p>
 
                     <div className="main__square">
@@ -66,7 +65,8 @@ const Main = () => {
                     </div>
 
                     <p className="main__text">
-                        So, you need to contact the Discord moderator and go through the authentication process:
+                        So, you need to contact the Discord moderator and go
+                        through the authentication process:
                     </p>
 
                     <div className="main__three">
@@ -76,7 +76,8 @@ const Main = () => {
                     </div>
 
                     <p className="main__text">
-                        Our next step: You will receive the NFT certificate as soon as you buy a branded item
+                        Our next step: You will receive the NFT certificate as
+                        soon as you buy a branded item
                     </p>
 
                     <div className="main__content">
@@ -92,12 +93,26 @@ const Main = () => {
                             </div>
 
                             <div className="main__footer--social">
-                                <a href="https://google.com" className="main__footer--social--link">
-                                    <img src="/assets/img/twitter-gold.png" alt="twitter" className="main__footer--social--icon" />
+                                <a
+                                    href="https://google.com"
+                                    className="main__footer--social--link"
+                                >
+                                    <img
+                                        src="/assets/img/twitter-gold.png"
+                                        alt="twitter"
+                                        className="main__footer--social--icon"
+                                    />
                                 </a>
 
-                                <a href="https://google.com" className="main__footer--social--link">
-                                    <img src="/assets/img/discord-gold.png" alt="discord" className="main__footer--social--icon" />
+                                <a
+                                    href="https://google.com"
+                                    className="main__footer--social--link"
+                                >
+                                    <img
+                                        src="/assets/img/discord-gold.png"
+                                        alt="discord"
+                                        className="main__footer--social--icon"
+                                    />
                                 </a>
                             </div>
                         </div>
@@ -105,7 +120,7 @@ const Main = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
 export default Main;
