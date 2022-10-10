@@ -1,30 +1,31 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {useSelector} from 'react-redux';
 
 import "./index.css";
 
-import api from "../../api";
+import {getPages} from "../../functions/data";
 
 import PageItem from "../../components/PageItem";
 
 const ControlPanel = () => {
+    const auth = useSelector(state => state.auth);
     const [pages, setPages] = React.useState([]);
-    const [pagesLoading, setPagesLoading] = React.useState(false);
+    const [pagesLoading, setPageLoading] = React.useState(false);
 
     React.useEffect(() => {
-        setPagesLoading(true);
-        api.get("page/")
-            .then((data) => {
-                setPages(data.data);
-                console.log(data.data);
-            })
-            .catch((e) => {
-                console.log(e);
-            })
-            .finally(() => {
-                setPagesLoading(false);
-            });
-    }, []);
+        setPageLoading(true);
+        const pagesList = getPages(auth.accessToken);
+
+        pagesList.then(d => {
+            setPages(d.data);
+            console.log(d);
+        }).catch(e => {
+            console.log(e)
+        }).finally(() => {
+            setPageLoading(false);
+        });
+    }, [auth.accessToken]);
 
     return (
         <div className="default__padding control">
@@ -181,22 +182,17 @@ const ControlPanel = () => {
 
                         <p className="control__text m0">Set preferences.</p>
 
-                        {pagesLoading ? (
-                            <p className="loading">Загрузка..</p>
-                        ) : (
-                            <>
-                                {pages.map((data, id) => (
-                                    <PageItem key={id} data={data} />
-                                ))}
+                        {pagesLoading
+                        ? <p className="control__text">Loading..</p>
+                        : <>
+                            {pages.map((data, id) => (
+                                <PageItem key={id} data={data} />
+                            ))}
 
-                                <Link
-                                    to="createpage"
-                                    className="control__add default__hover"
-                                >
-                                    + add new Page
-                                </Link>
-                            </>
-                        )}
+                            <Link to="createpage" className="control__add default__hover">
+                                + add new Page
+                            </Link>
+                        </>}
                     </div>
                 </div>
             </div>

@@ -20,13 +20,13 @@ const PageItem = ({data}) => {
     };
 
     const hidePage = () => {
-        api.patch(`page/hide/${id}/`, {
-            hide: true
-        }).then(data => {
-            console.log(data);
-        }).catch(e => {
-            console.log(e);
-        })
+        // api.patch(`page/hide/${id}/`, {
+        //     hide: true
+        // }).then(data => {
+        //     console.log(data);
+        // }).catch(e => {
+        //     console.log(e);
+        // });
     }
 
     return (

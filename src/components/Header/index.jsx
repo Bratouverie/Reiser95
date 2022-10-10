@@ -3,16 +3,19 @@ import { Link } from "react-router-dom";
 
 import "./index.css";
 
-import Modal from "../../common/Modal";
 import MenuMobile from "../MenuMobile";
+import MenuMobileAdmin from "../MenuMobileAdmin";
+import AuthElements from '../AuthElements';
+import WalletMenu from '../WalletMenu';
 
-const Header = () => {
-    const [modal, setModal] = React.useState(false);
+const Header = ({isAdminPage = false}) => {
     const [menu, setMenu] = React.useState(false);
+    const [menuAdmin, setMenuAdmin] = React.useState(false);
+    const [walletMenu, setWalletMenu] = React.useState(false);
 
     return (
         <>
-            <header className="header">
+            <header className={`header${isAdminPage ? ' admin' : ''}`}>
                 <div className="container">
                     <div className="header__inner">
                         <Link to="/" className="header__logo">
@@ -23,7 +26,82 @@ const Header = () => {
                             />
                         </Link>
 
-                        <nav className="header__nav">
+                        {isAdminPage
+                        ? <nav className="header__nav header__admin--nav">
+                            <Link
+                                to=""
+                                className="header__admin--nav--link"
+                            >
+                                Control page
+                            </Link>
+
+                            <div className="header__admin--nav--link">
+                                Stats
+                                <span className="header__admin--nav--drop">
+                                    <Link
+                                        to="whitelist"
+                                        className="header__admin--nav--drop--link"
+                                    >
+                                        White List
+                                    </Link>
+
+                                    <Link
+                                        to="activity"
+                                        className="header__admin--nav--drop--link"
+                                    >
+                                        Activity
+                                    </Link>
+
+                                    <Link
+                                        to="statistics"
+                                        className="header__admin--nav--drop--link"
+                                    >
+                                        Statistics
+                                    </Link>
+                                </span>
+                            </div>
+
+                            <div className="header__admin--nav--link">
+                                Create
+                                <span className="header__admin--nav--drop">
+                                    <Link
+                                        to="createpage"
+                                        className="header__admin--nav--drop--link"
+                                    >
+                                        Create Page
+                                    </Link>
+
+                                    <Link
+                                        to="createaccount"
+                                        className="header__admin--nav--drop--link"
+                                    >
+                                        Create Account
+                                    </Link>
+
+                                    <Link
+                                        to="createcollection"
+                                        className="header__admin--nav--drop--link"
+                                    >
+                                        Create Collection
+                                    </Link>
+
+                                    <Link
+                                        to="createpack"
+                                        className="header__admin--nav--drop--link"
+                                    >
+                                        Create Pack
+                                    </Link>
+
+                                    <Link
+                                        to="createitem"
+                                        className="header__admin--nav--drop--link"
+                                    >
+                                        Create Item
+                                    </Link>
+                                </span>
+                            </div>
+                        </nav>
+                        : <nav className="header__nav">
                             <Link to="/persons" className="header__nav--link">
                                 Persons
                             </Link>
@@ -55,47 +133,24 @@ const Header = () => {
                             <Link to="/admin" className="header__nav--link">
                                 Admin
                             </Link>
-                        </nav>
+                        </nav>}
 
                         <div className="header__wallet--inner">
-                            <Link
-                                to="/profile"
-                                className="button header__wallet--button"
-                            >
-                                <img
-                                    src="/assets/img/profile-icon.png"
-                                    alt="Profile"
-                                    className="header__wallet--icon"
-                                />
-                            </Link>
+                            <AuthElements setActive={setWalletMenu} />
 
-                            <button
-                                className="button header__wallet--button"
-                                onClick={() => setModal(true)}
-                            >
-                                <img
-                                    src="/assets/img/wallet.png"
-                                    alt="Wallet"
-                                    className="header__wallet--icon"
-                                />
-                            </button>
-
-                            <img
-                                src={`/assets/img/${
-                                    menu ? "cross" : "menu"
-                                }.svg`}
-                                alt="menu"
-                                className="menu"
-                                onClick={() => setMenu(!menu)}
-                            />
+                            <div className="menu__inner">
+                                <img src={`/assets/img/${menu ? "cross" : "menu"}.svg`} alt="menu" className="menu" onClick={() => setMenu(!menu)}/>
+                            </div>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <Modal active={modal} setActive={setModal} />
+            {isAdminPage
+            ? <MenuMobileAdmin active={menuAdmin} setActive={setMenuAdmin} />
+            : <MenuMobile active={menu} setActive={setMenu} />}
 
-            <MenuMobile active={menu} setActive={setMenu} />
+            <WalletMenu active={walletMenu} setActive={setWalletMenu} />
         </>
     );
 };

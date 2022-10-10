@@ -1,12 +1,12 @@
 import React from 'react';
 import { Outlet } from "react-router-dom";
 
-import HeaderAdmin from '../../components/HeaderAdmin';
+import Header from '../../components/Header';
 
 const Wrapper = () => {
     return(
         <>
-            <HeaderAdmin />
+            <Header isAdminPage={true} />
 
             <Outlet />
         </>

@@ -1,11 +1,12 @@
 import React from "react";
+import {useSelector} from 'react-redux';
 
 import "./index.css";
 
-import ModalChange from "../../common/ModalChange";
+import {getShortAddress} from '../../functions/auth';
 
 const Profile = () => {
-    const [modal, setModal] = React.useState(false);
+    const auth = useSelector(state => state.auth);
 
     return (
         <>
@@ -32,15 +33,12 @@ const Profile = () => {
 
                         <div className="profile__ava--inner">
                             <img
-                                src="/assets/img/profile.png"
+                                src={auth.image ? auth.image : `/assets/img/avatar.png`}
                                 alt="ava"
                                 className="profile__ava--img"
                             />
 
-                            <button
-                                className="button profile__settings"
-                                onClick={() => setModal(true)}
-                            >
+                            <button className="button profile__settings">
                                 <img
                                     src="/assets/img/settings.svg"
                                     alt="settings"
@@ -49,7 +47,7 @@ const Profile = () => {
                             </button>
                         </div>
 
-                        <p className="profile__name">Collector name</p>
+                        <p className="profile__name">{auth.username}</p>
 
                         <div className="profile__wrap">
                             <div className="profile__wallet">
@@ -58,7 +56,8 @@ const Profile = () => {
                                     alt="eth"
                                     className="eth"
                                 />
-                                0x495f...7b5e
+
+                                {getShortAddress(auth.walletAddress)}
                             </div>
 
                             <p className="profile__date">Joined Month Year</p>
@@ -262,8 +261,6 @@ const Profile = () => {
                     </div>
                 </div>
             </section>
-
-            <ModalChange active={modal} setActive={setModal} />
         </>
     );
 };

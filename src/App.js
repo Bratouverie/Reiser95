@@ -1,5 +1,8 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import {checkAuth} from './functions/auth';
 
 import "./App.css";
 
@@ -29,6 +32,12 @@ import CreatePack from './pages/CreatePack';
 import CreateItem from './pages/CreateItem';
 
 const App = () => {
+    const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        checkAuth(dispatch);
+    }, []);
+
     return (
         <>
             <img src="/assets/img/main-bg.png" alt="bg" className="main__bg" />
