@@ -1,6 +1,22 @@
 import React from 'react';
 
-const ModalChange = ({active, setActive}) => {
+import './index.css';
+
+const ModalChange = ({active, setActive, placeholder = "", value = "", setValue, callback = () => {}}) => {
+    const changeData = (e) => {
+        setValue(e.target.value);
+    }
+
+    const changeFunction = () => {
+        if(!value){
+            alert("Please enter data");
+        }
+        else{
+            callback();
+            setActive(false);
+        }
+    }
+
     return(
         <div className={`modal${active ? ' active' : ''}`}>
             <div className="modal__inner">
@@ -14,9 +30,9 @@ const ModalChange = ({active, setActive}) => {
                     </div>
 
                     <div className="modal__content--bottom">
-                        <input type="text" className="input modal__input" placeholder='Enter your discord username' />
+                        <input type="text" className="input modal__input" placeholder={placeholder} value={value} onChange={changeData} />
 
-                        <button className="button modal__button">
+                        <button className="button modal__button" onClick={changeFunction}>
                             Change
                         </button>
                     </div>

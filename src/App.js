@@ -36,7 +36,7 @@ const App = () => {
 
     React.useEffect(() => {
         checkAuth(dispatch);
-    }, []);
+    }, [dispatch]);
 
     return (
         <>

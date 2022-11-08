@@ -1,87 +1,226 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 import "./index.css";
 
 const Main = () => {
     return (
         <section className="main">
-            <div className="main__banner"></div>
+            <div className="main__banner">
+                <img src="/assets/img/main-img.jpg" alt="banner" className="main__banner--img" />
+            </div>
 
             <div className="container">
                 <div className="main__inner">
                     <h1 className="main__title">CHECKBRANDCOM</h1>
 
-                    <p className="main__subtitle">NFT Minting Platform</p>
+                    <p className="main__subtitle">Minting Platform</p>
 
                     <p className="main__text">
-                        You can mint an NFT certificate with new features:
+                        You can mint Brand NFT Certificates with new features:
                     </p>
 
-                    <div className="main__content">
-                        <div className="main__item"></div>
+                    <div className="main__content first">
+                        <div className="main__item">
+                            <img src="/assets/img/main-img1.jpg" alt="banner" className="main__item--img" />
 
-                        <div className="main__item"></div>
+                            <p className="main__item--text">
+                                Pass to private parties
+                            </p>
+                        </div>
 
-                        <div className="main__item"></div>
+                        <div className="main__item">
+                            <img src="/assets/img/main-img2.jpg" alt="banner" className="main__item--img" />
+
+                            <p className="main__item--text">
+                                Pass to airport bussiness lounges
+                            </p>
+                        </div>
+
+                        <div className="main__item">
+                            <img src="/assets/img/main-img3.jpg" alt="banner" className="main__item--img" />
+
+                            <p className="main__item--text">
+                                Pass to concert of your fave celebs
+                            </p>
+                        </div>
                     </div>
 
                     <div className="main__grid">
                         <div className="main__grid--content horiz">
-                            <div className="main__grid--item"></div>
-                            <div className="main__grid--item"></div>
-                            <div className="main__grid--item"></div>
+                            <div className="main__grid--item text">
+                                <span className="orange mr1">Vip</span> service
+                            </div>
+
+                            <div className="main__grid--item">
+                                <img src="/assets/img/vip1.jpg" alt="banner" className="main__grid--img" />
+
+                                <p className="main__item--text">
+                                    in cofes and restorantes
+                                </p>
+                            </div>
+
+                            <div className="main__grid--item">
+                                <img src="/assets/img/vip2.jpg" alt="banner" className="main__grid--img" />
+
+                                <p className="main__item--text">
+                                    in the banks
+                                </p>
+                            </div>
                         </div>
 
                         <div className="main__grid--content verti">
-                            <div className="main__grid--item"></div>
-                            <div className="main__grid--item"></div>
-                            <div className="main__grid--item"></div>
+                            <div className="main__grid--item">
+                                <img src="/assets/img/discount1.jpg" alt="banner" className="main__grid--img" />
+
+                                <div className="main__grid--text--inner">
+                                    <p className="main__grid--text--title">
+                                        discount
+                                    </p>
+
+                                    <p className="main__grid--text--text">
+                                        on physical items
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="main__grid--item">
+                                <img src="/assets/img/discount2.jpg" alt="banner" className="main__grid--img" />
+
+                                <div className="main__grid--text--inner">
+                                    <p className="main__grid--text--title">
+                                        discount
+                                    </p>
+
+                                    <p className="main__grid--text--text">
+                                        on virtual items
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="main__grid--item">
+                                <img src="/assets/img/discount3.jpg" alt="banner" className="main__grid--img" />
+
+                                <div className="main__grid--text--inner">
+                                    <p className="main__grid--text--title">
+                                        discount
+                                    </p>
+
+                                    <p className="main__grid--text--text">
+                                        on servies
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <p className="main__text">
-                        Besides the NFT certificate, you will receive a QR code
-                        that will give you a shortcut to all of the
-                        above-mentioned places
+                        Besides the NFT, you will receive a QR code that will give you a shortcut to all of the above-mentioned places
                     </p>
 
                     <div className="main__content">
-                        <div className="main__item"></div>
+                        <div className="main__item">
+                            <img src="/assets/img/main-img4.jpg" alt="banner" className="main__item--img" />
+                        </div>
                     </div>
 
                     <p className="main__text">
-                        To get an NFT certificate, you need to have one of the
-                        items of the brands listed on our platform
+                        To get Brand NFT Certificate, you need to have one of the items of the brands listed on our platform
                     </p>
 
                     <div className="main__square">
-                        <Link to="/" className="main__square--item"></Link>
-                        <Link to="/" className="main__square--item"></Link>
-                        <Link to="/" className="main__square--item"></Link>
-                        <Link to="/" className="main__square--item"></Link>
-                        <Link to="/" className="main__square--item"></Link>
-                        <Link to="/" className="main__square--item"></Link>
+                        <div className="main__square--item">
+                            <img src="/assets/img/brand-logo1.png" alt="brand" className="main__square--img" />
+
+                            <p className="main__square--text">
+                                Calvin Clein
+                            </p>
+                        </div>
+                        
+                        <div className="main__square--item">
+                            <img src="/assets/img/brand-logo2.png" alt="brand" className="main__square--img" />
+
+                            <p className="main__square--text">
+                                Omega
+                            </p>
+                        </div>
+                        
+                        <div className="main__square--item">
+                            <img src="/assets/img/brand-logo3.png" alt="brand" className="main__square--img" />
+
+                            <p className="main__square--text">
+                                Cwatch
+                            </p>
+                        </div>
+
+                        <div className="main__square--item">
+                            <img src="/assets/img/brand-logo4.png" alt="brand" className="main__square--img" />
+
+                            <p className="main__square--text">
+                                Jagermeister
+                            </p>
+                        </div>
+
+                        <div className="main__square--item">
+                            <img src="/assets/img/brand-logo5.png" alt="brand" className="main__square--img" />
+
+                            <p className="main__square--text">
+                                Balenciaga
+                            </p>
+                        </div>
+
+                        <div className="main__square--item">
+                            <img src="/assets/img/brand-logo6.png" alt="brand" className="main__square--img" />
+
+                            <p className="main__square--text">
+                                Hugo Boss
+                            </p>
+                        </div>
                     </div>
 
-                    <p className="main__text">
-                        So, you need to contact the Discord moderator and go
-                        through the authentication process:
+                    <p className="main__text big__margin">
+                        Sequence of actions to get Brand NFT Certificate
                     </p>
 
                     <div className="main__three">
-                        <div className="main__item--three"></div>
-                        <div className="main__item--three"></div>
-                        <div className="main__item--three"></div>
+                        <div className="main__three--content">
+                            <p className="main__three--text">
+                                Choose a brand
+                            </p>
+
+                            <div className="main__item--three">
+                                <img src="/assets/img/main-img5.jpg" alt="banner" className="main__item--img" />
+                            </div>
+                        </div>
+
+                        <div className="main__three--content">
+                            <p className="main__three--text">
+                                Connect your wallet
+                            </p>
+
+                            <div className="main__item--three">
+                                <img src="/assets/img/main-img6.jpg" alt="banner" className="main__item--img" />
+                            </div>
+                        </div>
+
+                        <div className="main__three--content">
+                            <p className="main__three--text">
+                                Click the “Get on Whitelist” button
+                            </p>
+
+                            <div className="main__item--three">
+                                <img src="/assets/img/main-img7.jpg" alt="banner" className="main__item--img" />
+                            </div>
+                        </div>
                     </div>
 
                     <p className="main__text">
-                        Our next step: You will receive the NFT certificate as
-                        soon as you buy a branded item
+                        Our next step <br/>You will receive the NFT as soon as you buy a branded item
                     </p>
 
-                    <div className="main__content">
-                        <div className="main__item"></div>
+                    <div className="main__content first">
+                        <div className="main__item">
+                            <img src="/assets/img/main-img8.jpg" alt="banner" className="main__item--img" />
+                        </div>
                     </div>
 
                     <div className="main__footer">
@@ -93,26 +232,12 @@ const Main = () => {
                             </div>
 
                             <div className="main__footer--social">
-                                <a
-                                    href="https://google.com"
-                                    className="main__footer--social--link"
-                                >
-                                    <img
-                                        src="/assets/img/twitter-gold.png"
-                                        alt="twitter"
-                                        className="main__footer--social--icon"
-                                    />
+                                <a href="https://google.com" className="main__footer--social--link">
+                                    <img src="/assets/img/twitter-gold.png" alt="twitter" className="main__footer--social--icon"/>
                                 </a>
 
-                                <a
-                                    href="https://google.com"
-                                    className="main__footer--social--link"
-                                >
-                                    <img
-                                        src="/assets/img/discord-gold.png"
-                                        alt="discord"
-                                        className="main__footer--social--icon"
-                                    />
+                                <a href="https://google.com" className="main__footer--social--link">
+                                    <img src="/assets/img/discord-gold.png" alt="discord" className="main__footer--social--icon"/>
                                 </a>
                             </div>
                         </div>

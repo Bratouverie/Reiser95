@@ -17,3 +17,15 @@ export const getPages = (token) => {
 
     return res;
 }
+
+export const hidePage = (id, token) => {
+    const res = data.patch(`page/hide/${id}/`, {
+        hide: true
+    }, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    return res;
+}

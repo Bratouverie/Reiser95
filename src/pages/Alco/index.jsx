@@ -6,25 +6,25 @@ import ImgBlock from "../../components/ImgBlock";
 
 const data = [
     {
-        path: "/assets/img/alco1.jpg",
+        path: "/assets/img/alco1.png",
     },
     {
         path: "/assets/img/alco2.png",
     },
     {
-        path: "/assets/img/alco3.jpg",
+        path: "/assets/img/alco3.png",
     },
     {
-        path: "/assets/img/alco4.jpeg",
+        path: "/assets/img/alco4.png",
     },
     {
-        path: "/assets/img/alco5.jpg",
+        path: "/assets/img/alco5.png",
     },
     {
-        path: "/assets/img/alco6.jpg",
+        path: "/assets/img/alco6.png",
     },
     {
-        path: "/assets/img/alco7.jpg",
+        path: "/assets/img/alco7.png",
     }
 ];
 

@@ -88,6 +88,7 @@
 .wallet__menu--address{
     color: #fff;
     font-size: 1.8rem;
+    cursor: pointer;
 }
 
 .wallet__menu--auth--button{

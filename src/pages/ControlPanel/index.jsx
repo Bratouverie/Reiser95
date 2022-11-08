@@ -1,31 +1,37 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import "./index.css";
 
 import {getPages} from "../../functions/data";
 
+import Preloader from '../../common/Preloader';
 import PageItem from "../../components/PageItem";
+
+import {setIsAuth, setPages} from '../../redux/slices/pages';
 
 const ControlPanel = () => {
     const auth = useSelector(state => state.auth);
-    const [pages, setPages] = React.useState([]);
-    const [pagesLoading, setPageLoading] = React.useState(false);
+    const pages = useSelector(state => state.pages);
+    const dispatch = useDispatch();
 
     React.useEffect(() => {
-        setPageLoading(true);
+        dispatch(setIsAuth(true));
         const pagesList = getPages(auth.accessToken);
 
         pagesList.then(d => {
-            setPages(d.data);
-            console.log(d);
+            dispatch(setPages(d.data));
         }).catch(e => {
-            console.log(e)
+            console.log(e);
         }).finally(() => {
-            setPageLoading(false);
+            dispatch(setIsAuth(false));
         });
-    }, [auth.accessToken]);
+    }, [auth.accessToken, dispatch]);
+
+    if(auth.loadAuth){
+        return <Preloader />
+    }
 
     return (
         <div className="default__padding control">
@@ -182,12 +188,12 @@ const ControlPanel = () => {
 
                         <p className="control__text m0">Set preferences.</p>
 
-                        {pagesLoading
-                        ? <p className="control__text">Loading..</p>
+                        {pages.isLoading
+                        ? <p className="control__subtext">Loading..</p>
                         : <>
-                            {pages.map((data, id) => (
+                            {pages.pages.length > 0 ? pages.pages.map((data, id) => (
                                 <PageItem key={id} data={data} />
-                            ))}
+                            )) : <p className="control__subtext">Pages not found</p>}
 
                             <Link to="createpage" className="control__add default__hover">
                                 + add new Page

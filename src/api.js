@@ -5,7 +5,7 @@ export const auth = axios.create({
 });
 
 export const user = axios.create({
-    baseURL: 'https://checkbrandcom.site/auth_service/user/api/v1/profile/'
+    baseURL: 'https://checkbrandcom.site/auth_service/user/api/v1/'
 });
 
 export const data = axios.create({

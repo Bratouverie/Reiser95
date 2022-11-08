@@ -13,15 +13,26 @@
     margin-top: 0;
 }
 
-.control__text{
+.control__text, .control__subtext{
     font-size: 1.4rem;
     color: #fff;
+}
+
+.control__subtext{
+    margin-top: 1rem;
+    font-size: 1.6rem;
 }
 
 .control__item{
     width: 100%;
     display: flex;
     margin-top: 1.5rem;
+    transition: .2s linear;
+}
+
+.control__item.loading{
+    opacity: 0.7;
+    pointer-events: none;
 }
 
 .control__input{

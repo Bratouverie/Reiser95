@@ -4,18 +4,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import './index.css';
 
 import {connectWallet, logout, getShortAddress} from '../../functions/auth';
+import {copyText} from '../../functions/utils';
 
 const WalletMenu = ({active, setActive}) => {
     const auth = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
-    const connect = async () => {
-        await connectWallet(dispatch);
+    const connect = () => {
+        connectWallet(dispatch);
     }
 
     const quit = async () => {
-        const res = await logout(auth.accessToken, dispatch);
-        console.log(res);
+        await logout(auth.accessToken, dispatch);
     }
 
     return(
@@ -36,7 +36,7 @@ const WalletMenu = ({active, setActive}) => {
                             </p>
                         </div>
 
-                        <p className="wallet__menu--address">
+                        <p className="wallet__menu--address" onClick={() => copyText(auth.walletAddress)}>
                             {getShortAddress(auth.walletAddress)}
                         </p>
                     </div>

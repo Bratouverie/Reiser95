@@ -3,13 +3,13 @@ import { ethers } from "ethers";
 import { auth } from "../api";
 import {getProfile} from './user';
 
-import {setIsAuth, initWalletAddress, initBalance, initAccessToken,
-    initRefreshToken, initId, initUsername, initImage} from '../redux/slices/auth';
+import {setIsAuth, setLoadAuth, initWalletAddress, initBalance, initAccessToken,
+    initRefreshToken, initId, initUsername, initImage, initCreated} from '../redux/slices/auth';
 
 export const connectWallet = async (dispatch) => {
+    dispatch(setLoadAuth(true));
     try {
-        await window.ethereum.request({ method: "eth_requestAccounts" });
-        const signer = getSigner();
+        const signer = await getSigner();
         const address = await signer.getAddress();
         const balance = await signer.getBalance();
         const nonce = await getNonce(address);
@@ -18,7 +18,7 @@ export const connectWallet = async (dispatch) => {
         );
         const tokens = await getTokens(address, signature);
         const profile = await getProfileData(tokens["access_token"]);
-        const {public_address, id, username, image_url} = profile.data;
+        const {public_address, id, username, image_url, created} = profile.data;
 
         window.sessionStorage.setItem("access_token", tokens["access_token"]);
         window.sessionStorage.setItem("refresh_token", tokens["refresh_token"]);
@@ -31,12 +31,14 @@ export const connectWallet = async (dispatch) => {
         dispatch(initId(id));
         dispatch(initUsername(username));
         dispatch(initImage(image_url));
+        dispatch(initCreated(created));
+        dispatch(setLoadAuth(false));
     } catch (error) {
         console.log(error);
     }
 };
 
-export const getSigner = () => {
+export const getSigner = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner();
 
@@ -44,6 +46,7 @@ export const getSigner = () => {
 }
 
 export const checkAuth = async (dispatch) => {
+    dispatch(setLoadAuth(true));
     const accessToken = window.sessionStorage.getItem("access_token");
     const refreshToken = window.sessionStorage.getItem("refresh_token");
 
@@ -51,7 +54,7 @@ export const checkAuth = async (dispatch) => {
         const profile = await getProfileData(accessToken);
 
         if(profile.data){
-            const {public_address, id, username, image_url} = profile.data;
+            const {public_address, id, username, image_url, created} = profile.data;
 
             dispatch(setIsAuth(true));
             dispatch(initAccessToken(accessToken));
@@ -60,9 +63,11 @@ export const checkAuth = async (dispatch) => {
             dispatch(initId(id));
             dispatch(initUsername(username));
             dispatch(initImage(image_url));
-            const signer = getSigner();
+            dispatch(initCreated(created));
+            const signer = await getSigner();
             const balance = await getBalance(signer);
             dispatch(initBalance(getNormalBalance(balance)));
+            dispatch(setLoadAuth(false));
         }
         else{
             const newTokens = await auth.post("refresh", {}, {
@@ -77,6 +82,7 @@ export const checkAuth = async (dispatch) => {
         }
     }
     else{
+        dispatch(setLoadAuth(false));
         clearData(dispatch);
     }
 }
@@ -98,7 +104,7 @@ export const getBalance = async (signer) => {
 }
 
 export const getNormalBalance = (balance) => {
-    return parseInt(ethers.utils.formatEther(balance));
+    return parseFloat(ethers.utils.formatEther(balance));
 }
 
 export const getNonce = async (walletAddress) => {

@@ -6,30 +6,6 @@ import ImgBlock from "../../components/ImgBlock";
 
 const data = [
     {
-        path: "/assets/img/brand1.png",
-    },
-    {
-        path: "/assets/img/brand2.png",
-    },
-    {
-        path: "/assets/img/brand3.png",
-    },
-    {
-        path: "/assets/img/brand4.png",
-    },
-    {
-        path: "/assets/img/brand5.png",
-    },
-    {
-        path: "/assets/img/brand6.png",
-    },
-    {
-        path: "/assets/img/brand7.png",
-    },
-    {
-        path: "/assets/img/brand8.png",
-    },
-    {
         path: "/assets/img/brand9.png",
     },
     {
@@ -58,7 +34,7 @@ const data = [
     },
     {
         path: "/assets/img/brand18.png",
-    },
+    }
 ];
 
 const title = "Brand NFT Certificates";

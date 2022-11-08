@@ -36,7 +36,13 @@ const CreatePage = () => {
 
         createdPage.then((d) => {
             alert("Page created!");
-            console.log(d);
+            setName("");
+            setNumber("");
+            setUrl("");
+            setBanner("");
+            setTitle1("");
+            setDescription("");
+            setTitle2("");
         }).catch((e) => {
             alert("Please fill all inputs");
             console.log(e);
@@ -78,7 +84,7 @@ const CreatePage = () => {
                         <Input
                             title="URL"
                             text="Customize your URL on CheckBrandcom. Must only contain lowercase letters, numbers, and hyphens."
-                            placeholder="https://checkbrand.com/"
+                            placeholder="https://checkbrand.com/URL"
                             required
                             value={url}
                             setValue={setUrl}

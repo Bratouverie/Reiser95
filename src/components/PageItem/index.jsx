@@ -1,10 +1,17 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import api from '../../api';
+import {hidePage} from '../../functions/data';
+import {deletePage} from '../../redux/slices/pages';
 
 const PageItem = ({data}) => {
+    const auth = useSelector(state => state.auth);
+
     const [edit, setEdit] = React.useState(false);
     const [del, setDel] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
+    const dispatch = useDispatch();
 
     const {name, id} = data;
 
@@ -19,18 +26,22 @@ const PageItem = ({data}) => {
         }
     };
 
-    const hidePage = () => {
-        // api.patch(`page/hide/${id}/`, {
-        //     hide: true
-        // }).then(data => {
-        //     console.log(data);
-        // }).catch(e => {
-        //     console.log(e);
-        // });
+    const deletePageFunc = () => {
+        setLoading(true);
+        const res = hidePage(id, auth.accessToken);
+        
+        res.then(data => {
+            dispatch(deletePage(id));
+            alert("Page deleted");
+        }).catch(e => {
+            console.log(e);
+        }).finally(() => {
+            setLoading(false);
+        });
     }
 
     return (
-        <div className="control__item">
+        <div className={`control__item${loading ? ' loading' : ''}`}>
             <input
                 type="text"
                 readOnly
@@ -57,7 +68,7 @@ const PageItem = ({data}) => {
             >
                 Delete
                 {del && (
-                    <span className="control__button--confirm" onClick={hidePage}>Confirm</span>
+                    <span className="control__button--confirm" onClick={deletePageFunc}>Confirm</span>
                 )}
             </button>
         </div>
