@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import "./index.css";
 
-const MenuMobile = ({ active, setActive }) => {
+const MenuMobile = ({ active, setActive, pagesList }) => {
     const closeMenu = () => {
         setActive(false);
     }
@@ -19,25 +19,9 @@ const MenuMobile = ({ active, setActive }) => {
             <div className="container">
                 <div className="mobile__menu--content">
                     <nav className="mobile__nav">
-                        <Link to="/persons" className="mobile__nav--link" onClick={closeMenu}>
-                            Persons
-                        </Link>
-
-                        <Link to="/brands" className="mobile__nav--link" onClick={closeMenu}>
-                            Brands
-                        </Link>
-
-                        <Link to="/alco" className="mobile__nav--link" onClick={closeMenu}>
-                            Alcohol
-                        </Link>
-
-                        <Link to="/watches" className="mobile__nav--link" onClick={closeMenu}>
-                            Watches
-                        </Link>
-
-                        <Link to="/cars" className="mobile__nav--link" onClick={closeMenu}>
-                            Cars
-                        </Link>
+                        {pagesList.map((data, id) => <Link key={id} to={`/${data.url}`} className="mobile__nav--link" onClick={closeMenu}>
+                            {data.name}
+                        </Link>)}
 
                         <Link to="/stats" className="mobile__nav--link" onClick={closeMenu}>
                             Stats

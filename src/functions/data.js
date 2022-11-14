@@ -1,5 +1,6 @@
 import {data} from '../api';
 
+// Создать страницу
 export const createPage = (formData, token) => {
     return data.post("page/", formData, {
         headers: {
@@ -8,6 +9,7 @@ export const createPage = (formData, token) => {
     });
 }
 
+// Получить все страницы
 export const getPages = (token) => {
     const res = data.get("page/", {
         headers: {
@@ -18,10 +20,22 @@ export const getPages = (token) => {
     return res;
 }
 
+// Удалить страницу(на беке она скрытая, но мы считаем ее удаленной)
 export const hidePage = (id, token) => {
     const res = data.patch(`page/hide/${id}/`, {
         hide: true
     }, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    return res;
+}
+
+// Получить данные одной страницы
+export const getPage = (token, url) => {
+    const res = data.get(`page/${url}/`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }

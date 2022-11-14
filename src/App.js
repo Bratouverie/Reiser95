@@ -20,6 +20,7 @@ import Cars from "./pages/Cars";
 import Alco from "./pages/Alco";
 import Profile from "./pages/Profile";
 import TokenCard from "./pages/TokenCard";
+import TemplatePage from './pages/TemplatePage';
 
 import WhiteList from './pages/WhiteList';
 import Activity from './pages/Activity';
@@ -45,17 +46,12 @@ const App = () => {
             <Routes>
                 <Route path="/" element={<Wrapper />}>
                     <Route index element={<Main />} />
-                    <Route path="persons" element={<Persons />} />
-                    <Route path="brands" element={<Brands />} />
-                    <Route path="alco" element={<Alco />} />
-                    <Route path="watches" element={<Watches />} />
-                    <Route path="cars" element={<Cars />} />
                     <Route path="stats" element={<Stats />} />
                     <Route path="about" element={<About />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="collection/:id" element={<Collection />} />
                     <Route path="token/:id" element={<TokenCard />} />
-                    <Route path="*" element={<Navigate to="/" />} />
+                    <Route path=":url" element={<TemplatePage />} />
                 </Route>
 
                 <Route path="/admin/" element={<WrapperAdmin />}>

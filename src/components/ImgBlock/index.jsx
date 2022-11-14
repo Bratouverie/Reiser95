@@ -11,9 +11,13 @@ const ImgBlock = ({title, data}) => {
                 <div className="imgblock__inner">
                     <h2 className="imgblock__title">{title}</h2>
 
-                    <div className="imgblock__content">
+                    {data.length > 0
+                    ? <div className="imgblock__content">
                         {data.map((data, id) => <ImgBlockItem key={id} path={data.path} id={id} />)}
                     </div>
+                    : <div className="collection__items--none">
+                        No items to display
+                    </div>}
                 </div>
             </div>
         </div>

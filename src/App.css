@@ -70,6 +70,7 @@ a, button, input, textarea, select{
 	transition: .2s linear;
 	font-size: 1.6rem;
 	font-family: 'Gilroy', sans-serif;
+	padding: 0;
 }
 
 a{

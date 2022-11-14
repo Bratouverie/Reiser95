@@ -39,10 +39,18 @@
     .imgblock__content{
         margin-top: 3rem;
     }
+
+    .imgblock__title{
+        font-size: 2.1rem;
+    }
 }
 @media(max-width: 480px){
     .imgblock__content{
         grid-gap: 15px;
         grid-template-columns: 1fr 1fr;
+    }
+
+    .imgblock__title{
+        font-size: 1.8rem;
     }
 }

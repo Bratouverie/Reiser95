@@ -7,11 +7,30 @@ import MenuMobile from "../MenuMobile";
 import MenuMobileAdmin from "../MenuMobileAdmin";
 import AuthElements from '../AuthElements';
 import WalletMenu from '../WalletMenu';
+import { useSelector } from "react-redux";
+
+import {getPages} from '../../functions/data';
 
 const Header = ({isAdminPage = false}) => {
     const [menu, setMenu] = React.useState(false);
     const [menuAdmin, setMenuAdmin] = React.useState(false);
     const [walletMenu, setWalletMenu] = React.useState(false);
+    const [pagesList, setPagesList] = React.useState([]);
+    const [pagesLoading, setPagesLoading] = React.useState(false);
+
+    const auth = useSelector(state => state.auth);
+
+    React.useEffect(() => {
+        if(auth.accessToken){
+            setPagesLoading(true);
+            const res = getPages(auth.accessToken);
+            res.then(data => setPagesList(data.data)).finally(() => setPagesLoading(false));
+        }
+    }, [auth]);
+
+    if(pagesLoading){
+        return "";
+    }
 
     return (
         <>
@@ -26,7 +45,7 @@ const Header = ({isAdminPage = false}) => {
                             />
                         </Link>
 
-                        {isAdminPage
+                        {auth.isAuth && (isAdminPage
                         ? <nav className="header__nav header__admin--nav">
                             <Link
                                 to=""
@@ -102,25 +121,11 @@ const Header = ({isAdminPage = false}) => {
                             </div>
                         </nav>
                         : <nav className="header__nav">
-                            <Link to="/persons" className="header__nav--link">
-                                Persons
-                            </Link>
-
-                            <Link to="/brands" className="header__nav--link">
-                                Brands
-                            </Link>
-
-                            <Link to="/alco" className="header__nav--link">
-                                Alcohol
-                            </Link>
-
-                            <Link to="/watches" className="header__nav--link">
-                                Watches
-                            </Link>
-
-                            <Link to="/cars" className="header__nav--link">
-                                Cars
-                            </Link>
+                            {pagesList.map((data, id) => 
+                                <Link key={id} to={`/${data.url}`} className="header__nav--link">
+                                    {data.name}
+                                </Link>
+                            )}
 
                             <Link to="/stats" className="header__nav--link">
                                 Stats
@@ -133,14 +138,10 @@ const Header = ({isAdminPage = false}) => {
                             <Link to="/admin" className="header__nav--link">
                                 Admin
                             </Link>
-                        </nav>}
+                        </nav>)}
 
                         <div className="header__wallet--inner">
-                            <AuthElements setActive={setWalletMenu} />
-
-                            <div className="menu__inner">
-                                <img src={`/assets/img/${menu ? "cross" : "menu"}.svg`} alt="menu" className="menu" onClick={() => setMenu(!menu)}/>
-                            </div>
+                            <AuthElements setActive={setWalletMenu} menu={menu} setMenu={setMenu} />
                         </div>
                     </div>
                 </div>
@@ -148,7 +149,7 @@ const Header = ({isAdminPage = false}) => {
 
             {isAdminPage
             ? <MenuMobileAdmin active={menuAdmin} setActive={setMenuAdmin} />
-            : <MenuMobile active={menu} setActive={setMenu} />}
+            : <MenuMobile active={menu} setActive={setMenu} pagesList={pagesList} />}
 
             <WalletMenu active={walletMenu} setActive={setWalletMenu} />
         </>

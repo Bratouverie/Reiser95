@@ -202,6 +202,10 @@
         bottom: -10px;
         right: -15px;
     }
+
+    .collection__items--none{
+        font-size: 2.1rem;
+    }
 }
 @media(max-width: 480px){
     .profile__ava--inner{
@@ -227,5 +231,9 @@
     .profile__date{
         margin: 0;
         font-size: 1.4rem;
+    }
+
+    .collection__items--none{
+        font-size: 1.8rem;
     }
 }

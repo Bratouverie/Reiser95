@@ -6,6 +6,7 @@ import {getProfile} from './user';
 import {setIsAuth, setLoadAuth, initWalletAddress, initBalance, initAccessToken,
     initRefreshToken, initId, initUsername, initImage, initCreated} from '../redux/slices/auth';
 
+// Авторизация(нажатие на кнопку connect wallet)
 export const connectWallet = async (dispatch) => {
     dispatch(setLoadAuth(true));
     try {
@@ -38,13 +39,24 @@ export const connectWallet = async (dispatch) => {
     }
 };
 
+// Получить signer
 export const getSigner = async () => {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    let provider;
+
+    if(window.ethereum){
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+    }
+    else{
+        window.location.href = 'https://metamask.app.link/dapp/resez.site';
+    }
+
+    await provider.send('eth_requestAccounts', []);
     const signer = provider.getSigner();
 
     return signer;
 }
 
+// Проверка авторизации время от времени, после истекания срока токенов - авторизуемся заново, незаметно для пользователя
 export const checkAuth = async (dispatch) => {
     dispatch(setLoadAuth(true));
     const accessToken = window.sessionStorage.getItem("access_token");
@@ -87,6 +99,7 @@ export const checkAuth = async (dispatch) => {
     }
 }
 
+// Получаем данные профиля
 export const getProfileData = async(token) => {
     try {
         const profile = await getProfile(token);
@@ -97,22 +110,26 @@ export const getProfileData = async(token) => {
     }
 }
 
+// Получаем баланс
 export const getBalance = async (signer) => {
     const balance = await signer.getBalance();
 
     return balance;
 }
 
+// Получаем нормальный баланс(в eth)
 export const getNormalBalance = (balance) => {
     return parseFloat(ethers.utils.formatEther(balance));
 }
 
+// Получаем nonce
 export const getNonce = async (walletAddress) => {
     const nonce = await auth.get(`web3/nonce?public_address=${walletAddress}`);
 
     return nonce.data.nonce;
 };
 
+// Получаем refresh и access токены
 export const getTokens = async (walletAddress, signature) => {
     const tokens = await auth.post("web3/login", {
         public_address: walletAddress,
@@ -122,6 +139,7 @@ export const getTokens = async (walletAddress, signature) => {
     return tokens.data;
 };
 
+// Выход с аккаунта
 export const logout = async (token, dispatch) => {
     const result = await auth.post("logout", {}, {
         headers: {
@@ -134,10 +152,12 @@ export const logout = async (token, dispatch) => {
     return result;
 }
 
+// Получить короткий адрес кошелька - xxxx...xxxx
 export const getShortAddress = (address) => {
     return address.substr(0, 4) + "..." + address.substr(-4);
 }
 
+// Очистить данные в redux и localstorage после выхода из аккаунта
 export const clearData = (dispatch) => {
     dispatch(setIsAuth(false));
 
