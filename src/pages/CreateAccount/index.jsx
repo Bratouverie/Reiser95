@@ -1,9 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 import Input from '../../common/Input';
 import File from '../../common/File';
 import { createAccaunt } from '../../functions/data';
+import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 
 import './index.css';
 
@@ -60,6 +61,8 @@ const CreateAccount = () => {
     twitter: '',
   });
 
+  const { state, request, onClearState } = useRequest(REQUEST_TYPE.DATA);
+
   const createAccountFunc = useCallback(() => {
     setIsLoading(true);
 
@@ -75,33 +78,33 @@ const CreateAccount = () => {
     formData.append('instagram', social.instagram);
     formData.append('twitter', social.twitter);
 
-    const createdPage = createAccaunt(formData, auth.accessToken);
+    // const createdPage = createAccaunt(formData, auth.accessToken);
 
-    createdPage
-      .then(d => {
-        alert('Account created!');
-        setBrand('');
-        setLogo('');
-        setAccauntName('');
-        setCover('');
-        setBanner('');
-        setUrl('');
-        setDescriprion('');
-        setSocial('');
-        setSocial({
-          opensea: '',
-          discord: '',
-          instagram: '',
-          twitter: '',
-        });
-      })
-      .catch(e => {
-        alert('Please fill all inputs');
-        console.log(e);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+    // createdPage
+    //   .then(d => {
+    //     alert('Account created!');
+    //     setBrand('');
+    //     setLogo('');
+    //     setAccauntName('');
+    //     setCover('');
+    //     setBanner('');
+    //     setUrl('');
+    //     setDescriprion('');
+    //     setSocial('');
+    //     setSocial({
+    //       opensea: '',
+    //       discord: '',
+    //       instagram: '',
+    //       twitter: '',
+    //     });
+    //   })
+    //   .catch(e => {
+    //     alert('Please fill all inputs');
+    //     console.log(e);
+    //   })
+    //   .finally(() => {
+    //     setIsLoading(false);
+    //   });
   }, [brand, logo, accauntName, cover, banner, url, descriprion, social, auth.accessToken]);
 
   const changeBrandHandler = useCallback(brand => {
@@ -113,6 +116,16 @@ const CreateAccount = () => {
       ...p,
       [key]: value,
     }));
+
+    useEffect(() => {
+      console.log({ state });
+    }, [state]);
+
+    useEffect(() => {
+      request({
+        url: 'page/',
+      });
+    }, []);
   }, []);
 
   return (
