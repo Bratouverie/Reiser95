@@ -40,12 +40,8 @@ export const getPage = url => {
   return res;
 };
 
-export const getAccountsList = token => {
-  const res = data.get('/account/', {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+export const getAccountsList = () => {
+  const res = data.get('/account/');
 
   return res;
 };
