@@ -19,13 +19,9 @@ const AuthElements = ({setActive, menu, setMenu}) => {
                 <img src="/assets/img/wallet.png" alt="Wallet" className="header__wallet--icon"/>
             </button>
             
-            {auth.isAuth
-            ? <div className="menu__inner">
+            <div className="menu__inner">
                 <img src={`/assets/img/${menu ? "cross" : "menu"}.svg`} alt="menu" className="menu" onClick={() => setMenu(!menu)}/>
             </div>
-            : <div className="menu__inner" onClick={() => setActive(true)}>
-                <img src={`/assets/img/${menu ? "cross" : "menu"}.svg`} alt="menu" className="menu" />
-            </div>}
         </>
     );
 };

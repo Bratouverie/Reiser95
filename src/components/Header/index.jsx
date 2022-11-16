@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import {useSelector, useDispatch} from 'react-redux';
 
 import "./index.css";
 
@@ -7,29 +8,35 @@ import MenuMobile from "../MenuMobile";
 import MenuMobileAdmin from "../MenuMobileAdmin";
 import AuthElements from '../AuthElements';
 import WalletMenu from '../WalletMenu';
-import { useSelector } from "react-redux";
 
 import {getPages} from '../../functions/data';
+import {setIsAuth, setPages} from '../../redux/slices/pages';
 
 const Header = ({isAdminPage = false}) => {
     const [menu, setMenu] = React.useState(false);
     const [menuAdmin, setMenuAdmin] = React.useState(false);
     const [walletMenu, setWalletMenu] = React.useState(false);
-    const [pagesList, setPagesList] = React.useState([]);
-    const [pagesLoading, setPagesLoading] = React.useState(false);
+    const pages = useSelector(state => state.pages);
+    const dispatch = useDispatch();
 
-    const auth = useSelector(state => state.auth);
-
+    // Перенести запрос страниц с шапки в отдельную функцию, которая 100% будет подгружаться при загрузке сайта
     React.useEffect(() => {
-        if(auth.accessToken){
-            setPagesLoading(true);
-            const res = getPages(auth.accessToken);
-            res.then(data => setPagesList(data.data)).finally(() => setPagesLoading(false));
-        }
-    }, [auth]);
+        if(pages.pages.length <= 0){
+            dispatch(setIsAuth(true));
+            const pagesList = getPages();
 
-    if(pagesLoading){
-        return "";
+            pagesList.then(d => {
+                dispatch(setPages(d.data));
+            }).catch(e => {
+                console.log(e);
+            }).finally(() => {
+                dispatch(setIsAuth(false));
+            });
+        }
+    }, []);
+
+    if(pages.isLoading){
+        return ""; //Типо прелоадер
     }
 
     return (
@@ -45,7 +52,7 @@ const Header = ({isAdminPage = false}) => {
                             />
                         </Link>
 
-                        {auth.isAuth && (isAdminPage
+                        {isAdminPage
                         ? <nav className="header__nav header__admin--nav">
                             <Link
                                 to=""
@@ -121,7 +128,7 @@ const Header = ({isAdminPage = false}) => {
                             </div>
                         </nav>
                         : <nav className="header__nav">
-                            {pagesList.map((data, id) => 
+                            {pages.pages.map((data, id) => 
                                 <Link key={id} to={`/${data.url}`} className="header__nav--link">
                                     {data.name}
                                 </Link>
@@ -138,7 +145,7 @@ const Header = ({isAdminPage = false}) => {
                             <Link to="/admin" className="header__nav--link">
                                 Admin
                             </Link>
-                        </nav>)}
+                        </nav>}
 
                         <div className="header__wallet--inner">
                             <AuthElements setActive={setWalletMenu} menu={menu} setMenu={setMenu} />
@@ -149,7 +156,7 @@ const Header = ({isAdminPage = false}) => {
 
             {isAdminPage
             ? <MenuMobileAdmin active={menuAdmin} setActive={setMenuAdmin} />
-            : <MenuMobile active={menu} setActive={setMenu} pagesList={pagesList} />}
+            : <MenuMobile active={menu} setActive={setMenu} />}
 
             <WalletMenu active={walletMenu} setActive={setWalletMenu} />
         </>

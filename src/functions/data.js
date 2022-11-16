@@ -10,12 +10,8 @@ export const createPage = (formData, token) => {
 }
 
 // Получить все страницы
-export const getPages = (token) => {
-    const res = data.get("page/", {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+export const getPages = () => {
+    const res = data.get("page/");
 
     return res;
 }
@@ -34,12 +30,8 @@ export const hidePage = (id, token) => {
 }
 
 // Получить данные одной страницы
-export const getPage = (token, url) => {
-    const res = data.get(`page/${url}/`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
+export const getPage = (url) => {
+    const res = data.get(`page/${url}/`);
 
     return res;
 }

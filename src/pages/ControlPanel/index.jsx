@@ -1,33 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import "./index.css";
-
-import {getPages} from "../../functions/data";
 
 import Preloader from '../../common/Preloader';
 import PageItem from "../../components/PageItem";
 
-import {setIsAuth, setPages} from '../../redux/slices/pages';
-
 const ControlPanel = () => {
     const auth = useSelector(state => state.auth);
     const pages = useSelector(state => state.pages);
-    const dispatch = useDispatch();
-
-    React.useEffect(() => {
-        dispatch(setIsAuth(true));
-        const pagesList = getPages(auth.accessToken);
-
-        pagesList.then(d => {
-            dispatch(setPages(d.data));
-        }).catch(e => {
-            console.log(e);
-        }).finally(() => {
-            dispatch(setIsAuth(false));
-        });
-    }, [auth.accessToken, dispatch]);
 
     if(auth.loadAuth){
         return <Preloader />

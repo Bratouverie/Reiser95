@@ -46,6 +46,7 @@ export const authSlice = createSlice({
             state.image = action.payload;
         },
         initCreated: (state, action) => {
+            // Приводим дату в нормальный вид сразу, пример: 09.10.2022
             const date = new Date(action.payload);
             const day = date.getDate();
             const month = date.getMonth() + 1;

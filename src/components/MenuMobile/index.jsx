@@ -1,9 +1,12 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 import "./index.css";
 
-const MenuMobile = ({ active, setActive, pagesList }) => {
+const MenuMobile = ({ active, setActive }) => {
+    const pages = useSelector(state => state.pages);
+
     const closeMenu = () => {
         setActive(false);
     }
@@ -19,7 +22,7 @@ const MenuMobile = ({ active, setActive, pagesList }) => {
             <div className="container">
                 <div className="mobile__menu--content">
                     <nav className="mobile__nav">
-                        {pagesList.map((data, id) => <Link key={id} to={`/${data.url}`} className="mobile__nav--link" onClick={closeMenu}>
+                        {pages.pages.map((data, id) => <Link key={id} to={`/${data.url}`} className="mobile__nav--link" onClick={closeMenu}>
                             {data.name}
                         </Link>)}
 

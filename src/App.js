@@ -10,14 +10,9 @@ import Wrapper from "./common/Wrapper";
 import WrapperAdmin from "./common/WrapperAdmin";
 
 import Main from "./pages/Main";
-import Persons from "./pages/Persons";
-import Brands from "./pages/Brands";
 import Stats from "./pages/Stats";
 import Collection from "./pages/Collection";
-import Watches from "./pages/Watches";
 import About from "./pages/About";
-import Cars from "./pages/Cars";
-import Alco from "./pages/Alco";
 import Profile from "./pages/Profile";
 import TokenCard from "./pages/TokenCard";
 import TemplatePage from './pages/TemplatePage';
