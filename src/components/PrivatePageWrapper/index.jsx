@@ -11,9 +11,9 @@ const PrivatePageWrapper = ({children}) => {
 		return <Preloader />
 	}
 
-    if(!auth.isAuth){
-        return <Navigate to="/" />
-    }
+    // if(!auth.isAuth){
+    //     return <Navigate to="/" />
+    // }
 
 	return(
 		children
