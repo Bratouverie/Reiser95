@@ -1,31 +1,32 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
-import {checkAuth} from './functions/auth';
+import { checkAuth } from './functions/auth';
 
-import "./App.css";
+import './App.css';
 
-import Wrapper from "./common/Wrapper";
-import WrapperAdmin from "./common/WrapperAdmin";
+import Wrapper from './common/Wrapper';
+import WrapperAdmin from './common/WrapperAdmin';
 
-import Main from "./pages/Main";
-import Stats from "./pages/Stats";
-import Collection from "./pages/Collection";
-import About from "./pages/About";
-import Profile from "./pages/Profile";
-import TokenCard from "./pages/TokenCard";
+import Main from './pages/Main';
+import Stats from './pages/Stats';
+import Collection from './pages/Collection';
+import About from './pages/About';
+import Profile from './pages/Profile';
+import TokenCard from './pages/TokenCard';
 import TemplatePage from './pages/TemplatePage';
 
 import WhiteList from './pages/WhiteList';
 import Activity from './pages/Activity';
 import Statistics from './pages/Statistics';
-import ControlPanel from "./pages/ControlPanel";
-import CreatePage from "./pages/CreatePage";
+import ControlPanel from './pages/ControlPanel';
+import CreatePage from './pages/CreatePage';
 import CreateAccount from './pages/CreateAccount';
 import CreateCollection from './pages/CreateCollection';
 import CreatePack from './pages/CreatePack';
 import CreateItem from './pages/CreateItem';
+import InitialDataWrapper from './common/InitialDataWrapper';
 
 const App = () => {
     const dispatch = useDispatch();
@@ -37,7 +38,7 @@ const App = () => {
     return (
         <>
             <img src="/assets/img/main-bg.png" alt="bg" className="main__bg" />
-
+            <InitialDataWrapper />
             <Routes>
                 <Route path="/" element={<Wrapper />}>
                     <Route index element={<Main />} />
