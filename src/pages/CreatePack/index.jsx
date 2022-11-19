@@ -1,8 +1,93 @@
-import React from "react";
+import React, { useState, useMemo } from 'react';
+import FileDropzone from '../../common/FileDropzone';
+import Input from '../../common/Input';
+import { useFileDropzone } from '../../hooks/useFileDropzone';
+import { getFileNameAndExt } from '../../utils/getFilenameAndExt';
 
-import "./index.css";
+import './index.css';
+
+const UPLOAD_FILES_MAX_LIMIT = 1000;
+
+// FILE TYPE
+// type FileValue = {
+//     file: {
+//         path: "BURGER2.png",
+//         lastModified: 1667925903547,
+//         lastModifiedDate: Tue Nov 08 2022 19:45:03 GMT+0300 (Moscow Standard Time) {},
+//         name: "BURGER2.png",
+//         size: 1310265,
+//         type: "image/png",
+//     },
+//     fileType: "image/png",
+//     id: "file_1",
+//     preview: "blob:http://localhost:3000/8e020a77-9e32-4fbe-a1fe-6015bca163ea",
+// }
 
 const CreatePack = () => {
+    const [name, setName] = useState('');
+    const [tokenName, setTokenName] = useState('Common name');
+    const [numbering, setNumbering] = useState('');
+    const [tokenPrice, setTokenPrice] = useState('');
+    const [investorRoyalty, setInvestorRoyalty] = useState('');
+    const [creatorRoyalty, setCreatorRoyalty] = useState('');
+
+    const {
+        values: tokenImgValues,
+        onAdd: onAddTokenImg,
+        onDelete: onDeleteTokenImg,
+    } = useFileDropzone({
+        multiple: true,
+        limit: UPLOAD_FILES_MAX_LIMIT,
+    });
+
+    const {
+        values: tokenPreviewValues,
+        onAdd: onAddTokenPreview,
+        onDelete: onDeleteTokenPreview,
+    } = useFileDropzone({
+        multiple: true,
+        limit: UPLOAD_FILES_MAX_LIMIT,
+    });
+
+    const genrateTablesRow = useMemo(() => {
+        if (tokenImgValues.length === 0) {
+            return [];
+        }
+
+        const res = [];
+
+        tokenImgValues.map(tiv => {
+            const fileNameAndExt = getFileNameAndExt(tiv.file.name);
+
+            if (res.some(r => r.numericIndicator === fileNameAndExt.fileName)) {
+                return null;
+            }
+
+            const tokenPreviewImg = tokenPreviewValues.find(tpv => tpv.file.name === tiv.file.name);
+
+            res.push({
+                name: tokenName,
+                numericIndicator: fileNameAndExt.fileName,
+                tokenImgName: tiv.file.name,
+                tokenPreviewName: tokenPreviewImg ? tokenPreviewImg.file.name : null,
+                tokenImgFile: tiv.file,
+                tokenPreviewFile: tokenPreviewImg ? tokenPreviewImg.file : null,
+                tokenPrice,
+                investorRoyalty,
+                creatorRoyalty,
+            });
+        });
+
+        return res.sort((a, b) => Number(a.numericIndicator) - Number(b.numericIndicator));
+    }, [
+        tokenImgValues,
+        tokenPreviewValues,
+        tokenName,
+        tokenPrice,
+        investorRoyalty,
+        creatorRoyalty,
+    ]);
+
     return (
         <div className="default__padding createpage">
             <div className="container">
@@ -12,17 +97,13 @@ const CreatePack = () => {
                     <p className="text left">Bulk token upload interface</p>
 
                     <div className="create__content">
-                        <div className="create__item half">
-                            <p className="create__item--title required">
-                                Pack name
-                            </p>
-
-                            <input
-                                type="text"
-                                className="input create__item--input"
-                                placeholder="Enter Pack name"
-                            />
-                        </div>
+                        <Input
+                            title="Pack name"
+                            placeholder="Enter Pack name"
+                            required
+                            value={name}
+                            setValue={setName}
+                        />
 
                         <div className="create__item">
                             <p className="create__item--title required">
@@ -30,22 +111,20 @@ const CreatePack = () => {
                             </p>
 
                             <p className="create__item--text">
-                                File types supported: JPG, PNG, GIF, SVG, Mp4,
-                                WEBM, MP3, WAV, OGG, GLB, GLTF. Max 1000 files.
-                                Files are sorted by file name.
+                                File types supported: JPG, PNG, GIF, SVG, Mp4, WEBM, MP3, WAV, OGG,
+                                GLB, GLTF. Max 1000 files. Files are sorted by file name.
                             </p>
 
-                            <input
+                            <FileDropzone
+                                multiple
+                                availableFormats={['image/png', 'image/gif', 'image/jpeg']}
+                                values={tokenImgValues}
+                                onAdd={onAddTokenImg}
                                 id="createpackImgs"
-                                type="file"
-                                className="file"
-                                accept="image/png, image/gif, image/jpeg"
+                                onDelete={onDeleteTokenImg}
                             />
 
-                            <label
-                                htmlFor="createpackImgs"
-                                className="create__item--label img"
-                            >
+                            <label htmlFor="createpackImgs" className="create__item--label img">
                                 <img
                                     src="/assets/img/img.png"
                                     alt="img"
@@ -55,28 +134,24 @@ const CreatePack = () => {
                         </div>
 
                         <div className="create__item">
-                            <p className="create__item--title required">
-                                Preview Images
-                            </p>
+                            <p className="create__item--title required">Preview Images</p>
 
                             <p className="create__item--text">
-                                Because you&rsquo;ve included multimedia,
-                                you&rsquo;ll need to provide an images (PNG,
-                                JPG, or GIF) for the card display of your item.
-                                Files are sorted by file name.
+                                Because you&rsquo;ve included multimedia, you&rsquo;ll need to
+                                provide an images (PNG, JPG, or GIF) for the card display of your
+                                item. Files are sorted by file name.
                             </p>
 
-                            <input
+                            <FileDropzone
+                                multiple
+                                availableFormats={['image/png', 'image/gif', 'image/jpeg']}
+                                values={tokenPreviewValues}
+                                onAdd={onAddTokenPreview}
                                 id="createpackPreview"
-                                type="file"
-                                className="file"
-                                accept="image/png, image/gif, image/jpeg"
+                                onDelete={onDeleteTokenPreview}
                             />
 
-                            <label
-                                htmlFor="createpackPreview"
-                                className="create__item--label img"
-                            >
+                            <label htmlFor="createpackPreview" className="create__item--label img">
                                 <img
                                     src="/assets/img/img.png"
                                     alt="img"
@@ -86,18 +161,14 @@ const CreatePack = () => {
                         </div>
 
                         <div className="create__item">
-                            <p className="create__item--title required">
-                                Loading table
-                            </p>
+                            <p className="create__item--title required">Loading table</p>
 
                             <p className="create__item--text">
-                                The table shows which files with which name and
-                                price will be uploaded to the smart contract and
-                                readiness for uploading. All tokens will have
-                                the same characteristics (Link, Description,
-                                Collection name, Properties, Blockchain, etc.).
-                                But you can change the price of tokens in the
-                                table.
+                                The table shows which files with which name and price will be
+                                uploaded to the smart contract and readiness for uploading. All
+                                tokens will have the same characteristics (Link, Description,
+                                Collection name, Properties, Blockchain, etc.). But you can change
+                                the price of tokens in the table.
                             </p>
 
                             <div className="create__loading">
@@ -105,693 +176,56 @@ const CreatePack = () => {
                                     <div className="create__loading--item">
                                         <p className="create__loading--title"></p>
 
-                                        <p className="create__loading--title">
-                                            Token name
-                                        </p>
+                                        <p className="create__loading--title">Token name</p>
 
-                                        <p className="create__loading--title">
-                                            Token Image
-                                        </p>
+                                        <p className="create__loading--title">Token Image</p>
 
-                                        <p className="create__loading--title">
-                                            Token Preview
-                                        </p>
+                                        <p className="create__loading--title">Token Preview</p>
 
-                                        <p className="create__loading--title">
-                                            Price
-                                        </p>
+                                        <p className="create__loading--title">Price</p>
 
-                                        <p className="create__loading--title">
-                                            Fee
-                                        </p>
+                                        <p className="create__loading--title">Fee</p>
 
-                                        <p className="create__loading--title">
-                                            Upload
-                                        </p>
+                                        <p className="create__loading--title">Upload</p>
                                     </div>
 
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            1
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            2
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            3
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            5
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            6
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            7
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            8
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            9
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            10
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            11
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            12
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            13
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            14
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            15
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            16
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
-
-                                    <div className="create__loading--item">
-                                        <p className="create__loading--text">
-                                            17
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Common name{" "}
-                                            <span className="green__c">
-                                                001
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.mp4
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            001.gif
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Price{" "}
-                                            <span className="green__c">
-                                                0.01 ETH
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            Fee{" "}
-                                            <span className="green__c">
-                                                4.5/0.5
-                                            </span>
-                                        </p>
-
-                                        <p className="create__loading--text">
-                                            100%
-                                        </p>
-                                    </div>
+                                    {genrateTablesRow.map((row, i) => (
+                                        <div className="create__loading--item">
+                                            <p className="create__loading--text">{i + 1}</p>
+
+                                            <p className="create__loading--text">
+                                                {tokenName}{' '}
+                                                <span className="green__c">
+                                                    {row.numericIndicator}
+                                                </span>
+                                            </p>
+
+                                            <p className="create__loading--text">
+                                                {row.tokenImgName}
+                                            </p>
+
+                                            <p className="create__loading--text">
+                                                {row.tokenPreviewName}
+                                            </p>
+
+                                            <p className="create__loading--text">
+                                                Price{' '}
+                                                <span className="green__c">
+                                                    {row.tokenPrice} ETH
+                                                </span>
+                                            </p>
+
+                                            <p className="create__loading--text">
+                                                Fee{' '}
+                                                <span className="green__c">
+                                                    {row.investorRoyalty || 0}/
+                                                    {row.creatorRoyalty || 0}
+                                                </span>
+                                            </p>
+
+                                            <p className="create__loading--text">100%</p>
+                                        </div>
+                                    ))}
                                 </div>
 
                                 <button className="button create__loading--button">
@@ -801,56 +235,41 @@ const CreatePack = () => {
                         </div>
 
                         <div className="create__item half">
-                            <p className="create__item--title required">
-                                Token name
-                            </p>
-
-                            <p className="create__item--text">
-                                Choose a “common name” so that all tokens have the same name.
-                            </p>
-
-                            <input
-                                type="text"
-                                className="input create__item--input"
+                            <Input
+                                title="Token name"
+                                text="Choose a “common name” so that all tokens have the same name."
                                 placeholder="Enter common name"
+                                required
+                                value={tokenName}
+                                setValue={setTokenName}
                             />
-
-                            <p className="create__item--text">
-                                Token name = filename.ext - token name copies the token filename.
-                            </p>
-
-                            <input
-                                type="text"
-                                className="input create__item--input"
+                            <Input
+                                text="Token name = filename.ext - token name copies the token filename."
                                 placeholder="Token name = filename.ext"
+                                value={tokenName}
+                                setValue={setTokenName}
                             />
                         </div>
 
                         <div className="create__item half">
-                            <p className="create__item--title">
-                                Numbering
-                            </p>
-
-                            <p className="create__item--text">
-                                When choosing a common name, enter from which number the numbering will start.
-                            </p>
-
-                            <input
-                                type="text"
-                                className="input create__item--input"
+                            <Input
+                                title="Numbering"
+                                text=" When choosing a common name, enter from which number the numbering will start."
                                 placeholder="1"
+                                required
+                                value={numbering}
+                                setValue={setNumbering}
                             />
                         </div>
 
                         <div className="create__item">
-                            <p className="create__item--title">
-                                Tokens price
-                            </p>
+                            <p className="create__item--title">Tokens price</p>
 
                             <p className="create__item--text">
-                                The price at which the tokens will be put up for sale. All tokens in the pack will have the same price.
+                                The price at which the tokens will be put up for sale. All tokens in
+                                the pack will have the same price.
                             </p>
-                            
+
                             <div className="control__item">
                                 <input
                                     type="text"
@@ -877,29 +296,32 @@ const CreatePack = () => {
                             <div className="create__item--select--prop">
                                 <button className="button create__item--option active">
                                     Auction
-
-                                    <img src="/assets/img/check.svg" alt="icon" className="create__item--icon" />
+                                    <img
+                                        src="/assets/img/check.svg"
+                                        alt="icon"
+                                        className="create__item--icon"
+                                    />
                                 </button>
                             </div>
 
                             <div className="create__item--select--prop">
                                 <button className="button create__item--option active">
                                     No price
-
-                                    <img src="/assets/img/check.svg" alt="icon" className="create__item--icon" />
+                                    <img
+                                        src="/assets/img/check.svg"
+                                        alt="icon"
+                                        className="create__item--icon"
+                                    />
                                 </button>
                             </div>
                         </div>
 
                         <div className="create__item">
-                            <p className="create__item--title">
-                                Investor's royalty
-                            </p>
+                            <p className="create__item--title">Investor's royalty</p>
 
                             <p className="create__item--text">
-                                Enter the percentage that will be accrued to the
-                                first owner of the token from the second and
-                                subsequent sales.
+                                Enter the percentage that will be accrued to the first owner of the
+                                token from the second and subsequent sales.
                             </p>
 
                             <input
@@ -910,14 +332,11 @@ const CreatePack = () => {
                         </div>
 
                         <div className="create__item">
-                            <p className="create__item--title">
-                                Creator&rsquo;s royalty
-                            </p>
+                            <p className="create__item--title">Creator&rsquo;s royalty</p>
 
                             <p className="create__item--text">
-                                Enter the percentage that will be accrued to the
-                                team of token creators from the first and
-                                subsequent sales.
+                                Enter the percentage that will be accrued to the team of token
+                                creators from the first and subsequent sales.
                             </p>
 
                             <input
@@ -928,9 +347,7 @@ const CreatePack = () => {
                         </div>
 
                         <div className="create__item">
-                            <p className="create__item--title">
-                                Creator royalty distribution:
-                            </p>
+                            <p className="create__item--title">Creator royalty distribution:</p>
 
                             <div className="control__item">
                                 <input
@@ -1016,14 +433,11 @@ const CreatePack = () => {
                         </div>
 
                         <div className="create__item">
-                            <p className="create__item--title">
-                                Income distribution
-                            </p>
+                            <p className="create__item--title">Income distribution</p>
 
                             <p className="create__item--text">
-                                Income is equal to the cost of selling the token
-                                minus royalties. Enter the percentage
-                                distribution of income from the sale of tokens.
+                                Income is equal to the cost of selling the token minus royalties.
+                                Enter the percentage distribution of income from the sale of tokens.
                             </p>
 
                             <div className="control__item">
@@ -1113,10 +527,9 @@ const CreatePack = () => {
                             <p className="create__item--title">External Link</p>
 
                             <p className="create__item--text">
-                                Item&rsquo;s page will include a link to this
-                                URL on this item&rsquo;s detail page, so that
-                                users can click to learn more about it. This
-                                link will be displayed on item&rsquo;s detail
+                                Item&rsquo;s page will include a link to this URL on this
+                                item&rsquo;s detail page, so that users can click to learn more
+                                about it. This link will be displayed on item&rsquo;s detail
                                 CheckBrand.com page:
                             </p>
 
@@ -1129,8 +542,7 @@ const CreatePack = () => {
 
                         <div className="create__item">
                             <p className="create__item--text">
-                                This link will be displayed on item&rsquo;s
-                                detail OpenSea.io page:
+                                This link will be displayed on item&rsquo;s detail OpenSea.io page:
                             </p>
 
                             <input
@@ -1144,8 +556,8 @@ const CreatePack = () => {
                             <p className="create__item--title">Description</p>
 
                             <p className="create__item--text">
-                                The description will be included on the
-                                item&rsquo;s detail page underneath its image.
+                                The description will be included on the item&rsquo;s detail page
+                                underneath its image.
                             </p>
 
                             <textarea
@@ -1159,8 +571,7 @@ const CreatePack = () => {
                             <p className="create__item--title">Collection</p>
 
                             <p className="create__item--text">
-                                This is the collection where your items Pack
-                                will appear.
+                                This is the collection where your items Pack will appear.
                             </p>
 
                             <div className="create__item--select--inner">
@@ -1183,7 +594,11 @@ const CreatePack = () => {
                         <div className="create__item">
                             <div className="create__item--checkbox--inner">
                                 <div className="create__item--checkbox--wrapper">
-                                    <img src="/assets/img/menu2.svg" alt="prop" className="create__item--checkbox--wrapper--icon" />
+                                    <img
+                                        src="/assets/img/menu2.svg"
+                                        alt="prop"
+                                        className="create__item--checkbox--wrapper--icon"
+                                    />
 
                                     <div className="create__item--checkbox--text">
                                         <p className="create__item--checkbox--text--title">
@@ -1197,7 +612,11 @@ const CreatePack = () => {
                                 </div>
 
                                 <button className="button create__item--add">
-                                    <img src="/assets/img/plus.png" alt="add" className="create__item--add--icon" />
+                                    <img
+                                        src="/assets/img/plus.png"
+                                        alt="add"
+                                        className="create__item--add--icon"
+                                    />
                                 </button>
                             </div>
                         </div>
@@ -1205,7 +624,11 @@ const CreatePack = () => {
                         <div className="create__item">
                             <div className="create__item--checkbox--inner">
                                 <div className="create__item--checkbox--wrapper">
-                                    <img src="/assets/img/star2.svg" alt="star" className="create__item--checkbox--wrapper--icon" />
+                                    <img
+                                        src="/assets/img/star2.svg"
+                                        alt="star"
+                                        className="create__item--checkbox--wrapper--icon"
+                                    />
 
                                     <div className="create__item--checkbox--text">
                                         <p className="create__item--checkbox--text--title">
@@ -1219,7 +642,11 @@ const CreatePack = () => {
                                 </div>
 
                                 <button className="button create__item--add">
-                                    <img src="/assets/img/plus.png" alt="add" className="create__item--add--icon" />
+                                    <img
+                                        src="/assets/img/plus.png"
+                                        alt="add"
+                                        className="create__item--add--icon"
+                                    />
                                 </button>
                             </div>
                         </div>
@@ -1227,12 +654,14 @@ const CreatePack = () => {
                         <div className="create__item">
                             <div className="create__item--checkbox--inner">
                                 <div className="create__item--checkbox--wrapper">
-                                    <img src="/assets/img/stats.svg" alt="stat" className="create__item--checkbox--wrapper--icon" />
+                                    <img
+                                        src="/assets/img/stats.svg"
+                                        alt="stat"
+                                        className="create__item--checkbox--wrapper--icon"
+                                    />
 
                                     <div className="create__item--checkbox--text">
-                                        <p className="create__item--checkbox--text--title">
-                                            Stats
-                                        </p>
+                                        <p className="create__item--checkbox--text--title">Stats</p>
 
                                         <p className="create__item--checkbox--text--text">
                                             Numerical traits that just show as numbers
@@ -1241,7 +670,11 @@ const CreatePack = () => {
                                 </div>
 
                                 <button className="button create__item--add">
-                                    <img src="/assets/img/plus.png" alt="add" className="create__item--add--icon" />
+                                    <img
+                                        src="/assets/img/plus.png"
+                                        alt="add"
+                                        className="create__item--add--icon"
+                                    />
                                 </button>
                             </div>
                         </div>
@@ -1249,7 +682,11 @@ const CreatePack = () => {
                         <div className="create__item">
                             <div className="create__item--checkbox--inner">
                                 <div className="create__item--checkbox--wrapper">
-                                    <img src="/assets/img/lock.png" alt="lock" className="create__item--checkbox--wrapper--icon" />
+                                    <img
+                                        src="/assets/img/lock.png"
+                                        alt="lock"
+                                        className="create__item--checkbox--wrapper--icon"
+                                    />
 
                                     <div className="create__item--checkbox--text">
                                         <p className="create__item--checkbox--text--title">
@@ -1257,15 +694,23 @@ const CreatePack = () => {
                                         </p>
 
                                         <p className="create__item--checkbox--text--text">
-                                            Include unlockable content that can only be revealed by the owner of the item.
+                                            Include unlockable content that can only be revealed by
+                                            the owner of the item.
                                         </p>
                                     </div>
                                 </div>
 
                                 <div className="create__item--checkbox--box">
-                                    <input type="checkbox" className="create__item--checkbox" id="lock" />
+                                    <input
+                                        type="checkbox"
+                                        className="create__item--checkbox"
+                                        id="lock"
+                                    />
 
-                                    <label htmlFor="lock" className="create__item--checkbox--label"></label>
+                                    <label
+                                        htmlFor="lock"
+                                        className="create__item--checkbox--label"
+                                    ></label>
                                 </div>
                             </div>
 
@@ -1279,7 +724,11 @@ const CreatePack = () => {
                         <div className="create__item">
                             <div className="create__item--checkbox--inner">
                                 <div className="create__item--checkbox--wrapper">
-                                    <img src="/assets/img/warn.png" alt="warn" className="create__item--checkbox--wrapper--icon" />
+                                    <img
+                                        src="/assets/img/warn.png"
+                                        alt="warn"
+                                        className="create__item--checkbox--wrapper--icon"
+                                    />
 
                                     <div className="create__item--checkbox--text">
                                         <p className="create__item--checkbox--text--title">
@@ -1287,9 +736,8 @@ const CreatePack = () => {
                                         </p>
 
                                         <p className="create__item--checkbox--text--text">
-                                            Upload a cover that will be
-                                            displayed on all tokens in the pack
-                                            until you disable this feature.
+                                            Upload a cover that will be displayed on all tokens in
+                                            the pack until you disable this feature.
                                         </p>
                                     </div>
                                 </div>
@@ -1349,9 +797,8 @@ const CreatePack = () => {
                                         </p>
 
                                         <p className="create__item--checkbox--text--text">
-                                            Freeze your metadata will allow you
-                                            to permanently lock and store all of
-                                            this item&rsquo;s content in
+                                            Freeze your metadata will allow you to permanently lock
+                                            and store all of this item&rsquo;s content in
                                             decentralized file storage.
                                         </p>
                                     </div>
@@ -1371,9 +818,7 @@ const CreatePack = () => {
                                 </div>
                             </div>
 
-                            <button className="button create__item--def--button">
-                                Freeze
-                            </button>
+                            <button className="button create__item--def--button">Freeze</button>
                         </div>
                     </div>
 

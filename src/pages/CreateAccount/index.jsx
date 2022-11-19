@@ -3,11 +3,10 @@ import { useSelector } from 'react-redux';
 
 import Input from '../../common/Input';
 import File from '../../common/File';
-import { createAccount } from '../../functions/data';
 import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
+import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 
 import './index.css';
-import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 
 const SocialLinks = {
     OPENSEA: {
@@ -59,21 +58,21 @@ const CreateAccount = () => {
     });
 
     const createAccountFunc = useCallback(() => {
-        const data = {
-            link_opensea: social.opensea,
-            link_discord: social.discord,
-            link_instagram: social.instagram,
-            link_twitter: social.twitter,
-            logo: logo,
-            cover: cover,
-            brand: brandId,
-            name: accountName,
-            url: url,
-            descriprion: descriprion,
-        };
-        console.log(data);
+        let formData = new FormData();
+
+        formData.append('link_opensea', social.opensea);
+        formData.append('link_discord', social.discord);
+        formData.append('link_instagram', social.instagram);
+        formData.append('link_twitter', social.twitter);
+        formData.append('logo', logo);
+        formData.append('cover', cover);
+        formData.append('brand', brandId);
+        formData.append('name', accountName);
+        formData.append('url', url);
+        formData.append('descriprion', descriprion);
+
         request({
-            data,
+            data: formData,
         });
     }, [brandId, logo, accountName, cover, banner, url, descriprion, social]);
 
@@ -87,6 +86,13 @@ const CreateAccount = () => {
             [key]: value,
         }));
     }, []);
+
+    useEffect(() => {
+        console.log(state.error);
+        if (state && state.error) {
+            alert(state.error);
+        }
+    }, [state.error]);
 
     useEffect(() => {
         if (state && state.result) {
@@ -104,6 +110,7 @@ const CreateAccount = () => {
                 instagram: '',
                 twitter: '',
             });
+            onClearState();
         }
     }, [state]);
 
