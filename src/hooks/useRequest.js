@@ -12,7 +12,7 @@ export const REQUEST_TYPE = {
 const DEFAULT_STATE = {
     isProcessing: false,
     result: {},
-    errors: [],
+    error: null,
 };
 
 const sendRequest = async (axiosInstance, url, method, data, query, body, headers = {}) => {
@@ -40,16 +40,17 @@ const sendRequest = async (axiosInstance, url, method, data, query, body, header
         };
     } catch (err) {
         const { response } = err;
+        console.log({ response });
 
         if (!response) {
             throw err;
         }
 
         const {
-            data: { errors },
+            data: { detail },
         } = response;
 
-        throw errors;
+        throw detail;
     }
 };
 
@@ -132,7 +133,7 @@ export const useRequest = ({
                 setState(p => ({
                     ...p,
                     isProcessing: false,
-                    errors: err,
+                    error: err,
                 }));
 
                 return null;

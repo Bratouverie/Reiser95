@@ -58,6 +58,18 @@ body{
 	font-family: 'Gilroy', sans-serif;
 	background: #101010;
 	margin-top: 7rem;
+
+}
+::-webkit-scrollbar {
+	border-radius: 14px;
+	width: 8px;
+}
+::-webkit-scrollbar-track {
+	border-radius: 14px;
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 28px;
+	background: #535454;
 }
 
 *,

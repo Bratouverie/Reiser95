@@ -1,54 +1,57 @@
-import React from "react";
+import React from 'react';
 
-import {createPage} from "../../functions/data";
+import { createPage } from '../../functions/data';
 
-import "./index.css";
+import './index.css';
 
-import Input from "../../common/Input";
-import File from "../../common/File";
-import { useSelector } from "react-redux";
+import Input from '../../common/Input';
+import File from '../../common/File';
+import { useSelector } from 'react-redux';
 
 const CreatePage = () => {
     const auth = useSelector(state => state.auth);
 
-    const [name, setName] = React.useState("");
-    const [number, setNumber] = React.useState("");
-    const [url, setUrl] = React.useState("");
-    const [banner, setBanner] = React.useState("");
-    const [title1, setTitle1] = React.useState("");
-    const [description, setDescription] = React.useState("");
-    const [title2, setTitle2] = React.useState("");
+    const [name, setName] = React.useState('');
+    const [number, setNumber] = React.useState('');
+    const [url, setUrl] = React.useState('');
+    const [banner, setBanner] = React.useState('');
+    const [title1, setTitle1] = React.useState('');
+    const [description, setDescription] = React.useState('');
+    const [title2, setTitle2] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
 
     const createPageFunc = () => {
         setIsLoading(true);
 
         let formData = new FormData();
-        formData.append("name", name);
-        formData.append("number", parseInt(number));
-        formData.append("url", url);
-        formData.append("banner", banner);
-        formData.append("title_1", title1);
-        formData.append("description", description);
-        formData.append("title_2", title2);
+        formData.append('name', name);
+        formData.append('number', parseInt(number));
+        formData.append('url', url);
+        formData.append('banner', banner);
+        formData.append('title_1', title1);
+        formData.append('description', description);
+        formData.append('title_2', title2);
 
         const createdPage = createPage(formData, auth.accessToken);
 
-        createdPage.then((d) => {
-            alert("Page created!");
-            setName("");
-            setNumber("");
-            setUrl("");
-            setBanner("");
-            setTitle1("");
-            setDescription("");
-            setTitle2("");
-        }).catch((e) => {
-            alert("Please fill all inputs");
-            console.log(e);
-        }).finally(() => {
-            setIsLoading(false);
-        });
+        createdPage
+            .then(d => {
+                alert('Page created!');
+                setName('');
+                setNumber('');
+                setUrl('');
+                setBanner('');
+                setTitle1('');
+                setDescription('');
+                setTitle2('');
+            })
+            .catch(e => {
+                alert('Please fill all inputs');
+                console.log(e);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
 
     return (
@@ -58,8 +61,7 @@ const CreatePage = () => {
                     <h2 className="title left">Create Page</h2>
 
                     <p className="text left">
-                        The created Page will be available for management in the
-                        Control Panel.
+                        The created Page will be available for management in the Control Panel.
                     </p>
 
                     <div className="create__content">
@@ -127,13 +129,16 @@ const CreatePage = () => {
                     </div>
 
                     <div className="create__button--content">
-                        {isLoading
-                        ? <button className="button create__button disabled">
-                            Loading..
-                        </button>
-                        : <button className="button create__button default__hover" onClick={createPageFunc}>
-                            Create
-                        </button>}
+                        {isLoading ? (
+                            <button className="button create__button disabled">Loading..</button>
+                        ) : (
+                            <button
+                                className="button create__button default__hover"
+                                onClick={createPageFunc}
+                            >
+                                Create
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
