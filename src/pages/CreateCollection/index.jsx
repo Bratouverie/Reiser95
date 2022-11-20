@@ -2,7 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import File from '../../common/File';
 import Input from '../../common/Input';
+import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 import { getAccountsList } from '../../functions/data';
+import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 
 import './index.css';
 
@@ -63,12 +65,19 @@ const DisplayThemes = {
 const SOCIAL_LINKS_ARR = Object.values(SocialLinks);
 const OPENSEA_CATEGORY_ARR = Object.values(OpenSeaCategory);
 const DISPLAIED_THEMES_ARR = Object.values(DisplayThemes);
-console.log({ DISPLAIED_THEMES_ARR });
+
 const CreateCollection = () => {
     const pages = useSelector(state => state.pages);
     const accounts = useSelector(state => state.accounts);
     const blockchains = useSelector(state => state.blockchains);
     const tokens = useSelector(state => state.tokens);
+
+    const { state, request, onClearState } = useRequest({
+        requestType: REQUEST_TYPE.DATA,
+        method: HTTP_METHODS.POST,
+        url: 'collection/',
+        isAuth: true,
+    });
 
     const [logo, setLogo] = useState('');
     const [adminSmart, setAdminSmart] = useState('');
@@ -91,8 +100,6 @@ const CreateCollection = () => {
     const [blockchainId, setBlockchainId] = useState('');
     const [tokenId, setTokenId] = useState('');
     const [displayTheme, setDisplayTheme] = useState(DisplayThemes.PADDED.value);
-
-    console.log({ tokenId });
 
     const changeBrandHandler = useCallback(id => {
         setBrandId(id);
@@ -120,6 +127,82 @@ const CreateCollection = () => {
     const changeThemeHandler = useCallback(theme => {
         setDisplayTheme(theme);
     }, []);
+
+    const onSubmitHandler = useCallback(() => {
+        let formData = new FormData();
+
+        formData.append('link_opensea', social.opensea);
+        formData.append('link_discord', social.discord);
+        formData.append('link_instagram', social.instagram);
+        formData.append('link_twitter', social.twitter);
+        formData.append('logo', logo);
+        formData.append('featured', featuredImage);
+        formData.append('banner', banner);
+        formData.append('name', name);
+        formData.append('url', checkbrandcom);
+        formData.append('url_opensea', opensea);
+        formData.append('category_opensea', openSeaCategory);
+        formData.append('percentage_fee', percentageFee);
+        formData.append('display_theme', displayTheme);
+        formData.append('description', descriprion);
+        formData.append('smart_contract_address', adminSmart);
+        formData.append('page', brandId);
+        formData.append('account', accountId);
+        formData.append('blockchain', blockchainId);
+        formData.append('payment_tokens', tokenId);
+
+        request({ data: formData });
+    }, [
+        social,
+        logo,
+        featuredImage,
+        banner,
+        name,
+        checkbrandcom,
+        opensea,
+        openSeaCategory,
+        percentageFee,
+        displayTheme,
+        descriprion,
+        adminSmart,
+        brandId,
+        accountId,
+        blockchainId,
+        tokenId,
+    ]);
+
+    useEffect(() => {
+        if (state && state.error) {
+            alert(state.error);
+        }
+    }, [state.error]);
+
+    useEffect(() => {
+        if (state && state.result) {
+            setLogo('');
+            setAdminSmart('');
+            setFeaturedImage('');
+            setBanner('');
+            setName('');
+            setOpensea('');
+            setDescriprion('');
+            setCheckbrandcom('');
+            setOpenSeaCategory(OpenSeaCategory.ART);
+            setBrandId('');
+            setAccountId('');
+            setSocial({
+                opensea: '',
+                discord: '',
+                instagram: '',
+                twitter: '',
+            });
+            setPercentageFee('');
+            setBlockchainId('');
+            setTokenId('');
+            setDisplayTheme('');
+            onClearState();
+        }
+    }, [state]);
 
     return (
         <div className="default__padding createpage">
@@ -355,7 +438,7 @@ const CreateCollection = () => {
                                     className="select create__item--select"
                                     onChange={blockchainChangeHandler}
                                 >
-                                    {blockchains.blockchains.map(b => (
+                                    {(blockchains.blockchains || []).map(b => (
                                         <option key={b.id} value={b.id}>
                                             {b.name}
                                         </option>
@@ -470,22 +553,27 @@ const CreateCollection = () => {
 
                     <div className="create__button--content">
                         <div className="create__button--wrapper">
-                            <button className="button create__button default__hover">Create</button>
+                            <button
+                                className="button create__button default__hover"
+                                onClick={onSubmitHandler}
+                            >
+                                Create
+                            </button>
 
-                            <button className="button create__button filled">
+                            {/* <button className="button create__button filled">
                                 Upload in Blockchane
                             </button>
 
                             <button className="button create__button default__hover delete">
                                 Delete Collection
-                            </button>
+                            </button> */}
                         </div>
 
-                        <div className="create__button--wrapper">
+                        {/* <div className="create__button--wrapper">
                             <button className="button create__button default__hover">
                                 Submit changes
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
