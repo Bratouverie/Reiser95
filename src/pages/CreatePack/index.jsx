@@ -1,12 +1,17 @@
-import React, { useState, useMemo } from 'react';
+import _, { uniqueId } from 'lodash';
+import React, { useState, useMemo, useCallback } from 'react';
 import FileDropzone from '../../common/FileDropzone';
-import Input from '../../common/Input';
+import Input, { INPUT_TYPE } from '../../common/Input';
+import { ONLY_NUMBERS_REGEX_ONLY_G } from '../../const /regExp';
 import { useFileDropzone } from '../../hooks/useFileDropzone';
+import { generateNumericIndicator } from '../../utils/generateNumericIndicator';
 import { getFileNameAndExt } from '../../utils/getFilenameAndExt';
 
 import './index.css';
 
 const UPLOAD_FILES_MAX_LIMIT = 1000;
+const MAX_NUMERIC_INDICATOR_START = 1000;
+const ONE_HUNDRED = 100;
 
 // FILE TYPE
 // type FileValue = {
@@ -23,13 +28,31 @@ const UPLOAD_FILES_MAX_LIMIT = 1000;
 //     preview: "blob:http://localhost:3000/8e020a77-9e32-4fbe-a1fe-6015bca163ea",
 // }
 
+const TOKEN_PRICE_TYPE = {
+    AUCTION: 'auction',
+    PRICE: 'price',
+    NO_PRICE: 'no_price',
+};
+
+const ROYALTY_DESTRIBIUTION = {
+    percentage: '',
+    wallet: '',
+};
+
 const CreatePack = () => {
     const [name, setName] = useState('');
-    const [tokenName, setTokenName] = useState('Common name');
-    const [numbering, setNumbering] = useState('');
+    const [tokenCommonName, setTokenCommonName] = useState('Common name');
+    const [numbering, setNumbering] = useState('1');
     const [tokenPrice, setTokenPrice] = useState('');
     const [investorRoyalty, setInvestorRoyalty] = useState('');
     const [creatorRoyalty, setCreatorRoyalty] = useState('');
+    const [isTokenNameEqualFileName, setIsTokenNameEqualFileName] = useState(false);
+    const [isAuction, setIsAuction] = useState(false);
+    const [isNoPrice, setIsNoPrice] = useState(false);
+    const [creatorRoyaltyDestribution, setCreatorRoyaltyDestribution] = useState([]);
+    const [creatorRoyaltyInput, setCreatorRoyaltyInput] = useState(null);
+    const [incomeRoyaltyDestribution, setIncomeRoyaltyDestribution] = useState([]);
+    const [incomeRoyaltyInput, setIncomeRoyaltyInput] = useState(null);
 
     const {
         values: tokenImgValues,
@@ -56,21 +79,33 @@ const CreatePack = () => {
 
         const res = [];
 
-        tokenImgValues.map(tiv => {
+        tokenImgValues.map((tiv, i) => {
             const fileNameAndExt = getFileNameAndExt(tiv.file.name);
 
-            if (res.some(r => r.numericIndicator === fileNameAndExt.fileName)) {
+            if (res.some(r => r.tokenImgName === fileNameAndExt.fileName)) {
                 return null;
             }
 
             const tokenPreviewImg = tokenPreviewValues.find(tpv => tpv.file.name === tiv.file.name);
+            const numericIndicator = generateNumericIndicator(Number(numbering) + i);
 
             res.push({
-                name: tokenName,
-                numericIndicator: fileNameAndExt.fileName,
+                nameComponent: (
+                    <>
+                        {isTokenNameEqualFileName ? (
+                            <>{fileNameAndExt.fileName}</>
+                        ) : (
+                            <>
+                                {tokenCommonName}{' '}
+                                <span className="green__c">{numericIndicator}</span>
+                            </>
+                        )}
+                    </>
+                ),
+                numericIndicator,
                 tokenImgName: tiv.file.name,
-                tokenPreviewName: tokenPreviewImg ? tokenPreviewImg.file.name : null,
                 tokenImgFile: tiv.file,
+                tokenPreviewName: tokenPreviewImg ? tokenPreviewImg.file.name : null,
                 tokenPreviewFile: tokenPreviewImg ? tokenPreviewImg.file : null,
                 tokenPrice,
                 investorRoyalty,
@@ -78,15 +113,159 @@ const CreatePack = () => {
             });
         });
 
-        return res.sort((a, b) => Number(a.numericIndicator) - Number(b.numericIndicator));
+        return res;
     }, [
+        numbering,
         tokenImgValues,
         tokenPreviewValues,
-        tokenName,
+        tokenCommonName,
         tokenPrice,
         investorRoyalty,
         creatorRoyalty,
+        isTokenNameEqualFileName,
     ]);
+
+    const onMakeTokenNameEqualToFileNameHandler = useCallback(() => {
+        setIsTokenNameEqualFileName(p => !p);
+    }, []);
+
+    const onSelectTokenNameForPayment = useCallback(event => {
+        console.log({ value: event.target.value });
+    }, []);
+
+    const onAuctionClickHandler = useCallback(() => {
+        setIsAuction(p => !p);
+    }, []);
+
+    const onNoPriceClickHandler = useCallback(() => {
+        setIsNoPrice(p => !p);
+    }, []);
+
+    const onPriceInputChange = useCallback(e => {
+        setTokenPrice(e.target.value);
+    }, []);
+
+    const onCreatorRoyaltyInputPercentageChange = useCallback(
+        e => {
+            if (creatorRoyaltyInput) {
+                const value = e.currentTarget.value.match(ONLY_NUMBERS_REGEX_ONLY_G);
+
+                const valueStr = value && value.join('');
+
+                if (Number(valueStr) <= ONE_HUNDRED) {
+                    setCreatorRoyaltyInput(p => ({
+                        ...p,
+                        percentage: valueStr,
+                    }));
+                }
+            }
+        },
+        [creatorRoyaltyInput],
+    );
+
+    const onCreatorRoyaltyInputWalletChange = useCallback(
+        e => {
+            if (creatorRoyaltyInput) {
+                setCreatorRoyaltyInput(p => ({
+                    ...p,
+                    wallet: e.target.value,
+                }));
+            }
+        },
+        [creatorRoyaltyInput],
+    );
+
+    const addCreatorRoyaltyWallet = useCallback(() => {
+        if (!creatorRoyaltyInput) {
+            setCreatorRoyaltyInput(ROYALTY_DESTRIBIUTION);
+        }
+    }, [creatorRoyaltyInput]);
+
+    const saveRoyaltyWalletHandler = useCallback(() => {
+        const sumRoyaltyPerc = creatorRoyaltyDestribution.reduce(
+            (a, c) => a + Number(c.percentage),
+            0,
+        );
+        if (
+            creatorRoyaltyInput &&
+            creatorRoyaltyInput.percentage &&
+            creatorRoyaltyInput.wallet &&
+            sumRoyaltyPerc + Number(creatorRoyaltyInput.percentage) <= ONE_HUNDRED
+        ) {
+            setCreatorRoyaltyDestribution(p => [
+                ...p,
+                { id: _.uniqueId('creatorRoyalty_'), ...creatorRoyaltyInput },
+            ]);
+
+            setCreatorRoyaltyInput(null);
+        }
+    }, [creatorRoyaltyInput, creatorRoyaltyDestribution]);
+
+    const deleteCreatorDestributionItem = useCallback(id => {
+        setCreatorRoyaltyDestribution(p => p.filter(el => el.id !== id));
+    }, []);
+
+    // INCOME
+
+    const onIncomeRoyaltyInputPercentageChange = useCallback(
+        e => {
+            if (incomeRoyaltyInput) {
+                const value = e.currentTarget.value.match(ONLY_NUMBERS_REGEX_ONLY_G);
+
+                const valueStr = value && value.join('');
+
+                if (Number(valueStr) <= ONE_HUNDRED) {
+                    setIncomeRoyaltyInput(p => ({
+                        ...p,
+                        percentage: valueStr,
+                    }));
+                }
+            }
+        },
+        [incomeRoyaltyInput],
+    );
+
+    const onIncomeRoyaltyInputWalletChange = useCallback(
+        e => {
+            if (incomeRoyaltyInput) {
+                setIncomeRoyaltyInput(p => ({
+                    ...p,
+                    wallet: e.target.value,
+                }));
+            }
+        },
+        [incomeRoyaltyInput],
+    );
+
+    const addIncomeRoyaltyWallet = useCallback(() => {
+        if (!incomeRoyaltyInput) {
+            setIncomeRoyaltyInput(ROYALTY_DESTRIBIUTION);
+        }
+    }, [incomeRoyaltyInput]);
+
+    const saveIncomeRoyaltyWalletHandler = useCallback(() => {
+        const sumRoyaltyPerc = incomeRoyaltyDestribution.reduce(
+            (a, c) => a + Number(c.percentage),
+            0,
+        );
+        if (
+            incomeRoyaltyInput &&
+            incomeRoyaltyInput.percentage &&
+            incomeRoyaltyInput.wallet &&
+            sumRoyaltyPerc + Number(incomeRoyaltyInput.percentage) <= ONE_HUNDRED
+        ) {
+            setIncomeRoyaltyDestribution(p => [
+                ...p,
+                { id: _.uniqueId('incomeRoyalty_'), ...incomeRoyaltyInput },
+            ]);
+
+            setIncomeRoyaltyInput(null);
+        }
+    }, [incomeRoyaltyInput, incomeRoyaltyDestribution]);
+
+    const deleteIncomeDestributionItem = useCallback(id => {
+        setIncomeRoyaltyDestribution(p => p.filter(el => el.id !== id));
+    }, []);
 
     return (
         <div className="default__padding createpage">
@@ -190,14 +369,14 @@ const CreatePack = () => {
                                     </div>
 
                                     {genrateTablesRow.map((row, i) => (
-                                        <div className="create__loading--item">
+                                        <div
+                                            className="create__loading--item"
+                                            key={row.numericIndicator}
+                                        >
                                             <p className="create__loading--text">{i + 1}</p>
 
                                             <p className="create__loading--text">
-                                                {tokenName}{' '}
-                                                <span className="green__c">
-                                                    {row.numericIndicator}
-                                                </span>
+                                                {row.nameComponent}
                                             </p>
 
                                             <p className="create__loading--text">
@@ -240,15 +419,27 @@ const CreatePack = () => {
                                 text="Choose a “common name” so that all tokens have the same name."
                                 placeholder="Enter common name"
                                 required
-                                value={tokenName}
-                                setValue={setTokenName}
+                                value={tokenCommonName}
+                                setValue={setTokenCommonName}
                             />
-                            <Input
-                                text="Token name = filename.ext - token name copies the token filename."
-                                placeholder="Token name = filename.ext"
-                                value={tokenName}
-                                setValue={setTokenName}
-                            />
+                            <p className="create__item--text">
+                                Token name = filename.ext - token name copies the token filename.
+                            </p>
+                            <button
+                                className={`button create__item--option ${
+                                    isTokenNameEqualFileName ? 'active' : ''
+                                }`}
+                                onClick={onMakeTokenNameEqualToFileNameHandler}
+                            >
+                                Token name = filename.ext
+                                {isTokenNameEqualFileName && (
+                                    <img
+                                        src="/assets/img/check.svg"
+                                        alt="icon"
+                                        className="create__item--icon"
+                                    />
+                                )}
+                            </button>
                         </div>
 
                         <div className="create__item half">
@@ -256,6 +447,8 @@ const CreatePack = () => {
                                 title="Numbering"
                                 text=" When choosing a common name, enter from which number the numbering will start."
                                 placeholder="1"
+                                type={INPUT_TYPE.NUMERIC}
+                                maxValue={MAX_NUMERIC_INDICATOR_START}
                                 required
                                 value={numbering}
                                 setValue={setNumbering}
@@ -269,65 +462,80 @@ const CreatePack = () => {
                                 The price at which the tokens will be put up for sale. All tokens in
                                 the pack will have the same price.
                             </p>
-
-                            <div className="control__item">
-                                <input
-                                    type="text"
-                                    className="input create__item--input"
-                                    placeholder="0.01"
-                                />
-
-                                <div className="create__item--select--inner small">
-                                    <select className="select create__item--select">
-                                        <option>Eth</option>
-                                        <option>Btc</option>
-                                        <option>Eur</option>
-                                        <option>Usd</option>
-                                    </select>
-
-                                    <img
-                                        src="/assets/img/arrow-select.png"
-                                        alt="arrow"
-                                        className="create__item--select--icon"
+                            <div className="createPack_priceItemContainer">
+                                <div className="createPack_priceItemContainer_priceInputWrapper">
+                                    <input
+                                        className={`input create__item--input createPack_priceItemContainer_priceInputWrapper_priceInput`}
+                                        placeholder="0.01"
+                                        value={tokenPrice}
+                                        onChange={onPriceInputChange}
                                     />
+
+                                    <div className="create__item--select--inner small">
+                                        <select
+                                            className="select create__item--select"
+                                            onChange={onSelectTokenNameForPayment}
+                                        >
+                                            <option>Eth</option>
+                                            <option>Btc</option>
+                                            <option>Eur</option>
+                                            <option>Usd</option>
+                                        </select>
+
+                                        <img
+                                            src="/assets/img/arrow-select.png"
+                                            alt="arrow"
+                                            className="create__item--select--icon"
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div className="create__item--select--prop">
-                                <button className="button create__item--option active">
-                                    Auction
-                                    <img
-                                        src="/assets/img/check.svg"
-                                        alt="icon"
-                                        className="create__item--icon"
-                                    />
-                                </button>
-                            </div>
-
-                            <div className="create__item--select--prop">
-                                <button className="button create__item--option active">
-                                    No price
-                                    <img
-                                        src="/assets/img/check.svg"
-                                        alt="icon"
-                                        className="create__item--icon"
-                                    />
-                                </button>
+                                <div className="create__item--select--prop half createPack_priceItemContainer_lastbuttonContainer">
+                                    <button
+                                        className={`button create__item--option ${
+                                            isAuction ? 'active' : ''
+                                        } createPack_priceItemContainer_button`}
+                                        onClick={onAuctionClickHandler}
+                                    >
+                                        Auction
+                                        {isAuction && (
+                                            <img
+                                                src="/assets/img/check.svg"
+                                                alt="icon"
+                                                className="create__item--icon"
+                                            />
+                                        )}
+                                    </button>
+                                </div>
+                                <div className="create__item--select--prop half createPack_priceItemContainer_lastbuttonContainer">
+                                    <button
+                                        className={`button create__item--option ${
+                                            isNoPrice ? 'active' : ''
+                                        } createPack_priceItemContainer_button
+                                        `}
+                                        onClick={onNoPriceClickHandler}
+                                    >
+                                        No price
+                                        {isNoPrice && (
+                                            <img
+                                                src="/assets/img/check.svg"
+                                                alt="icon"
+                                                className="create__item--icon"
+                                            />
+                                        )}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
                         <div className="create__item">
-                            <p className="create__item--title">Investor's royalty</p>
-
-                            <p className="create__item--text">
-                                Enter the percentage that will be accrued to the first owner of the
-                                token from the second and subsequent sales.
-                            </p>
-
-                            <input
-                                type="text"
-                                className="input create__item--input"
+                            <Input
+                                title="Investor's royalty"
+                                text="Enter the percentage that will be accrued to the first owner of the
+                            token from the second and subsequent sales."
                                 placeholder="4.5"
+                                required
+                                value={investorRoyalty}
+                                setValue={setInvestorRoyalty}
                             />
                         </div>
 
@@ -344,90 +552,94 @@ const CreatePack = () => {
                                 className="input create__item--input"
                                 placeholder="0.5"
                             />
+
+                            <Input
+                                title="Creator&rsquo;s royalty"
+                                text="Enter the percentage that will be accrued to the team of token
+                                creators from the first and subsequent sales."
+                                placeholder="0.5"
+                                required
+                                value={creatorRoyalty}
+                                setValue={setCreatorRoyalty}
+                            />
                         </div>
 
                         <div className="create__item">
                             <p className="create__item--title">Creator royalty distribution:</p>
 
-                            <div className="control__item">
-                                <input
-                                    type="text"
-                                    className="input control__input control__input--mini"
-                                    value="10"
-                                />
+                            {Boolean(
+                                creatorRoyaltyDestribution && creatorRoyaltyDestribution.length,
+                            ) &&
+                                creatorRoyaltyDestribution.map(wallet => (
+                                    <div className="control__item" key={wallet.id}>
+                                        <input
+                                            type="text"
+                                            className="input control__input control__input--mini"
+                                            disabled
+                                            value={wallet.percentage}
+                                        />
 
-                                <input
-                                    type="text"
-                                    className="input control__input"
-                                    value="0xeA09D6D8Cff17b11E45763d1025831de3E2DdaAF"
-                                />
+                                        <input
+                                            type="text"
+                                            className="input control__input"
+                                            value={wallet.wallet}
+                                            disabled
+                                        />
 
-                                <button className="button control__item--settings default__hover">
-                                    <img
-                                        src="/assets/img/settings-white.svg"
-                                        alt="settings"
-                                        className="control__item--settings--icon"
+                                        <button className="button control__item--settings default__hover">
+                                            <img
+                                                src="/assets/img/settings-white.svg"
+                                                alt="settings"
+                                                className="control__item--settings--icon"
+                                            />
+                                        </button>
+
+                                        <button
+                                            className="button control__item--confirm default__hover delete"
+                                            onClick={() => deleteCreatorDestributionItem(wallet.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                ))}
+                            {creatorRoyaltyInput && (
+                                <div className="control__item">
+                                    <input
+                                        type="text"
+                                        className="input control__input control__input--mini"
+                                        value={creatorRoyaltyInput.percentage}
+                                        onChange={onCreatorRoyaltyInputPercentageChange}
                                     />
-                                </button>
 
-                                <button className="button control__item--confirm default__hover delete">
-                                    Delete
-                                </button>
-                            </div>
-
-                            <div className="control__item">
-                                <input
-                                    type="text"
-                                    className="input control__input control__input--mini"
-                                    value="10"
-                                />
-
-                                <input
-                                    type="text"
-                                    className="input control__input"
-                                    value="0xeA09D6D8Cff17b11E45763d1025831de3E2DdaAF"
-                                />
-
-                                <button className="button control__item--settings default__hover">
-                                    <img
-                                        src="/assets/img/settings-white.svg"
-                                        alt="settings"
-                                        className="control__item--settings--icon"
+                                    <input
+                                        type="text"
+                                        className="input control__input"
+                                        placeholder="0xeA09D6D8Cff17b11E45763d1025831de3E2DdaAF"
+                                        value={creatorRoyaltyInput.wallet}
+                                        onChange={onCreatorRoyaltyInputWalletChange}
                                     />
-                                </button>
 
-                                <button className="button control__item--confirm default__hover delete">
-                                    Delete
-                                </button>
-                            </div>
+                                    <button className="button control__item--settings default__hover">
+                                        <img
+                                            src="/assets/img/settings-white.svg"
+                                            alt="settings"
+                                            className="control__item--settings--icon"
+                                        />
+                                    </button>
 
-                            <div className="control__item">
-                                <input
-                                    type="text"
-                                    className="input control__input control__input--mini"
-                                    placeholder="10"
-                                />
+                                    <button
+                                        className="button control__item--confirm default__hover save"
+                                        onClick={saveRoyaltyWalletHandler}
+                                    >
+                                        Save
+                                    </button>
+                                </div>
+                            )}
 
-                                <input
-                                    type="text"
-                                    className="input control__input"
-                                    placeholder="0xeA09D6D8Cff17b11E45763d1025831de3E2DdaAF"
-                                />
-
-                                <button className="button control__item--settings default__hover">
-                                    <img
-                                        src="/assets/img/settings-white.svg"
-                                        alt="settings"
-                                        className="control__item--settings--icon"
-                                    />
-                                </button>
-
-                                <button className="button control__item--confirm default__hover save">
-                                    Save
-                                </button>
-                            </div>
-
-                            <button className="button control__add default__hover">
+                            <button
+                                className="button control__add default__hover"
+                                onClick={addCreatorRoyaltyWallet}
+                            >
                                 + Add Wallet address
                             </button>
                         </div>
@@ -440,85 +652,79 @@ const CreatePack = () => {
                                 Enter the percentage distribution of income from the sale of tokens.
                             </p>
 
-                            <div className="control__item">
-                                <input
-                                    type="text"
-                                    className="input control__input control__input--mini"
-                                    value="10"
-                                />
+                            {Boolean(
+                                incomeRoyaltyDestribution && incomeRoyaltyDestribution.length,
+                            ) &&
+                                incomeRoyaltyDestribution.map(wallet => (
+                                    <div className="control__item" key={wallet.id}>
+                                        <input
+                                            type="text"
+                                            className="input control__input control__input--mini"
+                                            disabled
+                                            value={wallet.percentage}
+                                        />
 
-                                <input
-                                    type="text"
-                                    className="input control__input"
-                                    value="0xeA09D6D8Cff17b11E45763d1025831de3E2DdaAF"
-                                />
+                                        <input
+                                            type="text"
+                                            className="input control__input"
+                                            value={wallet.wallet}
+                                            disabled
+                                        />
 
-                                <button className="button control__item--settings default__hover">
-                                    <img
-                                        src="/assets/img/settings-white.svg"
-                                        alt="settings"
-                                        className="control__item--settings--icon"
+                                        <button className="button control__item--settings default__hover">
+                                            <img
+                                                src="/assets/img/settings-white.svg"
+                                                alt="settings"
+                                                className="control__item--settings--icon"
+                                            />
+                                        </button>
+
+                                        <button
+                                            className="button control__item--confirm default__hover delete"
+                                            onClick={() => deleteIncomeDestributionItem(wallet.id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </div>
+                                ))}
+                            {incomeRoyaltyInput && (
+                                <div className="control__item">
+                                    <input
+                                        type="text"
+                                        className="input control__input control__input--mini"
+                                        value={incomeRoyaltyInput.percentage}
+                                        onChange={onIncomeRoyaltyInputPercentageChange}
                                     />
-                                </button>
 
-                                <button className="button control__item--confirm default__hover delete">
-                                    Delete
-                                </button>
-                            </div>
-
-                            <div className="control__item">
-                                <input
-                                    type="text"
-                                    className="input control__input control__input--mini"
-                                    value="10"
-                                />
-
-                                <input
-                                    type="text"
-                                    className="input control__input"
-                                    value="0xeA09D6D8Cff17b11E45763d1025831de3E2DdaAF"
-                                />
-
-                                <button className="button control__item--settings default__hover">
-                                    <img
-                                        src="/assets/img/settings-white.svg"
-                                        alt="settings"
-                                        className="control__item--settings--icon"
+                                    <input
+                                        type="text"
+                                        className="input control__input"
+                                        placeholder="0xeA09D6D8Cff17b11E45763d1025831de3E2DdaAF"
+                                        value={incomeRoyaltyInput.wallet}
+                                        onChange={onIncomeRoyaltyInputWalletChange}
                                     />
-                                </button>
 
-                                <button className="button control__item--confirm default__hover delete">
-                                    Delete
-                                </button>
-                            </div>
+                                    <button className="button control__item--settings default__hover">
+                                        <img
+                                            src="/assets/img/settings-white.svg"
+                                            alt="settings"
+                                            className="control__item--settings--icon"
+                                        />
+                                    </button>
 
-                            <div className="control__item">
-                                <input
-                                    type="text"
-                                    className="input control__input control__input--mini"
-                                    placeholder="10"
-                                />
+                                    <button
+                                        className="button control__item--confirm default__hover save"
+                                        onClick={saveIncomeRoyaltyWalletHandler}
+                                    >
+                                        Save
+                                    </button>
+                                </div>
+                            )}
 
-                                <input
-                                    type="text"
-                                    className="input control__input"
-                                    placeholder="0xeA09D6D8Cff17b11E45763d1025831de3E2DdaAF"
-                                />
-
-                                <button className="button control__item--settings default__hover">
-                                    <img
-                                        src="/assets/img/settings-white.svg"
-                                        alt="settings"
-                                        className="control__item--settings--icon"
-                                    />
-                                </button>
-
-                                <button className="button control__item--confirm default__hover save">
-                                    Save
-                                </button>
-                            </div>
-
-                            <button className="button control__add default__hover">
+                            <button
+                                className="button control__add default__hover"
+                                onClick={addIncomeRoyaltyWallet}
+                            >
                                 + Add Wallet address
                             </button>
                         </div>
