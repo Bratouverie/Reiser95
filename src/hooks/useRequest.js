@@ -22,7 +22,6 @@ const sendRequest = async (axiosInstance, url, method, data, query, body, header
 
     const h = {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
         ...headers,
     };
 
