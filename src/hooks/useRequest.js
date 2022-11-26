@@ -22,7 +22,6 @@ const sendRequest = async (axiosInstance, url, method, data, query, body, header
 
     const h = {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
         ...headers,
     };
 
@@ -40,7 +39,6 @@ const sendRequest = async (axiosInstance, url, method, data, query, body, header
         };
     } catch (err) {
         const { response } = err;
-        console.log({ response });
 
         if (!response) {
             throw err;
@@ -89,13 +87,15 @@ export const useRequest = ({
     ]);
 
     const request = useCallback(
-        async ({ data, query, body, headers, callback }) => {
+        async ({ data, query, body, headers, beforeRequestFoo, callback }) => {
+            if (beforeRequestFoo) {
+                beforeRequestFoo();
+            }
+
             setState(p => ({
                 ...p,
                 isProcessing: true,
             }));
-
-            console.log({ requestType });
 
             const axiosInstance = axiosInstancesMap.get(requestType);
 
@@ -104,7 +104,8 @@ export const useRequest = ({
             if (isAuth) {
                 reqHeaders = {
                     ...reqHeaders,
-                    Authorization: `Bearer ${authInfo.accessToken}`,
+                    Authorization:
+                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY2OTQ2MjIzNCwianRpIjoiYzk1OTQ2YjAtMTcyMi00Y2I3LWEwMjctMDZhMThkNWUxNjBjIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY2OTQ2MjIzNCwiZXhwIjoxNjY5NDYzMTM0fQ.8YR3iRUBGoflHX60Buy2iWSiv55u5acznNuNf9wOcGk',
                 };
             }
 

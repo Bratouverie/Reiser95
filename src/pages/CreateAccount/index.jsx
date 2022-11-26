@@ -88,7 +88,6 @@ const CreateAccount = () => {
     }, []);
 
     useEffect(() => {
-        console.log(state.error);
         if (state && state.error) {
             alert(state.error);
         }

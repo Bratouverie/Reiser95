@@ -85,7 +85,7 @@ const CreateCollection = () => {
     const [banner, setBanner] = useState('');
     const [name, setName] = useState('');
     const [opensea, setOpensea] = useState('');
-    const [descriprion, setDescriprion] = useState('');
+    const [description, setDescriprion] = useState('');
     const [checkbrandcom, setCheckbrandcom] = useState('');
     const [openSeaCategory, setOpenSeaCategory] = useState(OpenSeaCategory.ART);
     const [brandId, setBrandId] = useState('');
@@ -144,7 +144,7 @@ const CreateCollection = () => {
         formData.append('category_opensea', openSeaCategory);
         formData.append('percentage_fee', percentageFee);
         formData.append('display_theme', displayTheme);
-        formData.append('description', descriprion);
+        formData.append('description', description);
         formData.append('smart_contract_address', adminSmart);
         formData.append('page', brandId);
         formData.append('account', accountId);
@@ -163,7 +163,7 @@ const CreateCollection = () => {
         openSeaCategory,
         percentageFee,
         displayTheme,
-        descriprion,
+        description,
         adminSmart,
         brandId,
         accountId,
@@ -278,7 +278,7 @@ const CreateCollection = () => {
                             text="Markdown syntax is supported. 0 of 1000 characters used."
                             textarea
                             required
-                            value={descriprion}
+                            value={description}
                             setValue={setDescriprion}
                         />
                         <div className="create__item">
