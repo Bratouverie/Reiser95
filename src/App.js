@@ -27,7 +27,7 @@ import CreateAccount from './pages/CreateAccount';
 import CreateCollection from './pages/CreateCollection';
 import CreatePack from './pages/CreatePack';
 import CreateItem from './pages/CreateItem';
-import InitialDataWrapper from './common/InitialDataWrapper';
+import InitialDataWrapper from './containers/InitialDataContainer';
 import { NotificationsContainer } from './containers/NotificationsContainer';
 import { NotificationProvider } from './context/NotificationContext';
 
@@ -42,9 +42,9 @@ const App = () => {
         <>
             <img src="/assets/img/main-bg.png" alt="bg" className="main__bg" />
             <StyledEngineProvider>
-                <InitialDataWrapper>
-                    <NotificationProvider>
-                        <NotificationsContainer>
+                <NotificationProvider>
+                    <NotificationsContainer>
+                        <InitialDataWrapper>
                             <Routes>
                                 <Route path="/" element={<Wrapper />}>
                                     <Route index element={<Main />} />
@@ -70,9 +70,9 @@ const App = () => {
                                     <Route path="*" element={<Navigate to="/" />} />
                                 </Route>
                             </Routes>
-                        </NotificationsContainer>
-                    </NotificationProvider>
-                </InitialDataWrapper>
+                        </InitialDataWrapper>
+                    </NotificationsContainer>
+                </NotificationProvider>
             </StyledEngineProvider>
         </>
     );
