@@ -18,6 +18,8 @@ import { getFileNameAndExt } from '../../utils/getFilenameAndExt';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 
 import './index.css';
+import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
+import { CustomSelect } from '../../common/CustomSelect';
 
 const UPLOAD_FILES_MAX_LIMIT = 1000;
 const MAX_NUMERIC_INDICATOR_START = 1000;
@@ -58,14 +60,18 @@ const CreatePack = () => {
     const [tokenCommonName, setTokenCommonName] = useState('Common name');
     const [numbering, setNumbering] = useState('1');
     const [tokenPrice, setTokenPrice] = useState('');
+    const [tokenIdForPayment, setTokenIdForPayment] = useState('');
     const [investorRoyalty, setInvestorRoyalty] = useState('');
     const [creatorRoyalty, setCreatorRoyalty] = useState('');
     const [isTokenNameEqualFileName, setIsTokenNameEqualFileName] = useState(false);
     const [isAuction, setIsAuction] = useState(false);
     const [isNoPrice, setIsNoPrice] = useState(false);
     const [properties, setProperties] = useState([]);
+    const [description, setDescriprion] = useState('');
     const [levels, setLevels] = useState([]);
     const [stats, setStats] = useState([]);
+    const [opensea, setOpensea] = useState('');
+    const [checkbrandcom, setCheckbrandcom] = useState('');
 
     const [creatorRoyaltyDestribution, setCreatorRoyaltyDestribution] = useState([]);
     const [incomeRoyaltyDestribution, setIncomeRoyaltyDestribution] = useState([]);
@@ -81,6 +87,13 @@ const CreatePack = () => {
 
     const { state: getBlockchainTokensState, request: onGetBlockchainTokens } = useRequest({
         url: 'currency_token/',
+        requestType: REQUEST_TYPE.DATA,
+        isAuth: true,
+    });
+
+    const { state: createPackState, request: onCreatePack } = useRequest({
+        url: 'pack/',
+        method: HTTP_METHODS.POST,
         requestType: REQUEST_TYPE.DATA,
         isAuth: true,
     });
@@ -176,16 +189,26 @@ const CreatePack = () => {
         setIsTokenNameEqualFileName(p => !p);
     }, []);
 
-    const onSelectTokenNameForPayment = useCallback(event => {
-        console.log({ value: event.target.value });
+    const onSelectTokenNameForPayment = useCallback(value => {
+        setTokenIdForPayment(value);
     }, []);
 
     const onAuctionClickHandler = useCallback(() => {
-        setIsAuction(p => !p);
+        setIsAuction(p => {
+            if (!p) {
+                setIsNoPrice(false);
+            }
+            return !p;
+        });
     }, []);
 
     const onNoPriceClickHandler = useCallback(() => {
-        setIsNoPrice(p => !p);
+        setIsNoPrice(p => {
+            if (!p) {
+                setIsAuction(false);
+            }
+            return !p;
+        });
     }, []);
 
     const onPriceInputChange = useCallback(e => {
@@ -210,8 +233,9 @@ const CreatePack = () => {
         setIncomeRoyaltyDestribution(p => p.filter(el => el.id !== id));
     }, []);
 
-    const onCollectionIdChangeHandler = useCallback(e => {
-        setCollectionId(e.target.value);
+    const onCollectionIdChangeHandler = useCallback(value => {
+        console.log({ value });
+        setCollectionId(value);
     }, []);
 
     const setPropertiesHandler = useCallback(properties => {
@@ -225,6 +249,106 @@ const CreatePack = () => {
     const setStatsHandler = useCallback(stats => {
         setStats(stats);
     }, []);
+
+    const onSavePackHandler = useCallback(() => {
+        let data = new FormData();
+
+        let status_price = 'price';
+
+        if (isAuction) {
+            status_price = 'auction';
+        }
+
+        if (isNoPrice) {
+            status_price = 'no_price';
+        }
+
+        if (
+            !collectionId ||
+            !name ||
+            !tokenPrice ||
+            !tokenIdForPayment ||
+            !description ||
+            !investorRoyalty ||
+            !creatorRoyalty
+        ) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Fill all required fields',
+            });
+
+            return;
+        }
+
+        const incomeSumRoyaltyPerc = incomeRoyaltyDestribution.reduce(
+            (a, c) => a + Number(c.percentage),
+            0,
+        );
+        const creatorSumRoyaltyPerc = creatorRoyaltyDestribution.reduce(
+            (a, c) => a + Number(c.percentage),
+            0,
+        );
+
+        if (incomeSumRoyaltyPerc < 100) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'The total royalties of the income must be equal to 100%',
+            });
+
+            return;
+        }
+
+        if (creatorSumRoyaltyPerc < 100) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'The total royalties of the creators must be equal to 100%',
+            });
+
+            return;
+        }
+
+        data.append('collection', collectionId);
+        data.append('type', 'standard');
+        data.append('name', name);
+        data.append('price', tokenPrice);
+        data.append('currency_token', tokenIdForPayment);
+        data.append('status_price', status_price);
+        data.append('investor_royalty', investorRoyalty);
+        data.append('creator_royalty', creatorRoyalty);
+        data.append('description', description);
+        data.append('unlockable', unlockable);
+        data.append('unlockable_content', unlockableContent);
+        data.append(
+            'income_distribution',
+            incomeRoyaltyDestribution.map(el => ({ wallet: el.wallet, percent: el.percent })),
+        );
+        data.append(
+            'creator_royalty_distribution',
+            creatorRoyaltyDestribution.map(el => ({ wallet: el.wallet, percent: el.percent })),
+        );
+        data.append('opensea', opensea);
+        data.append('checkbrandcom', checkbrandcom);
+
+        onCreatePack({
+            data,
+        });
+    }, [
+        collectionId,
+        name,
+        tokenPrice,
+        tokenIdForPayment,
+        incomeRoyaltyDestribution,
+        creatorRoyaltyDestribution,
+        description,
+        opensea,
+        checkbrandcom,
+        unlockable,
+        unlockableContent,
+        isAuction,
+        isNoPrice,
+        investorRoyalty,
+        creatorRoyalty,
+    ]);
 
     useEffect(() => {
         if (selectedBlockchain) {
@@ -240,7 +364,29 @@ const CreatePack = () => {
         if (getBlockchainTokensState.result && getBlockchainTokensState.result.data) {
             setAvailablePaymentTokens(getBlockchainTokensState.result.data);
         }
-    }, [getBlockchainTokensState.result]);
+
+        if (getBlockchainTokensState.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: getBlockchainTokensState.error.message,
+            });
+        }
+    }, [getBlockchainTokensState]);
+
+    useEffect(() => {
+        if (createPackState.result && createPackState.result.data) {
+            setAvailablePaymentTokens(createPackState.result.data);
+        }
+
+        if (createPackState.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: createPackState.error.message,
+            });
+        }
+    }, [createPackState]);
+
+    console.log({ collectionId });
 
     return (
         <>
@@ -443,7 +589,7 @@ const CreatePack = () => {
                                     tokens in the pack will have the same price.
                                 </p>
                                 <div className="createPack_priceItemContainer">
-                                    <div className="createPack_priceItemContainer_priceInputWrapper">
+                                    <div className="createPack_priceItemContainer_priceInputWrapper createPack_priceItemContainer_wrapper">
                                         <input
                                             className={`input create__item--input createPack_priceItemContainer_priceInputWrapper_priceInput`}
                                             placeholder="0.01"
@@ -451,33 +597,28 @@ const CreatePack = () => {
                                             onChange={onPriceInputChange}
                                         />
 
-                                        <div className="create__item--select--inner small">
-                                            <select
-                                                className="select create__item--select"
-                                                onChange={onSelectTokenNameForPayment}
-                                                disabled={!availablePaymentTokens.length}
-                                            >
-                                                {!availablePaymentTokens.length ? (
+                                        <div className="create__item--select--inner small createPack_priceItemContainer_priceInputWrapper_select_currency">
+                                            {!availablePaymentTokens.length ? (
+                                                <select
+                                                    className="select create__item--select"
+                                                    disabled={!availablePaymentTokens.length}
+                                                >
                                                     <option>Select collection</option>
-                                                ) : (
-                                                    availablePaymentTokens.map(t => (
-                                                        <option key={t.id} value={t.id}>
-                                                            {t.name}
-                                                        </option>
-                                                    ))
-                                                )}
-                                            </select>
-
-                                            {!!availablePaymentTokens.length && (
-                                                <img
-                                                    src="/assets/img/arrow-select.png"
-                                                    alt="arrow"
-                                                    className="create__item--select--icon"
+                                                </select>
+                                            ) : (
+                                                <CustomSelect
+                                                    optionsList={availablePaymentTokens.map(c => ({
+                                                        value: c.id,
+                                                        name: c.name,
+                                                    }))}
+                                                    value={tokenIdForPayment}
+                                                    placeholder="Select Collection"
+                                                    onChange={onSelectTokenNameForPayment}
                                                 />
                                             )}
                                         </div>
                                     </div>
-                                    <div className="create__item--select--prop half createPack_priceItemContainer_lastbuttonContainer">
+                                    <div className="create__item--select--prop half createPack_priceItemContainer_lastbuttonContainer createPack_priceItemContainer_wrapper">
                                         <button
                                             className={`button create__item--option ${
                                                 isAuction ? 'active' : ''
@@ -494,7 +635,7 @@ const CreatePack = () => {
                                             )}
                                         </button>
                                     </div>
-                                    <div className="create__item--select--prop half createPack_priceItemContainer_lastbuttonContainer">
+                                    <div className="create__item--select--prop half createPack_priceItemContainer_lastbuttonContainer createPack_priceItemContainer_wrapper">
                                         <button
                                             className={`button create__item--option ${
                                                 isNoPrice ? 'active' : ''
@@ -559,52 +700,31 @@ const CreatePack = () => {
                                     saveRoyaltyWalletHandler={saveIncomeRoyaltyWalletHandler}
                                 />
                             </div>
-
-                            <div className="create__item">
-                                <p className="create__item--title">External Link</p>
-
-                                <p className="create__item--text">
-                                    Item&rsquo;s page will include a link to this URL on this
-                                    item&rsquo;s detail page, so that users can click to learn more
-                                    about it. This link will be displayed on item&rsquo;s detail
-                                    CheckBrand.com page:
-                                </p>
-
-                                <input
-                                    type="text"
-                                    className="input create__item--input"
-                                    placeholder="https://OpenSea.io/collection/collectionname"
-                                />
-                            </div>
-
-                            <div className="create__item">
-                                <p className="create__item--text">
-                                    This link will be displayed on item&rsquo;s detail OpenSea.io
-                                    page:
-                                </p>
-
-                                <input
-                                    type="text"
-                                    className="input create__item--input"
-                                    placeholder="https://CheckBrand.com/pagename"
-                                />
-                            </div>
-
-                            <div className="create__item">
-                                <p className="create__item--title">Description</p>
-
-                                <p className="create__item--text">
-                                    The description will be included on the item&rsquo;s detail page
-                                    underneath its image.
-                                </p>
-
-                                <textarea
-                                    type="text"
-                                    className="input create__item--textarea"
-                                    placeholder="Provide a detailed description of your item."
-                                ></textarea>
-                            </div>
-
+                            <Input
+                                title="External Link"
+                                text="Item&rsquo;s page will include a link to this URL on this
+                                item&rsquo;s detail page, so that users can click to learn more
+                                about it. This link will be displayed on item&rsquo;s detail
+                                CheckBrand.com page:"
+                                placeholder="https://OpenSea.io/collection/collectionname"
+                                value={opensea}
+                                setValue={setOpensea}
+                            />
+                            <Input
+                                text="This link will be displayed on item&rsquo;s detail OpenSea.io page:"
+                                placeholder="https://checkbrand.com/collection/custom URL"
+                                value={checkbrandcom}
+                                setValue={setCheckbrandcom}
+                            />
+                            <Input
+                                title="Description"
+                                text="The description will be included on the item&rsquo;s detail page underneath its image."
+                                placeholder="Provide a detailed description of your item."
+                                textarea
+                                required
+                                value={description}
+                                setValue={setDescriprion}
+                            />
                             <div className="create__item">
                                 <p className="create__item--title">Collection</p>
 
@@ -614,21 +734,14 @@ const CreatePack = () => {
 
                                 {Boolean(collections && collections.collections) && (
                                     <div className="create__item--select--inner">
-                                        <select
-                                            className="select create__item--select"
+                                        <CustomSelect
+                                            optionsList={collections.collections.map(c => ({
+                                                value: c.id,
+                                                name: c.name,
+                                            }))}
+                                            value={collectionId}
+                                            placeholder="Select Collection"
                                             onChange={onCollectionIdChangeHandler}
-                                        >
-                                            {collections.collections.map(c => (
-                                                <option key={c.id} value={c.id}>
-                                                    {c.name}
-                                                </option>
-                                            ))}
-                                        </select>
-
-                                        <img
-                                            src="/assets/img/arrow-select.png"
-                                            alt="arrow"
-                                            className="create__item--select--icon"
                                         />
                                     </div>
                                 )}
@@ -876,24 +989,27 @@ const CreatePack = () => {
 
                         <div className="create__button--content">
                             <div className="create__button--wrapper">
-                                <button className="button create__button default__hover">
+                                <button
+                                    className="button create__button default__hover"
+                                    onClick={onSavePackHandler}
+                                >
                                     Upload on site
                                 </button>
 
-                                <button className="button create__button filled">
+                                {/* <button className="button create__button filled">
                                     Upload in Blockchane
                                 </button>
 
                                 <button className="button create__button default__hover delete">
                                     Delete Pack
-                                </button>
+                                </button> */}
                             </div>
 
-                            <div className="create__button--wrapper">
+                            {/* <div className="create__button--wrapper">
                                 <button className="button create__button default__hover">
                                     Submit changes
                                 </button>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </div>
@@ -921,4 +1037,4 @@ const CreatePack = () => {
     );
 };
 
-export default CreatePack;
+export default React.memo(CreatePack);
