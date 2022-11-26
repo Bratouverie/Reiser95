@@ -218,6 +218,37 @@
     .create__item--select--inner.small {
         margin: 1.5rem 0rem 0rem 0;
     }
+    .createPack_priceItemContainer .createPack_priceItemContainer_priceInputWrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 1000px) {
+    .createPack_priceItemContainer {
+        flex-direction: column !important;
+        gap: 10px;
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+    }
+
+    .createPack_priceItemContainer .createPack_priceItemContainer_wrapper {
+        width: 100% !important;
+    }
+
+    .createPack_priceItemContainer .createPack_priceItemContainer_priceInput {
+        max-width: 220px;
+    }
+    .createPack_priceItemContainer .createPack_priceItemContainer_lastbuttonContainer {
+        justify-content: flex-start !important;
+        align-items: flex-start !important;
+    }
+
+    .createPack_priceItemContainer
+        .createPack_priceItemContainer_priceInputWrapper_select_currency {
+        max-width: 250px;
+    }
 }
 
 .createPack_priceItemContainer {
@@ -230,6 +261,10 @@
     flex-wrap: wrap;
 }
 
+.createPack_priceItemContainer .createPack_priceItemContainer_priceInputWrapper_select_currency {
+    min-width: 220px;
+}
+
 .createPack_priceItemContainer .createPack_priceItemContainer_priceInput {
     justify-content: flex-start;
 }
@@ -238,16 +273,17 @@
 }
 
 .createPack_priceItemContainer
-    .createPack_priceItemContainer_priceInput
+    .createPack_priceItemContainer_priceInputWrapper
     .createPack_priceItemContainer_priceInputWrapper_priceInput {
     margin-top: 0;
+    min-width: 100px;
 }
 .createPack_priceItemContainer .createPack_priceItemContainer_button {
     margin-top: 0;
     width: 100%;
     max-width: 220px;
 }
-.createPack_priceItemContainer div {
+.createPack_priceItemContainer .createPack_priceItemContainer_wrapper {
     width: 33%;
     min-width: 200px;
     display: flex;
