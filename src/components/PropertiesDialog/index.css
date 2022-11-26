@@ -1,0 +1,101 @@
+.PropertiesDialog_dialog_paper {
+    padding: 20px;
+    border-radius: 16px !important;
+}
+
+.PropertiesDialog_dialog_removeBtn {
+    width: 46px;
+    height: 46px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid #393c3b;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+    color: #fff;
+}
+
+.PropertiesDialog_dialog_removeBtn:hover {
+    cursor: pointer;
+}
+
+.PropertiesDialog_dialog_crossIcon {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+.inputsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: flex-end;
+    margin-top: 16px;
+}
+
+.PropertiesDialog_dialog_label {
+    font-weight: 600;
+}
+
+.inputsContainer .PropertiesDialog_dialog_input {
+    margin-top: 0;
+    border-radius: 0;
+    height: 46px;
+    border: 1px solid #393c3b;
+    min-width: 0 !important;
+    margin-top: 8px;
+    background: rgba(0, 0, 0, 0.6);
+}
+.inputsContainer .PropertiesDialog_dialog_right_input {
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+.PropertiesDialog_dialog_inputContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.PropertiesDialog_dialog_add_more {
+    height: 56px;
+    border: 1px solid #393c3b;
+    border-radius: 8px;
+    min-width: 0 !important;
+    margin-top: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #006dba;
+    font-weight: 600;
+    width: 156px;
+}
+
+.PropertiesDialog_dialog_add_more:hover {
+    cursor: pointer;
+}
+
+.PropertiesDialog_dialog_save {
+    height: 56px;
+    margin-top: 25px !important;
+    border-radius: 8px;
+    border: none;
+    min-width: 0 !important;
+    margin-top: 8px;
+    background: #0082e6;
+    color: #fff;
+    font-weight: 600;
+    width: 100%;
+}
+
+.PropertiesDialog_dialog_save:hover {
+    cursor: pointer;
+}
+
+.PropertiesDialog_dialog_loaderContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 60px;
+}

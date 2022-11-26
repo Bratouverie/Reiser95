@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { ONLY_NUMBERS_REGEX_ONLY_G } from '../../const /regExp';
+import { ONLY_NUMBERS_REGEX_ONLY_G } from '../../const/regExp';
 
 export const INPUT_TYPE = {
     NUMERIC: 'numeric',
@@ -17,8 +17,9 @@ const Input = ({
     isLink = false,
     type,
     maxValue,
-    inputName,
+    name,
     className,
+    inputProps,
 }) => {
     const onInputChange = useCallback(
         e => {
@@ -30,7 +31,7 @@ const Input = ({
             const value = e.currentTarget.value.match(ONLY_NUMBERS_REGEX_ONLY_G);
 
             const valueStr = value && value.join('');
-            console.log({ valueStr });
+
             if (Number(valueStr) < maxValue) {
                 setValue(valueStr);
             }
@@ -46,16 +47,18 @@ const Input = ({
 
             {textarea ? (
                 <textarea
-                    name={inputName}
+                    {...inputProps}
+                    name={name}
                     type="text"
                     className="input create__item--textarea"
                     placeholder={placeholder}
                     value={value}
                     onChange={onInputChange}
-                ></textarea>
+                />
             ) : (
                 <input
-                    name={inputName}
+                    {...inputProps}
+                    name={name}
                     type={isLink ? '' : 'text'}
                     className={`input create__item${isLink ? '--link' : ''}--input`}
                     placeholder={placeholder}

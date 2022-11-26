@@ -1,0 +1,10 @@
+.centeredContainer {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #101010;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
