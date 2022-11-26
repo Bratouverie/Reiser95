@@ -242,17 +242,6 @@ const CreatePack = () => {
         }
     }, [getBlockchainTokensState.result]);
 
-    console.log({
-        availablePaymentTokens,
-    });
-
-    useEffect(() => {
-        addNotification({
-            type: NOTIFICATION_TYPES.ERROR,
-            text: 'Something went wrong',
-        });
-    }, []);
-
     return (
         <>
             <div className="default__padding createpage">

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import _ from 'lodash';
 
-const TIMEOUT_IN_MS = 300000;
+const TIMEOUT_IN_MS = 5000;
 
 const NotificationContext = React.createContext({});
 
@@ -68,13 +68,7 @@ const NotificationProvider = props => {
 
 NotificationProvider.defaultProps = {
     state: {
-        notifications: [
-            {
-                type: 'error',
-                text: 'somethingWentWrong',
-                id: 'dasdasd',
-            },
-        ],
+        notifications: [],
     },
 };
 export { NotificationContext, NotificationProvider };

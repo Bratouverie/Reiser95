@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { setAccounts } from '../../redux/slices/accounts';
@@ -6,8 +6,10 @@ import { setBlockchains } from '../../redux/slices/blockchains';
 import { setCollections } from '../../redux/slices/collections';
 import { setPages } from '../../redux/slices/pages';
 import { setTokens } from '../../redux/slices/tokens';
-import CenteredContainer from '../CenteredContainer';
-import Loader from '../Loader';
+import CenteredContainer from '../../common/CenteredContainer';
+import Loader from '../../common/Loader';
+import { NotificationContext } from '../../context/NotificationContext';
+import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 
 const InitialRequests = {
     PAGES: 'pages',
@@ -18,8 +20,12 @@ const InitialRequests = {
     PACKS: 'packs',
 };
 
-const InitialDataWrapper = ({ children }) => {
+const InitialDataContainer = ({ children }) => {
     const dispatch = useDispatch();
+
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
 
     const [loadingRequests, setSetLoadingRequests] = useState([]);
 
@@ -57,11 +63,25 @@ const InitialDataWrapper = ({ children }) => {
         if (stateGetPages && stateGetPages.result) {
             dispatch(setPages(stateGetPages.result.data));
         }
+
+        if (stateGetPages.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: stateGetPages.error.message,
+            });
+        }
     }, [stateGetPages]);
 
     useEffect(() => {
         if (stateGetAccounts && stateGetAccounts.result) {
             dispatch(setAccounts(stateGetAccounts.result.data));
+        }
+
+        if (stateGetAccounts.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: stateGetAccounts.error.message,
+            });
         }
     }, [stateGetAccounts]);
 
@@ -69,11 +89,25 @@ const InitialDataWrapper = ({ children }) => {
         if (stateGetBlockchains && stateGetBlockchains.result) {
             dispatch(setBlockchains(stateGetBlockchains.result.data));
         }
+
+        if (stateGetBlockchains.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: stateGetBlockchains.error.message,
+            });
+        }
     }, [stateGetBlockchains]);
 
     useEffect(() => {
         if (stateGetTokens && stateGetTokens.result) {
             dispatch(setTokens(stateGetTokens.result.data));
+        }
+
+        if (stateGetTokens.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: stateGetTokens.error.message,
+            });
         }
     }, [stateGetTokens]);
 
@@ -81,11 +115,25 @@ const InitialDataWrapper = ({ children }) => {
         if (stateGetCollections && stateGetCollections.result) {
             dispatch(setCollections(stateGetCollections.result.data));
         }
+
+        if (stateGetCollections.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: stateGetCollections.error.message,
+            });
+        }
     }, [stateGetCollections]);
 
     useEffect(() => {
         if (stateGetPacks && stateGetPacks.result) {
             dispatch(setCollections(stateGetPacks.result.data));
+        }
+
+        if (stateGetPacks.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: stateGetPacks.error.message,
+            });
         }
     }, [stateGetPacks]);
 
@@ -127,4 +175,4 @@ const InitialDataWrapper = ({ children }) => {
     return children;
 };
 
-export default React.memo(InitialDataWrapper);
+export default React.memo(InitialDataContainer);
