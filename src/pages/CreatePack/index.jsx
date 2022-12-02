@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useCallback, useContext } from 'react';
+import React, { useState, useMemo, useCallback, useContext, useRef } from 'react';
+import axios from 'axios';
 import _, { uniqueId } from 'lodash';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -16,10 +17,13 @@ import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { generateNumericIndicator } from '../../utils/generateNumericIndicator';
 import { getFileNameAndExt } from '../../utils/getFilenameAndExt';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
-
-import './index.css';
 import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 import { CustomSelect } from '../../common/CustomSelect';
+import AsyncQueue from '../../utils/asyncQueue';
+import Loader from '../../common/Loader';
+import { TOKEN_BY_PACK, CONFIRME_UPLOAD_TOKEN } from '../../const/http/API_URLS';
+
+import './index.css';
 
 const UPLOAD_FILES_MAX_LIMIT = 1000;
 const MAX_NUMERIC_INDICATOR_START = 1000;
@@ -46,7 +50,11 @@ const TOKEN_PRICE_TYPE = {
     NO_PRICE: 'no_price',
 };
 
+const FAKE_TOKEN =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDAwMjI1OCwianRpIjoiMDc3YjZkNjAtNGQ5Ny00ZDE2LTg2ODItYjY0Yjk5ZGFhMzc4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDAwMjI1OCwiZXhwIjoxNjcwMDA1ODU4fQ.m3V2hO_YJsiyrvOqMhal3QndYxG03pk4V6ELN88Cy-Y';
+
 const CreatePack = () => {
+    const authInfo = useSelector(state => state.auth);
     const collections = useSelector(state => state.collections);
     const blockchains = useSelector(state => state.blockchains);
 
@@ -54,15 +62,20 @@ const CreatePack = () => {
         actions: { addNotification },
     } = useContext(NotificationContext);
 
+    const requestsQueueRef = useRef(new AsyncQueue({ maxParallelTasks: 2 }));
+
     const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
+    const [createdPack, setCreatedPack] = useState({ id: '33cb653d-bad2-4579-be96-c5c2385e112c' });
 
     const [name, setName] = useState('');
     const [tokenCommonName, setTokenCommonName] = useState('Common name');
     const [numbering, setNumbering] = useState('1');
-    const [tokenPrice, setTokenPrice] = useState('');
-    const [tokenIdForPayment, setTokenIdForPayment] = useState('');
-    const [investorRoyalty, setInvestorRoyalty] = useState('');
-    const [creatorRoyalty, setCreatorRoyalty] = useState('');
+    const [tokenPrice, setTokenPrice] = useState(0.1);
+    const [tokenIdForPayment, setTokenIdForPayment] = useState(
+        'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
+    );
+    const [investorRoyalty, setInvestorRoyalty] = useState(0.5);
+    const [creatorRoyalty, setCreatorRoyalty] = useState(0.5);
     const [isTokenNameEqualFileName, setIsTokenNameEqualFileName] = useState(false);
     const [isAuction, setIsAuction] = useState(false);
     const [isNoPrice, setIsNoPrice] = useState(false);
@@ -81,6 +94,10 @@ const CreatePack = () => {
     const [unlockable, setUnlockable] = useState(false);
     const [unlockableContent, setUnlockableContent] = useState('');
 
+    const [numericIndicatorInProccess, setNumericIndicatorInProccess] = useState([]);
+    const [numericIndicatorDone, setNumericIndicatorDone] = useState([]);
+    const [numericIndicatorFailed, setNumericIndicatorFailed] = useState([]);
+    console.log({ numericIndicatorInProccess });
     const propertiesDialog = useDialog();
     const levelsDialog = useDialog();
     const statsDialog = useDialog();
@@ -162,6 +179,9 @@ const CreatePack = () => {
                         )}
                     </>
                 ),
+                name: isTokenNameEqualFileName
+                    ? fileNameAndExt.fileName
+                    : `${tokenCommonName} ${numericIndicator}`,
                 numericIndicator,
                 tokenImgName: tiv.file.name,
                 tokenImgFile: tiv.file,
@@ -234,7 +254,6 @@ const CreatePack = () => {
     }, []);
 
     const onCollectionIdChangeHandler = useCallback(value => {
-        console.log({ value });
         setCollectionId(value);
     }, []);
 
@@ -251,86 +270,117 @@ const CreatePack = () => {
     }, []);
 
     const onSavePackHandler = useCallback(() => {
-        let data = new FormData();
+        // let data = new FormData();
 
-        let status_price = 'price';
+        // let status_price = 'price';
 
-        if (isAuction) {
-            status_price = 'auction';
-        }
+        // if (isAuction) {
+        //     status_price = 'auction';
+        // }
 
-        if (isNoPrice) {
-            status_price = 'no_price';
-        }
+        // if (isNoPrice) {
+        //     status_price = 'no_price';
+        // }
 
-        if (
-            !collectionId ||
-            !name ||
-            !tokenPrice ||
-            !tokenIdForPayment ||
-            !description ||
-            !investorRoyalty ||
-            !creatorRoyalty
-        ) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: 'Fill all required fields',
-            });
+        // if (
+        //     !collectionId ||
+        //     !name ||
+        //     !tokenPrice ||
+        //     !tokenIdForPayment ||
+        //     !description ||
+        //     !investorRoyalty ||
+        //     !creatorRoyalty
+        // ) {
+        //     addNotification({
+        //         type: NOTIFICATION_TYPES.ERROR,
+        //         text: 'Fill all required fields',
+        //     });
 
-            return;
-        }
+        //     return;
+        // }
 
-        const incomeSumRoyaltyPerc = incomeRoyaltyDestribution.reduce(
-            (a, c) => a + Number(c.percentage),
-            0,
-        );
-        const creatorSumRoyaltyPerc = creatorRoyaltyDestribution.reduce(
-            (a, c) => a + Number(c.percentage),
-            0,
-        );
+        // const incomeSumRoyaltyPerc = incomeRoyaltyDestribution.reduce(
+        //     (a, c) => a + Number(c.percentage),
+        //     0,
+        // );
+        // const creatorSumRoyaltyPerc = creatorRoyaltyDestribution.reduce(
+        //     (a, c) => a + Number(c.percentage),
+        //     0,
+        // );
 
-        if (incomeSumRoyaltyPerc < 100) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: 'The total royalties of the income must be equal to 100%',
-            });
+        // if (incomeSumRoyaltyPerc < 100) {
+        //     addNotification({
+        //         type: NOTIFICATION_TYPES.ERROR,
+        //         text: 'The total royalties of the income must be equal to 100%',
+        //     });
 
-            return;
-        }
+        //     return;
+        // }
 
-        if (creatorSumRoyaltyPerc < 100) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: 'The total royalties of the creators must be equal to 100%',
-            });
+        // if (creatorSumRoyaltyPerc < 100) {
+        //     addNotification({
+        //         type: NOTIFICATION_TYPES.ERROR,
+        //         text: 'The total royalties of the creators must be equal to 100%',
+        //     });
 
-            return;
-        }
+        //     return;
+        // }
 
-        data.append('collection', collectionId);
-        data.append('type', 'standard');
-        data.append('name', name);
-        data.append('price', tokenPrice);
-        data.append('currency_token', tokenIdForPayment);
-        data.append('status_price', status_price);
-        data.append('investor_royalty', investorRoyalty);
-        data.append('creator_royalty', creatorRoyalty);
-        data.append('description', description);
-        data.append('unlockable', unlockable);
-        data.append('unlockable_content', unlockableContent);
-        data.append(
-            'income_distribution',
-            incomeRoyaltyDestribution.map(el => ({ wallet: el.wallet, percent: el.percent })),
-        );
-        data.append(
-            'creator_royalty_distribution',
-            creatorRoyaltyDestribution.map(el => ({ wallet: el.wallet, percent: el.percent })),
-        );
-        data.append('opensea', opensea);
-        data.append('checkbrandcom', checkbrandcom);
+        // data.append('collection', collectionId);
+        // data.append('type', 'standard');
+        // data.append('name', name);
+        // data.append('price', Number(tokenPrice));
+        // data.append('currency_token', tokenIdForPayment);
+        // data.append('status_price', status_price);
+        // data.append('investor_royalty', Number(investorRoyalty));
+        // data.append('creator_royalty', Number(creatorRoyalty));
+        // data.append('description', description);
+        // data.append('unlockable', unlockable);
+        // data.append('unlockable_content', unlockableContent);
+        // data.append(
+        //     'income_distribution',
+        //     incomeRoyaltyDestribution.map(el => ({ wallet: el.wallet, percent: Number(el.percentage) })),
+        // );
+        // data.append(
+        //     'creator_royalty_distribution',
+        //     creatorRoyaltyDestribution.map(el => ({ wallet: el.wallet, percent: Number(el.percentage) })),
+        // );
+        // data.append('opensea', opensea);
+        // data.append('checkbrandcom', checkbrandcom);
+
+        const mockData = {
+            checkbrandcom: 'eqwqeweqw',
+            collection: '5dfbc65f-0275-48ab-b3aa-edbe2d02897b',
+            creator_royalty: 0.5,
+            investor_royalty: 0.5,
+            creator_royalty_distribution: [
+                {
+                    wallet: 'rwqeqweqw',
+                    percent: 100,
+                },
+            ],
+            currency_token: 'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
+            description: 'eqweqweqw',
+            income_distribution: [
+                {
+                    wallet: 'eqwewewq',
+                    percent: 100,
+                },
+            ],
+            name: 'eqweqw2',
+            opensea: 'eqeeqwqewweq',
+            price: 0.01,
+            status_price: 'price',
+            type: 'standard',
+            unlockable: false,
+            unlockable_content: '',
+            close: false,
+        };
+
+        console.log({ mockData });
 
         onCreatePack({
-            data,
+            data: mockData,
         });
     }, [
         collectionId,
@@ -349,6 +399,162 @@ const CreatePack = () => {
         investorRoyalty,
         creatorRoyalty,
     ]);
+
+    const onUploadTokensHandler = useCallback(async () => {
+        if (!genrateTablesRow.length || !createdPack) {
+            return;
+        }
+
+        await Promise.all(
+            genrateTablesRow.map(token => {
+                return new Promise(resolve => {
+                    const task = async () => {
+                        setNumericIndicatorInProccess(p => [...p, token.numericIndicator]);
+                        const res = await axios.request({
+                            method: HTTP_METHODS.POST,
+                            url: TOKEN_BY_PACK,
+                            headers: {
+                                'Content-Type': 'application/json',
+                                Authorization: authInfo.accessToken || `Bearer ${FAKE_TOKEN}`,
+                            },
+                            data: {
+                                pack: createdPack.id,
+                                name: token.name,
+                                price: token.tokenPrice,
+                                currency_token: tokenIdForPayment,
+                                investor_royalty: investorRoyalty,
+                                creator_royalty: creatorRoyalty,
+                                file_1_name_ext: token.tokenImgName,
+                                file_2_name_ext: token.tokenPreviewName,
+                            },
+                        });
+
+                        if (!res.data.file_1_pre_signed_url_data) {
+                            throw 'Bad request';
+                        }
+
+                        const dataImage = new FormData();
+
+                        dataImage.append('key', res.data.file_1_pre_signed_url_data.fields.key);
+                        dataImage.append(
+                            'AWSAccessKeyId',
+                            res.data.file_1_pre_signed_url_data.fields.AWSAccessKeyId,
+                        );
+                        dataImage.append(
+                            'policy',
+                            res.data.file_1_pre_signed_url_data.fields.policy,
+                        );
+                        dataImage.append(
+                            'signature',
+                            res.data.file_1_pre_signed_url_data.fields.signature,
+                        );
+                        dataImage.append('file', token.tokenImgFile);
+
+                        try {
+                            await axios.request({
+                                method: HTTP_METHODS.POST,
+                                url: res.data.file_1_pre_signed_url_data.url,
+                                headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                },
+                                data: dataImage,
+                            });
+                        } catch (e) {
+                            console.log({ e });
+                            throw `Token ${token.name} image upload failed`;
+                        }
+
+                        const dataPreview = new FormData();
+
+                        dataPreview.append('key', res.data.file_2_pre_signed_url_data.fields.key);
+                        dataPreview.append(
+                            'AWSAccessKeyId',
+                            res.data.file_2_pre_signed_url_data.fields.AWSAccessKeyId,
+                        );
+                        dataPreview.append(
+                            'policy',
+                            res.data.file_2_pre_signed_url_data.fields.policy,
+                        );
+                        dataPreview.append(
+                            'signature',
+                            res.data.file_2_pre_signed_url_data.fields.signature,
+                        );
+                        dataPreview.append('file', token.tokenPreviewFile);
+
+                        try {
+                            await axios.request({
+                                method: HTTP_METHODS.POST,
+                                url: res.data.file_1_pre_signed_url_data.url,
+                                headers: {
+                                    'Content-Type': 'multipart/form-data',
+                                },
+                                data: dataPreview,
+                            });
+                        } catch (e) {
+                            console.log(e);
+                            throw `Token ${token.name} preview upload failed`;
+                        }
+
+                        let updateToken;
+                        try {
+                            updateToken = await axios.request({
+                                method: HTTP_METHODS.PATCH,
+                                url: CONFIRME_UPLOAD_TOKEN(res.data.id),
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    Authorization: authInfo.accessToken || `Bearer ${FAKE_TOKEN}`,
+                                },
+                                data: {
+                                    file_1_name_ext: res.data.file_1_pre_signed_url_data.fields.key,
+                                    file_2_name_ext: res.data.file_2_pre_signed_url_data.fields.key,
+                                },
+                            });
+                        } catch (e) {
+                            console.log(e);
+                            throw `Token ${token.name} update failed`;
+                        }
+
+                        return updateToken;
+                    };
+
+                    const getUploadsUrls = urgently => {
+                        requestsQueueRef.current
+                            .addTask(
+                                {
+                                    key: token.numericIndicator,
+                                    task,
+                                },
+                                urgently,
+                            )
+                            .then(res => {
+                                setNumericIndicatorInProccess(p => {
+                                    return p.filter(el => el !== token.numericIndicator);
+                                });
+                                setNumericIndicatorDone(p => [...p, token.numericIndicator]);
+                                return resolve({
+                                    numericId: token.numericIndicator,
+                                });
+                            })
+                            .catch(e => {
+                                console.log({ e });
+                                setNumericIndicatorFailed(p => [...p, token.numericIndicator]);
+                                setNumericIndicatorInProccess(p => {
+                                    return p.filter(el => el !== token.numericIndicator);
+                                });
+                                addNotification({
+                                    type: NOTIFICATION_TYPES.ERROR,
+                                    text: `${e}`,
+                                });
+                                // setTimeout(() => getUploadsUrls(true), 5000);
+                            });
+                    };
+
+                    getUploadsUrls(true);
+                    console.log({ numericIndicatorInProccess });
+                });
+            }),
+        );
+    }, [genrateTablesRow, authInfo.accessToken, createdPack, tokenIdForPayment]);
 
     useEffect(() => {
         if (selectedBlockchain) {
@@ -375,7 +581,12 @@ const CreatePack = () => {
 
     useEffect(() => {
         if (createPackState.result && createPackState.result.data) {
-            setAvailablePaymentTokens(createPackState.result.data);
+            setCreatedPack(createPackState.result.data);
+
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Pack successfuly created, now you are able to upload pack tokens',
+            });
         }
 
         if (createPackState.error) {
@@ -385,8 +596,6 @@ const CreatePack = () => {
             });
         }
     }, [createPackState]);
-
-    console.log({ collectionId });
 
     return (
         <>
@@ -527,12 +736,29 @@ const CreatePack = () => {
                                                     </span>
                                                 </p>
 
-                                                <p className="create__loading--text">100%</p>
+                                                <p className="create_pack_proccess_status_container">
+                                                    {numericIndicatorInProccess.includes(
+                                                        row.numericIndicator,
+                                                    ) && (
+                                                        <Loader className="create_pack_table_loader" />
+                                                    )}
+
+                                                    {numericIndicatorDone.includes(
+                                                        row.numericIndicator,
+                                                    ) && <span className="green__c">Done</span>}
+
+                                                    {numericIndicatorFailed.includes(
+                                                        row.numericIndicator,
+                                                    ) && <span className="red__c">Failed</span>}
+                                                </p>
                                             </div>
                                         ))}
                                     </div>
 
-                                    <button className="button create__loading--button">
+                                    <button
+                                        className="button create__loading--button"
+                                        onClick={onUploadTokensHandler}
+                                    >
                                         Submit Upload
                                     </button>
                                 </div>
@@ -992,6 +1218,7 @@ const CreatePack = () => {
                                 <button
                                     className="button create__button default__hover"
                                     onClick={onSavePackHandler}
+                                    disabled={createPackState.isProcessing}
                                 >
                                     Upload on site
                                 </button>

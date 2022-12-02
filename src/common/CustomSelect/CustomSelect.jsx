@@ -8,9 +8,8 @@ import './index.css';
 
 const CustomSelect = props => {
     const { optionsList, value, placeholder, onChange } = props;
-    console.log({ optionsList });
+
     const onChangeHandler = useCallback(e => {
-        console.log({ value: e.target.value });
         onChange(e.target.value);
     }, []);
 
