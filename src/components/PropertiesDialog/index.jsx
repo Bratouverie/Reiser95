@@ -12,6 +12,7 @@ const PropertiesDialog = props => {
     const { open, onClose, properties: propertiesP, setPropertiesHandler } = props;
 
     const [propertiesList, setPropertiesList] = useState([]);
+    const [autoCompliteProperties, setAutoCompliteProperties] = useState([]);
 
     const { state: gerPropertiesRS, request: getProperties } = useRequest({
         url: 'properties/',
@@ -61,10 +62,15 @@ const PropertiesDialog = props => {
         setProperties(p => p.filter(property => property.id !== id));
     }, []);
 
-    const onSaveHandler = useCallback(() => {}, [properties]);
+    const onSaveHandler = useCallback(() => {
+        const filteredProperties = properties.filter(p => p.name && p.type);
+
+        setPropertiesHandler([...filteredProperties, ...autoCompliteProperties]);
+        onClose();
+    }, [properties, autoCompliteProperties]);
 
     const setPropertiesValue = useCallback(option => {
-        console.log({ option });
+        setAutoCompliteProperties(option);
     }, []);
 
     useEffect(() => {
@@ -76,8 +82,6 @@ const PropertiesDialog = props => {
             setPropertiesList(gerPropertiesRS.result.data);
         }
     }, [gerPropertiesRS.result]);
-
-    console.log({ propertiesList });
 
     return (
         <Dialog
@@ -98,15 +102,24 @@ const PropertiesDialog = props => {
                 disableCloseOnSelect
                 className={css.autocomplite}
                 label="Already existing properties"
-                defaultValue={propertiesP.map(p => ({
-                    name: `${p.name} - ${p.type}`,
-                    value: p.id,
-                }))}
+                defaultValue={propertiesP
+                    .filter(p => p.value)
+                    .map(p => ({
+                        label: p.label,
+                        value: p.value,
+                        name: p.name,
+                        type: p.type,
+                    }))}
                 isOptionEqualToValue={(option, value) => {
                     return value.value === option.value;
                 }}
-                options={propertiesList.map(p => ({ name: `${p.name} - ${p.type}`, value: p.id }))}
-                getOptionLabel={option => option.name}
+                options={propertiesList.map(p => ({
+                    label: `${p.name} - ${p.type}`,
+                    value: p.id,
+                    name: p.name,
+                    type: p.type,
+                }))}
+                getOptionLabel={option => option.label}
                 onChange={setPropertiesValue}
             />
 

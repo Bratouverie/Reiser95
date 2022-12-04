@@ -10,6 +10,7 @@ import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
 import { NotificationContext } from '../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
+import { setPacks } from '../../redux/slices/packs';
 
 const InitialRequests = {
     PAGES: 'pages',
@@ -57,6 +58,7 @@ const InitialDataContainer = ({ children }) => {
     const { state: stateGetPacks, request: getPacks } = useRequest({
         requestType: REQUEST_TYPE.DATA,
         url: 'pack/',
+        isAuth: true,
     });
 
     useEffect(() => {
@@ -126,7 +128,7 @@ const InitialDataContainer = ({ children }) => {
 
     useEffect(() => {
         if (stateGetPacks && stateGetPacks.result) {
-            dispatch(setCollections(stateGetPacks.result.data));
+            dispatch(setPacks(stateGetPacks.result.data));
         }
 
         if (stateGetPacks.error) {

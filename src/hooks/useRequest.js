@@ -106,7 +106,7 @@ export const useRequest = ({
                 reqHeaders = {
                     ...reqHeaders,
                     Authorization:
-                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDAwMjI1OCwianRpIjoiMDc3YjZkNjAtNGQ5Ny00ZDE2LTg2ODItYjY0Yjk5ZGFhMzc4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDAwMjI1OCwiZXhwIjoxNjcwMDA1ODU4fQ.m3V2hO_YJsiyrvOqMhal3QndYxG03pk4V6ELN88Cy-Y',
+                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDE0MDIwMCwianRpIjoiOWRhMzIyNzUtMTQzOC00ODc3LTg5ZjQtZjc3ZWVlMjE4MTM3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDE0MDIwMCwiZXhwIjoxNjcwMTQzODAwfQ.74DvSgGC2SlZvVOc2JFqo3iXnlilWw3534qJVg0qQb8',
                 };
             }
 
