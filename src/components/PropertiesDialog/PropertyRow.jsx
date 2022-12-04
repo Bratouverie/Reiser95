@@ -1,8 +1,8 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import { cnb } from 'cnbuilder';
 
 import css from './PropertiesDialog.module.css';
-import { cnb } from 'cnbuilder';
 
 const PropertyRow = ({ id, name: nameP, type: typeP, onChangePropery, onDeleteRowHandler }) => {
     const [type, setType] = useState(typeP);
@@ -37,7 +37,7 @@ const PropertyRow = ({ id, name: nameP, type: typeP, onChangePropery, onDeleteRo
                 <span className={css.PropertiesDialog_dialog_label}>Type</span>
                 <input
                     type="text"
-                    className={`css.input, css.create__item--input ${css.PropertiesDialog_dialog_input}`}
+                    className={`input create__item--input ${css.PropertiesDialog_dialog_input}`}
                     placeholder="Characters"
                     aria-label="Type"
                     value={type}

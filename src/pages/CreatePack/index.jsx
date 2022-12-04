@@ -44,14 +44,8 @@ const ONE_HUNDRED = 100;
 //     preview: "blob:http://localhost:3000/8e020a77-9e32-4fbe-a1fe-6015bca163ea",
 // }
 
-const TOKEN_PRICE_TYPE = {
-    AUCTION: 'auction',
-    PRICE: 'price',
-    NO_PRICE: 'no_price',
-};
-
 const FAKE_TOKEN =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDAwMjI1OCwianRpIjoiMDc3YjZkNjAtNGQ5Ny00ZDE2LTg2ODItYjY0Yjk5ZGFhMzc4IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDAwMjI1OCwiZXhwIjoxNjcwMDA1ODU4fQ.m3V2hO_YJsiyrvOqMhal3QndYxG03pk4V6ELN88Cy-Y';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDEzNTA2NCwianRpIjoiNGIxZTE5NDQtNjk3MS00ZGUxLWE3OTAtYzJlNmE4YzcyNmNmIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDEzNTA2NCwiZXhwIjoxNjcwMTM4NjY0fQ.5XUx3RJxjG-1zTQrGsHRE4ydRAP2W7JmO12HE-TJx-I';
 
 const CreatePack = () => {
     const authInfo = useSelector(state => state.auth);
@@ -97,7 +91,7 @@ const CreatePack = () => {
     const [numericIndicatorInProccess, setNumericIndicatorInProccess] = useState([]);
     const [numericIndicatorDone, setNumericIndicatorDone] = useState([]);
     const [numericIndicatorFailed, setNumericIndicatorFailed] = useState([]);
-    console.log({ numericIndicatorInProccess });
+
     const propertiesDialog = useDialog();
     const levelsDialog = useDialog();
     const statsDialog = useDialog();
@@ -257,8 +251,8 @@ const CreatePack = () => {
         setCollectionId(value);
     }, []);
 
-    const setPropertiesHandler = useCallback(properties => {
-        setProperties(properties);
+    const setPropertiesHandler = useCallback(propertiesA => {
+        setProperties(propertiesA);
     }, []);
 
     const setLevelsHandler = useCallback(levels => {
@@ -270,117 +264,139 @@ const CreatePack = () => {
     }, []);
 
     const onSavePackHandler = useCallback(() => {
-        // let data = new FormData();
+        let status_price = 'price';
 
-        // let status_price = 'price';
+        if (isAuction) {
+            status_price = 'auction';
+        }
 
-        // if (isAuction) {
-        //     status_price = 'auction';
-        // }
+        if (isNoPrice) {
+            status_price = 'no_price';
+        }
 
-        // if (isNoPrice) {
-        //     status_price = 'no_price';
-        // }
+        if (
+            !collectionId ||
+            !name ||
+            !tokenPrice ||
+            !tokenIdForPayment ||
+            !description ||
+            !investorRoyalty ||
+            !creatorRoyalty
+        ) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Fill all required fields',
+            });
 
-        // if (
-        //     !collectionId ||
-        //     !name ||
-        //     !tokenPrice ||
-        //     !tokenIdForPayment ||
-        //     !description ||
-        //     !investorRoyalty ||
-        //     !creatorRoyalty
-        // ) {
-        //     addNotification({
-        //         type: NOTIFICATION_TYPES.ERROR,
-        //         text: 'Fill all required fields',
-        //     });
+            return;
+        }
 
-        //     return;
-        // }
+        if (
+            Number(selectedCollection.percentage_fee) !==
+            Number(investorRoyalty) + Number(creatorRoyalty)
+        ) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text:
+                    'The sum of investor and creator royalty should be equal to collection percentage fee',
+            });
+            return;
+        }
+        const incomeSumRoyaltyPerc = incomeRoyaltyDestribution.reduce(
+            (a, c) => a + Number(c.percentage),
+            0,
+        );
+        const creatorSumRoyaltyPerc = creatorRoyaltyDestribution.reduce(
+            (a, c) => a + Number(c.percentage),
+            0,
+        );
 
-        // const incomeSumRoyaltyPerc = incomeRoyaltyDestribution.reduce(
-        //     (a, c) => a + Number(c.percentage),
-        //     0,
-        // );
-        // const creatorSumRoyaltyPerc = creatorRoyaltyDestribution.reduce(
-        //     (a, c) => a + Number(c.percentage),
-        //     0,
-        // );
+        if (incomeSumRoyaltyPerc < 100) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'The total royalties of the income must be equal to 100%',
+            });
 
-        // if (incomeSumRoyaltyPerc < 100) {
-        //     addNotification({
-        //         type: NOTIFICATION_TYPES.ERROR,
-        //         text: 'The total royalties of the income must be equal to 100%',
-        //     });
+            return;
+        }
 
-        //     return;
-        // }
+        if (creatorSumRoyaltyPerc < 100) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'The total royalties of the creators must be equal to 100%',
+            });
 
-        // if (creatorSumRoyaltyPerc < 100) {
-        //     addNotification({
-        //         type: NOTIFICATION_TYPES.ERROR,
-        //         text: 'The total royalties of the creators must be equal to 100%',
-        //     });
+            return;
+        }
 
-        //     return;
-        // }
-
-        // data.append('collection', collectionId);
-        // data.append('type', 'standard');
-        // data.append('name', name);
-        // data.append('price', Number(tokenPrice));
-        // data.append('currency_token', tokenIdForPayment);
-        // data.append('status_price', status_price);
-        // data.append('investor_royalty', Number(investorRoyalty));
-        // data.append('creator_royalty', Number(creatorRoyalty));
-        // data.append('description', description);
-        // data.append('unlockable', unlockable);
-        // data.append('unlockable_content', unlockableContent);
-        // data.append(
-        //     'income_distribution',
-        //     incomeRoyaltyDestribution.map(el => ({ wallet: el.wallet, percent: Number(el.percentage) })),
-        // );
-        // data.append(
-        //     'creator_royalty_distribution',
-        //     creatorRoyaltyDestribution.map(el => ({ wallet: el.wallet, percent: Number(el.percentage) })),
-        // );
-        // data.append('opensea', opensea);
-        // data.append('checkbrandcom', checkbrandcom);
-
-        const mockData = {
-            checkbrandcom: 'eqwqeweqw',
-            collection: '5dfbc65f-0275-48ab-b3aa-edbe2d02897b',
-            creator_royalty: 0.5,
-            investor_royalty: 0.5,
-            creator_royalty_distribution: [
-                {
-                    wallet: 'rwqeqweqw',
-                    percent: 100,
-                },
-            ],
-            currency_token: 'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
-            description: 'eqweqweqw',
-            income_distribution: [
-                {
-                    wallet: 'eqwewewq',
-                    percent: 100,
-                },
-            ],
-            name: 'eqweqw2',
-            opensea: 'eqeeqwqewweq',
-            price: 0.01,
-            status_price: 'price',
+        const data = {
+            collection: collectionId,
             type: 'standard',
-            unlockable: false,
-            unlockable_content: '',
-            close: false,
+            name: name,
+            price: Number(tokenPrice),
+            currency_token: tokenIdForPayment,
+            status_price: status_price,
+            investor_royalty: Number(investorRoyalty),
+            creator_royalty: Number(creatorRoyalty),
+            description: description,
+            unlockable: unlockable,
+            unlockable_content: unlockableContent,
+            income_distribution: incomeRoyaltyDestribution.map(el => ({
+                wallet: el.wallet,
+                percent: Number(el.percentage),
+            })),
+            creator_royalty_distribution: creatorRoyaltyDestribution.map(el => ({
+                wallet: el.wallet,
+                percent: Number(el.percentage),
+            })),
+            opensea: opensea,
+            checkbrandcom: checkbrandcom,
+            properties: properties.map(p => {
+                // if (p.value) {
+                //     return {
+                //         name: p.name,
+                //         type: p.type,
+                //     };
+                // }
+
+                return {
+                    name: p.name,
+                    type: p.type,
+                };
+            }),
         };
 
-        console.log({ mockData });
+        // const mockData = {
+        //     checkbrandcom: 'eqwqeweqw',
+        //     collection: '5dfbc65f-0275-48ab-b3aa-edbe2d02897b',
+        //     creator_royalty: 0.5,
+        //     investor_royalty: 0.5,
+        //     creator_royalty_distribution: [
+        //         {
+        //             wallet: 'rwqeqweqw',
+        //             percent: 100,
+        //         },
+        //     ],
+        //     currency_token: 'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
+        //     description: 'eqweqweqw',
+        //     income_distribution: [
+        //         {
+        //             wallet: 'eqwewewq',
+        //             percent: 100,
+        //         },
+        //     ],
+        //     name: 'eqweqw2',
+        //     opensea: 'eqeeqwqewweq',
+        //     price: 0.01,
+        //     status_price: 'price',
+        //     type: 'standard',
+        //     unlockable: false,
+        //     unlockable_content: '',
+        //     close: false,
+        // };
 
         onCreatePack({
-            data: mockData,
+            data,
         });
     }, [
         collectionId,
@@ -398,6 +414,8 @@ const CreatePack = () => {
         isNoPrice,
         investorRoyalty,
         creatorRoyalty,
+        properties,
+        selectedCollection,
     ]);
 
     const onUploadTokensHandler = useCallback(async () => {
@@ -550,7 +568,6 @@ const CreatePack = () => {
                     };
 
                     getUploadsUrls(true);
-                    console.log({ numericIndicatorInProccess });
                 });
             }),
         );
@@ -763,7 +780,27 @@ const CreatePack = () => {
                                     </button>
                                 </div>
                             </div>
+                            <div className="create__item">
+                                <p className="create__item--title">Collection</p>
 
+                                <p className="create__item--text">
+                                    This is the collection where your items Pack will appear.
+                                </p>
+
+                                {Boolean(collections && collections.collections) && (
+                                    <div className="create__item--select--inner">
+                                        <CustomSelect
+                                            optionsList={collections.collections.map(c => ({
+                                                value: c.id,
+                                                name: c.name,
+                                            }))}
+                                            value={collectionId}
+                                            placeholder="Select Collection"
+                                            onChange={onCollectionIdChangeHandler}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                             <div className="create__item half">
                                 <Input
                                     title="Token name"
@@ -951,28 +988,6 @@ const CreatePack = () => {
                                 value={description}
                                 setValue={setDescriprion}
                             />
-                            <div className="create__item">
-                                <p className="create__item--title">Collection</p>
-
-                                <p className="create__item--text">
-                                    This is the collection where your items Pack will appear.
-                                </p>
-
-                                {Boolean(collections && collections.collections) && (
-                                    <div className="create__item--select--inner">
-                                        <CustomSelect
-                                            optionsList={collections.collections.map(c => ({
-                                                value: c.id,
-                                                name: c.name,
-                                            }))}
-                                            value={collectionId}
-                                            placeholder="Select Collection"
-                                            onChange={onCollectionIdChangeHandler}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-
                             <div className="create__item">
                                 <div className="create__item--checkbox--inner">
                                     <div className="create__item--checkbox--wrapper">

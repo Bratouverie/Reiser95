@@ -99,7 +99,6 @@ const Autocomplite = props => {
 
     const handleRenderAutocomplete = useCallback(
         (props, option, { selected }) => {
-            console.log({ selected });
             return (
                 <li
                     key={option.id}
@@ -117,7 +116,7 @@ const Autocomplite = props => {
                             checked={selected}
                         />
                     )}
-                    {option.name}
+                    {option.label}
                 </li>
             );
         },
@@ -175,6 +174,8 @@ const Autocomplite = props => {
                     listbox: css.listBox,
                     input: css.input,
                     root: classes ? classes.root : '',
+                    paper: css.paper,
+                    noOptions: css.noOptions,
                 }}
                 sx={{
                     '& .MuiFormControl-root.MuiTextField-root': {
@@ -303,7 +304,7 @@ const Autocomplite = props => {
                     {multipleValue.map((option, index) => {
                         return (
                             <MuiChip
-                                key={`${getOptionLabel(option)}${index}`}
+                                key={`${getOptionLabel(option)}__${index}`}
                                 className={css.chip}
                                 label={getOptionLabel(option)}
                                 onDelete={onTagDelete(index)}
