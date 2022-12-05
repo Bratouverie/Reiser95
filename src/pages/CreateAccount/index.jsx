@@ -80,14 +80,13 @@ const CreateAccount = () => {
         formData.append('link_discord', social.discord);
         formData.append('link_instagram', social.instagram);
         formData.append('link_twitter', social.twitter);
-        formData.append('type', 'standart');
         formData.append('logo', logo);
         formData.append('cover', cover);
         formData.append('banner', banner);
         formData.append('page', brandId);
         formData.append('name', accountName);
         formData.append('url', url);
-        formData.append('descriprion', descriprion);
+        formData.append('description', descriprion);
 
         request({
             data: formData,
@@ -134,7 +133,7 @@ const CreateAccount = () => {
             onClearState();
 
             addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
+                type: NOTIFICATION_TYPES.SUCCESS,
                 text: 'Accaunt successfuly created',
             });
         }
