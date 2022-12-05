@@ -88,7 +88,7 @@ export const useRequest = ({
     ]);
 
     const request = useCallback(
-        async ({ data, query, body, headers, beforeRequestFoo, callback }) => {
+        async ({ url: urlP, data, query, body, headers, beforeRequestFoo, callback }) => {
             if (beforeRequestFoo) {
                 beforeRequestFoo();
             }
@@ -106,14 +106,14 @@ export const useRequest = ({
                 reqHeaders = {
                     ...reqHeaders,
                     Authorization:
-                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDE0MDIwMCwianRpIjoiOWRhMzIyNzUtMTQzOC00ODc3LTg5ZjQtZjc3ZWVlMjE4MTM3IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDE0MDIwMCwiZXhwIjoxNjcwMTQzODAwfQ.74DvSgGC2SlZvVOc2JFqo3iXnlilWw3534qJVg0qQb8',
+                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDE3MTM2MywianRpIjoiOTg2ZTExNDItODQwNy00N2M3LTkxMmQtZmUyY2Y5ZWZjMGU0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDE3MTM2MywiZXhwIjoxNjcwMTc0OTYzfQ.D2uU1MTG04uG3BW8ntYinPEDcsyQWH1eBnSXqZAlYMA',
                 };
             }
 
             try {
                 const result = await sendRequest(
                     axiosInstance,
-                    url,
+                    url || urlP,
                     method,
                     data,
                     query,
