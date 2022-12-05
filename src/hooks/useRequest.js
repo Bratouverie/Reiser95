@@ -105,8 +105,8 @@ export const useRequest = ({
             if (isAuth) {
                 reqHeaders = {
                     ...reqHeaders,
-                    Authorization:
-                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDE3MTM2MywianRpIjoiOTg2ZTExNDItODQwNy00N2M3LTkxMmQtZmUyY2Y5ZWZjMGU0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDE3MTM2MywiZXhwIjoxNjcwMTc0OTYzfQ.D2uU1MTG04uG3BW8ntYinPEDcsyQWH1eBnSXqZAlYMA',
+                    Authorization: `Bearer ${authInfo.accessToken ||
+                        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDI0ODE0MywianRpIjoiN2Q2NGYyYWMtYTUxYi00YmY1LWI0MzQtOGQzMWJlNWI3NGEzIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDI0ODE0MywiZXhwIjoxNjcwMjUxNzQzfQ.YTna2H3SwUP8g8IvBq4WcwSP6qBPrlbRisyk6Hyd91M'}`,
                 };
             }
 

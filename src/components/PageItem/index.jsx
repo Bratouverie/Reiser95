@@ -1,10 +1,12 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { deletePage } from '../../redux/slices/pages';
 
-import {hidePage} from '../../functions/data';
-import {deletePage} from '../../redux/slices/pages';
+import { hidePage } from '../../functions/data';
 
-const PageItem = ({data}) => {
+const PageItem = props => {
+    const { name, id } = props;
+
     const auth = useSelector(state => state.auth);
 
     const [edit, setEdit] = React.useState(false);
@@ -13,14 +15,11 @@ const PageItem = ({data}) => {
 
     const dispatch = useDispatch();
 
-    const {name, id} = data;
-
-    const confirmFunc = (attr) => {
-        if(attr === "edit"){
+    const confirmFunc = attr => {
+        if (attr === 'edit') {
             setDel(false);
             setEdit(!edit);
-        }
-        else{
+        } else {
             setEdit(false);
             setDel(!del);
         }
@@ -29,29 +28,26 @@ const PageItem = ({data}) => {
     const deletePageFunc = () => {
         setLoading(true);
         const res = hidePage(id, auth.accessToken);
-        
+
         res.then(data => {
             dispatch(deletePage(id));
-            alert("Page deleted");
-        }).catch(e => {
-            console.log(e);
-        }).finally(() => {
-            setLoading(false);
-        });
-    }
+            alert('Page deleted');
+        })
+            .catch(e => {
+                console.log(e);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
 
     return (
         <div className={`control__item${loading ? ' loading' : ''}`}>
-            <input
-                type="text"
-                readOnly
-                placeholder={name}
-                className="input control__input"
-            />
+            <input type="text" readOnly placeholder={name} className="input control__input" />
 
             <button
                 className="button control__item--settings default__hover"
-                onClick={() => confirmFunc("edit")}
+                onClick={() => confirmFunc('edit')}
             >
                 <img
                     src="/assets/img/settings-white.svg"
@@ -64,11 +60,13 @@ const PageItem = ({data}) => {
 
             <button
                 className="button control__item--confirm default__hover delete"
-                onClick={() => confirmFunc("delete")}
+                onClick={() => confirmFunc('delete')}
             >
                 Delete
                 {del && (
-                    <span className="control__button--confirm" onClick={deletePageFunc}>Confirm</span>
+                    <span className="control__button--confirm" onClick={deletePageFunc}>
+                        Confirm
+                    </span>
                 )}
             </button>
         </div>
