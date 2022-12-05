@@ -1,0 +1,23 @@
+.notificationsContainer {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.notificationsContainer .notificationsContainer_text {
+    font-size: 16px;
+}
+.notificationsContainer .notificationsContainer_action button {
+    width: 36px;
+    height: 36px;
+}
+
+.notificationsContainer .notificationsContainer_action button svg {
+    width: 24px;
+    height: 24px;
+}

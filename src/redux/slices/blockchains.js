@@ -15,7 +15,7 @@ export const blockchainsSlice = createSlice({
         setBlockchains: (state, action) => {
             state.blockchains = action.payload;
         },
-        deleteAccount: (state, action) => {
+        deleteBlockchain: (state, action) => {
             let newBlockchainsList = state.blockchains.filter(val => {
                 return val.id !== action.payload;
             });
@@ -25,6 +25,6 @@ export const blockchainsSlice = createSlice({
     },
 });
 
-export const { setIsAuth, setBlockchains, deleteAccount } = blockchainsSlice.actions;
+export const { setIsAuth, setBlockchains, deleteBlockchain } = blockchainsSlice.actions;
 
 export default blockchainsSlice.reducer;

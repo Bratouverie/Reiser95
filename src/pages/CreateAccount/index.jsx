@@ -7,6 +7,9 @@ import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 
 import './index.css';
+import { useContext } from 'react';
+import { NotificationContext } from '../../context/NotificationContext';
+import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 
 const SocialLinks = {
     OPENSEA: {
@@ -36,6 +39,10 @@ const SOCIAL_LINKS_ARR = Object.values(SocialLinks);
 const CreateAccount = () => {
     const pages = useSelector(state => state.pages);
 
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
+
     const { state, request, onClearState } = useRequest({
         requestType: REQUEST_TYPE.DATA,
         method: HTTP_METHODS.POST,
@@ -60,13 +67,24 @@ const CreateAccount = () => {
     const createAccountFunc = useCallback(() => {
         let formData = new FormData();
 
+        if (!logo || !cover || !banner || !brandId || !accountName || !url || !descriprion) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Fill all required fields',
+            });
+
+            return;
+        }
+
         formData.append('link_opensea', social.opensea);
         formData.append('link_discord', social.discord);
         formData.append('link_instagram', social.instagram);
         formData.append('link_twitter', social.twitter);
+        formData.append('type', 'standart');
         formData.append('logo', logo);
         formData.append('cover', cover);
-        formData.append('brand', brandId);
+        formData.append('banner', banner);
+        formData.append('page', brandId);
         formData.append('name', accountName);
         formData.append('url', url);
         formData.append('descriprion', descriprion);
@@ -88,14 +106,17 @@ const CreateAccount = () => {
     }, []);
 
     useEffect(() => {
-        console.log(state.error);
         if (state && state.error) {
-            alert(state.error);
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Fill all required fields',
+            });
         }
     }, [state.error]);
 
     useEffect(() => {
-        if (state && state.result) {
+        console.log({ result: state.result });
+        if (state.result && state.result.data) {
             setBrandId('');
             setLogo('');
             setAccountName('');
@@ -111,6 +132,11 @@ const CreateAccount = () => {
                 twitter: '',
             });
             onClearState();
+
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Accaunt successfuly created',
+            });
         }
     }, [state]);
 

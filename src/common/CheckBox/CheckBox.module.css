@@ -1,0 +1,8 @@
+.root {
+    padding: 10px;
+    color: white;
+}
+
+.root:hover svg {
+    border-radius: 5px;
+}

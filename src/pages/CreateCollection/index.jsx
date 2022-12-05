@@ -1,8 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { CustomSelect } from '../../common/CustomSelect';
 import File from '../../common/File';
 import Input from '../../common/Input';
 import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
+import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
+import { NotificationContext } from '../../context/NotificationContext';
 import { getAccountsList } from '../../functions/data';
 import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 
@@ -72,6 +75,10 @@ const CreateCollection = () => {
     const blockchains = useSelector(state => state.blockchains);
     const tokens = useSelector(state => state.tokens);
 
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
+
     const { state, request, onClearState } = useRequest({
         requestType: REQUEST_TYPE.DATA,
         method: HTTP_METHODS.POST,
@@ -85,7 +92,7 @@ const CreateCollection = () => {
     const [banner, setBanner] = useState('');
     const [name, setName] = useState('');
     const [opensea, setOpensea] = useState('');
-    const [descriprion, setDescriprion] = useState('');
+    const [description, setDescriprion] = useState('');
     const [checkbrandcom, setCheckbrandcom] = useState('');
     const [openSeaCategory, setOpenSeaCategory] = useState(OpenSeaCategory.ART);
     const [brandId, setBrandId] = useState('');
@@ -100,6 +107,14 @@ const CreateCollection = () => {
     const [blockchainId, setBlockchainId] = useState('');
     const [tokenId, setTokenId] = useState('');
     const [displayTheme, setDisplayTheme] = useState(DisplayThemes.PADDED.value);
+
+    const availbleAccaunts = useMemo(() => {
+        if (!brandId || !accounts.accounts) {
+            return null;
+        }
+
+        return (accounts.accounts || []).filter(a => a.page === brandId);
+    }, [accounts.accounts, brandId]);
 
     const changeBrandHandler = useCallback(id => {
         setBrandId(id);
@@ -116,12 +131,12 @@ const CreateCollection = () => {
         }));
     }, []);
 
-    const blockchainChangeHandler = useCallback(event => {
-        setBlockchainId(event.target.value);
+    const blockchainChangeHandler = useCallback(value => {
+        setBlockchainId(value);
     }, []);
 
-    const tokenChangeHandler = useCallback(event => {
-        setTokenId(event.target.value);
+    const tokenChangeHandler = useCallback(value => {
+        setTokenId(value);
     }, []);
 
     const changeThemeHandler = useCallback(theme => {
@@ -130,6 +145,31 @@ const CreateCollection = () => {
 
     const onSubmitHandler = useCallback(() => {
         let formData = new FormData();
+
+        if (
+            !logo ||
+            !featuredImage ||
+            !banner ||
+            !name ||
+            !checkbrandcom ||
+            !opensea ||
+            !openSeaCategory ||
+            !percentageFee ||
+            !displayTheme ||
+            !description ||
+            !adminSmart ||
+            !brandId ||
+            !accountId ||
+            !blockchainId ||
+            !tokenId
+        ) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Fill all required fields',
+            });
+
+            return;
+        }
 
         formData.append('link_opensea', social.opensea);
         formData.append('link_discord', social.discord);
@@ -144,12 +184,34 @@ const CreateCollection = () => {
         formData.append('category_opensea', openSeaCategory);
         formData.append('percentage_fee', percentageFee);
         formData.append('display_theme', displayTheme);
-        formData.append('description', descriprion);
+        formData.append('description', description);
         formData.append('smart_contract_address', adminSmart);
         formData.append('page', brandId);
         formData.append('account', accountId);
         formData.append('blockchain', blockchainId);
         formData.append('payment_tokens', tokenId);
+
+        const data = {
+            link_opensea: social.opensea,
+            link_discord: social.discord,
+            link_instagram: social.instagram,
+            link_twitter: social.twitter,
+            logo: logo,
+            featured: featuredImage,
+            banner: banner,
+            name: name,
+            url: checkbrandcom,
+            url_opensea: opensea,
+            category_opensea: openSeaCategory,
+            percentage_fee: percentageFee,
+            display_theme: displayTheme,
+            description: description,
+            smart_contract_address: adminSmart,
+            page: brandId,
+            account: accountId,
+            blockchain: blockchainId,
+            payment_tokens: tokenId,
+        };
 
         request({ data: formData });
     }, [
@@ -163,7 +225,7 @@ const CreateCollection = () => {
         openSeaCategory,
         percentageFee,
         displayTheme,
-        descriprion,
+        description,
         adminSmart,
         brandId,
         accountId,
@@ -173,12 +235,15 @@ const CreateCollection = () => {
 
     useEffect(() => {
         if (state && state.error) {
-            alert(state.error);
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Fill all required fields',
+            });
         }
     }, [state.error]);
 
     useEffect(() => {
-        if (state && state.result) {
+        if (state.result && state.result.data) {
             setLogo('');
             setAdminSmart('');
             setFeaturedImage('');
@@ -201,6 +266,11 @@ const CreateCollection = () => {
             setTokenId('');
             setDisplayTheme('');
             onClearState();
+
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Collection successfuly created',
+            });
         }
     }, [state]);
 
@@ -278,7 +348,7 @@ const CreateCollection = () => {
                             text="Markdown syntax is supported. 0 of 1000 characters used."
                             textarea
                             required
-                            value={descriprion}
+                            value={description}
                             setValue={setDescriprion}
                         />
                         <div className="create__item">
@@ -349,36 +419,55 @@ const CreateCollection = () => {
 
                             <div className="create__item--account--inner">
                                 <div className="create__item--account--content">
-                                    {(accounts.accounts || []).map((acc, i) => (
-                                        <div className="create__item--account--item" key={acc.id}>
-                                            <input
-                                                type="radio"
-                                                name="accounts"
-                                                className="create__item--account--checkbox"
-                                                id={acc.id}
-                                                onChange={() => changeAccountHandler(acc.id)}
-                                            />
+                                    {brandId ? (
+                                        <>
+                                            {availbleAccaunts.length ? (
+                                                <>
+                                                    {availbleAccaunts.map((acc, i) => (
+                                                        <div
+                                                            className="create__item--account--item"
+                                                            key={acc.id}
+                                                        >
+                                                            <input
+                                                                type="radio"
+                                                                name="accounts"
+                                                                className="create__item--account--checkbox"
+                                                                id={acc.id}
+                                                                onChange={() =>
+                                                                    changeAccountHandler(acc.id)
+                                                                }
+                                                            />
 
-                                            <label
-                                                htmlFor={acc.id}
-                                                className="create__item--account--item--label"
-                                            >
-                                                <span className="create__item--account--item--label--wrap">
-                                                    <p className="create__item--account--item--num">
-                                                        {i + 1}
-                                                    </p>
+                                                            <label
+                                                                htmlFor={acc.id}
+                                                                className="create__item--account--item--label"
+                                                            >
+                                                                <span className="create__item--account--item--label--wrap">
+                                                                    <p className="create__item--account--item--num">
+                                                                        {i + 1}
+                                                                    </p>
 
-                                                    <span className="create__item--account--item--img"></span>
+                                                                    <span className="create__item--account--item--img"></span>
 
-                                                    <p className="create__item--account--item--name">
-                                                        {acc.name}
-                                                    </p>
+                                                                    <p className="create__item--account--item--name">
+                                                                        {acc.name}
+                                                                    </p>
+                                                                </span>
+
+                                                                <span className="create__item--account--item--circle"></span>
+                                                            </label>
+                                                        </div>
+                                                    ))}
+                                                </>
+                                            ) : (
+                                                <span className="selectPageWarning">
+                                                    Selected page has no accounts
                                                 </span>
-
-                                                <span className="create__item--account--item--circle"></span>
-                                            </label>
-                                        </div>
-                                    ))}
+                                            )}
+                                        </>
+                                    ) : (
+                                        <span className="selectPageWarning">Select page first</span>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -434,22 +523,19 @@ const CreateCollection = () => {
                             </p>
 
                             <div className="create__item--select--inner">
-                                <select
-                                    className="select create__item--select"
-                                    onChange={blockchainChangeHandler}
-                                >
-                                    {(blockchains.blockchains || []).map(b => (
-                                        <option key={b.id} value={b.id}>
-                                            {b.name}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <img
-                                    src="/assets/img/arrow-select.png"
-                                    alt="arrow"
-                                    className="create__item--select--icon"
-                                />
+                                {Boolean(blockchains && blockchains.blockchains) && (
+                                    <div className="create__item--select--inner">
+                                        <CustomSelect
+                                            optionsList={blockchains.blockchains.map(c => ({
+                                                value: c.id,
+                                                name: c.name,
+                                            }))}
+                                            value={blockchainId}
+                                            placeholder="Select Blockchain"
+                                            onChange={blockchainChangeHandler}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
 
@@ -491,22 +577,19 @@ const CreateCollection = () => {
                             </div>
 
                             <div className="create__item--select--inner">
-                                <select
-                                    className="select create__item--select"
-                                    onChange={tokenChangeHandler}
-                                >
-                                    {(tokens.tokens || []).map(t => (
-                                        <option key={t.id} value={t.id}>
-                                            {t.name}
-                                        </option>
-                                    ))}
-                                </select>
-
-                                <img
-                                    src="/assets/img/arrow-select.png"
-                                    alt="arrow"
-                                    className="create__item--select--icon"
-                                />
+                                {Boolean(tokens && tokens.tokens) && (
+                                    <div className="create__item--select--inner">
+                                        <CustomSelect
+                                            optionsList={tokens.tokens.map(c => ({
+                                                value: c.id,
+                                                name: c.name,
+                                            }))}
+                                            value={tokenId}
+                                            placeholder="Select Token"
+                                            onChange={tokenChangeHandler}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
 

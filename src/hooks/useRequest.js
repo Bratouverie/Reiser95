@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { HTTP_METHODS } from '../const/http/HTTP_METHODS';
+import { BASE_API_URL } from '../const/http/API_URLS';
 
 export const REQUEST_TYPE = {
     AUTH: 'auth',
@@ -39,7 +40,6 @@ const sendRequest = async (axiosInstance, url, method, data, query, body, header
         };
     } catch (err) {
         const { response } = err;
-        console.log({ response });
 
         if (!response) {
             throw err;
@@ -78,7 +78,7 @@ export const useRequest = ({
     });
 
     const data = axios.create({
-        baseURL: 'https://checkbrandcom.site/admin_service/api/v1/',
+        baseURL: BASE_API_URL,
     });
 
     const axiosInstancesMap = new Map([
@@ -88,13 +88,15 @@ export const useRequest = ({
     ]);
 
     const request = useCallback(
-        async ({ data, query, body, headers, callback }) => {
+        async ({ url: urlP, data, query, body, headers, beforeRequestFoo, callback }) => {
+            if (beforeRequestFoo) {
+                beforeRequestFoo();
+            }
+
             setState(p => ({
                 ...p,
                 isProcessing: true,
             }));
-
-            console.log({ requestType });
 
             const axiosInstance = axiosInstancesMap.get(requestType);
 
@@ -103,14 +105,15 @@ export const useRequest = ({
             if (isAuth) {
                 reqHeaders = {
                     ...reqHeaders,
-                    Authorization: `Bearer ${authInfo.accessToken}`,
+                    Authorization:
+                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDE3MTM2MywianRpIjoiOTg2ZTExNDItODQwNy00N2M3LTkxMmQtZmUyY2Y5ZWZjMGU0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDE3MTM2MywiZXhwIjoxNjcwMTc0OTYzfQ.D2uU1MTG04uG3BW8ntYinPEDcsyQWH1eBnSXqZAlYMA',
                 };
             }
 
             try {
                 const result = await sendRequest(
                     axiosInstance,
-                    url,
+                    url || urlP,
                     method,
                     data,
                     query,

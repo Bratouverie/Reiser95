@@ -1,41 +1,43 @@
-.control__inner, .control__wrapper{
+.control__inner,
+.control__wrapper {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
 
-.control__wrapper{
+.control__wrapper {
     margin-top: 2.5rem;
 }
 
-.control__wrapper:first-child{
+.control__wrapper:first-child {
     margin-top: 0;
 }
 
-.control__text, .control__subtext{
+.control__text,
+.control__subtext {
     font-size: 1.4rem;
     color: #fff;
 }
 
-.control__subtext{
+.control__subtext {
     margin-top: 1rem;
     font-size: 1.6rem;
 }
 
-.control__item{
+.control__item {
     width: 100%;
     display: flex;
     margin-top: 1.5rem;
-    transition: .2s linear;
+    transition: 0.2s linear;
 }
 
-.control__item.loading{
+.control__item.loading {
     opacity: 0.7;
     pointer-events: none;
 }
 
-.control__input{
+.control__input {
     padding: 1.5rem 1.3rem;
     border-radius: 7px;
     background: #313232;
@@ -44,11 +46,11 @@
     width: 100%;
 }
 
-.control__input::placeholder{
+.control__input::placeholder {
     color: #b6b8ba;
 }
 
-.control__item--confirm{
+.control__item--confirm {
     min-width: 105px;
     flex-shrink: 0;
     background: #313232;
@@ -58,15 +60,15 @@
     position: relative;
 }
 
-.control__item--confirm.delete{
+.control__item--confirm.delete {
     color: #c94750;
 }
 
-.control__item--confirm.save{
+.control__item--confirm.save {
     color: #2081e2;
 }
 
-.control__item--settings{
+.control__item--settings {
     margin: 0rem 2rem;
     flex-shrink: 0;
     background: #313232;
@@ -79,11 +81,11 @@
     position: relative;
 }
 
-.control__item--settings--icon{
+.control__item--settings--icon {
     width: 26px;
 }
 
-.control__button--confirm{
+.control__button--confirm {
     position: absolute;
     text-align: center;
     background: #3d3e3f;
@@ -96,15 +98,15 @@
     left: 50%;
     top: 50%;
     cursor: pointer;
-    transition: .2s linear;
+    transition: 0.2s linear;
     z-index: 50;
 }
 
-.control__button--confirm:hover{
+.control__button--confirm:hover {
     background: #2e2f30;
 }
 
-.control__add{
+.control__add {
     margin-top: 1.5rem;
     border-radius: 6px;
     border: 1px solid #182f46;
@@ -114,29 +116,44 @@
     padding: 1.4rem 2.7rem;
 }
 
-@media(max-width: 768px){
-    .control__input{
+.UserRow_loader_container {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.UserRow_loader {
+    width: 36px !important;
+    min-width: 36px;
+    height: 36px !important;
+    min-height: 36px;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .control__input {
         font-size: 1.6rem;
     }
 
-    .control__item--settings{
+    .control__item--settings {
         margin: 0rem 1rem;
     }
 
-    .control__item{
+    .control__item {
         flex-wrap: wrap;
     }
 
-    .control__item--settings{
+    .control__item--settings {
         margin: 1rem 1rem 0rem 0rem;
     }
 
-    .control__item--confirm{
+    .control__item--confirm {
         margin: 1rem 0rem 0rem 0rem;
     }
 }
-@media(max-width: 480px){
-    .control__input{
+@media (max-width: 480px) {
+    .control__input {
         font-size: 1.4rem;
     }
 }
