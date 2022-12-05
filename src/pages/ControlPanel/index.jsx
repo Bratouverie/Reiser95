@@ -1,18 +1,119 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import {useSelector} from 'react-redux';
+import React, { useContext, useEffect, useState, useCallback } from 'react';
+import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import "./index.css";
+import './index.css';
 
 import Preloader from '../../common/Preloader';
-import PageItem from "../../components/PageItem";
+import PageItem from '../../components/PageItem';
+import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
+import { NotificationContext } from '../../context/NotificationContext';
+import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
+import { USER_ROLES } from '../../const/users/USER_ROLES';
+import UserRow from './UserRow';
 
 const ControlPanel = () => {
     const auth = useSelector(state => state.auth);
     const pages = useSelector(state => state.pages);
 
-    if(auth.loadAuth){
-        return <Preloader />
+    const [superAdmins, setSuperAdmins] = useState([]);
+    const [admins, setAdmins] = useState([]);
+    const [moderators, setModerators] = useState([]);
+
+    const [isNewAdminCreating, setIsNewAdminCreating] = useState(false);
+    const [isNewModeratorCreating, setIsNewModeratorCreating] = useState(false);
+
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
+
+    const { state: getSuperAdminsRS, request: onGetSuperAdmins } = useRequest({
+        url: '/users_by_role/super_admin',
+        requestType: REQUEST_TYPE.USER,
+        isAuth: true,
+    });
+
+    const { state: getAdminsRS, request: onGetAdmins } = useRequest({
+        url: '/users_by_role/admin',
+        requestType: REQUEST_TYPE.USER,
+        isAuth: true,
+    });
+
+    const { state: getModeratorsRS, request: onGetModerators } = useRequest({
+        url: '/users_by_role/moderator',
+        requestType: REQUEST_TYPE.USER,
+        isAuth: true,
+    });
+
+    const onNewAdminCreateStateChange = useCallback(() => {
+        setIsNewAdminCreating(p => !p);
+    }, []);
+
+    const onNewModerCreate = useCallback(() => {
+        setIsNewModeratorCreating(p => !p);
+    }, []);
+
+    const postSaveCallback = useCallback((role, wallet) => {
+        if (role === USER_ROLES.ADMIN) {
+            onNewAdminCreateStateChange();
+            setAdmins(p => [...p, wallet]);
+            return;
+        }
+
+        if (role === USER_ROLES.MODERATOR) {
+            onNewModerCreate();
+            setModerators(p => [...p, wallet]);
+        }
+    }, []);
+
+    const postDeleteCallback = useCallback((role, wallet) => {
+        if (role === USER_ROLES.ADMIN) {
+            setAdmins(p => p.filter(w => w !== wallet));
+            return;
+        }
+
+        if (role === USER_ROLES.MODERATOR) {
+            setModerators(p => p.filter(w => w !== wallet));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (getSuperAdminsRS.result && getSuperAdminsRS.result.data) {
+            setSuperAdmins(getSuperAdminsRS.result.data.users);
+        }
+    }, [getSuperAdminsRS]);
+
+    useEffect(() => {
+        if (getAdminsRS.result && getAdminsRS.result.data) {
+            setAdmins(getAdminsRS.result.data.users);
+        }
+    }, [getAdminsRS]);
+
+    useEffect(() => {
+        if (getModeratorsRS.result && getModeratorsRS.result.data) {
+            setModerators(getModeratorsRS.result.data.users);
+        }
+    }, [getModeratorsRS]);
+
+    console.log({
+        superAdmins,
+        admins,
+        moderators,
+    });
+
+    useEffect(() => {
+        onGetSuperAdmins({});
+        onGetAdmins({});
+        onGetModerators({});
+    }, []);
+
+    if (
+        auth.loadAuth ||
+        getAdminsRS.isProcessing ||
+        getAdminsRS.isProcessing ||
+        getModeratorsRS.isProcessing
+    ) {
+        return <Preloader />;
     }
 
     return (
@@ -22,18 +123,14 @@ const ControlPanel = () => {
                     <h2 className="title left">Control Panel</h2>
 
                     <div className="control__wrapper">
-                        <p className="control__text">
-                            "Reliable control is a big part of success"
-                        </p>
+                        <p className="control__text">"Reliable control is a big part of success"</p>
 
                         <p className="text bold left">
-                            Set access rights and control all platform processes
-                            in one place
+                            Set access rights and control all platform processes in one place
                         </p>
 
                         <p className="control__text m0">
-                            Access to the appointment of administrators is only
-                            for the Super Admin
+                            Access to the appointment of administrators is only for the Super Admin
                         </p>
                     </div>
 
@@ -44,123 +141,77 @@ const ControlPanel = () => {
                             Super administrator manages all platform processes.
                         </p>
 
-                        <p className="control__text m0">
-                            Enter super admin wallet address:
-                        </p>
+                        <p className="control__text m0">Enter super admin wallet address:</p>
 
-                        <div className="control__item">
-                            <input
-                                type="text"
-                                className="input control__input"
-                                placeholder="Super admin wallet address"
-                            />
-
-                            <button className="button control__item--settings default__hover">
-                                <img
-                                    src="/assets/img/settings-white.svg"
-                                    alt="settings"
-                                    className="control__item--settings--icon"
-                                />
-                            </button>
-
-                            <button className="button control__item--confirm default__hover">
-                                Conferm
-                            </button>
-                        </div>
+                        {superAdmins.map(sa => (
+                            <UserRow key={sa} wallet={sa} role={USER_ROLES.SUPER_ADMIN} />
+                        ))}
                     </div>
 
                     <div className="control__wrapper">
                         <p className="text bold left m0">Administrator</p>
 
-                        <p className="control__text m0">
-                            Has a limited list of powers.
-                        </p>
+                        <p className="control__text m0">Has a limited list of powers.</p>
 
-                        <p className="control__text m0">
-                            Enter Admin wallet address:
-                        </p>
+                        <p className="control__text m0">Enter Admin wallet address:</p>
 
-                        <div className="control__item">
-                            <input
-                                type="text"
-                                className="input control__input"
-                                placeholder="Admin wallet address"
+                        {admins.map(sa => (
+                            <UserRow
+                                key={sa}
+                                wallet={sa}
+                                role={USER_ROLES.ADMIN}
+                                postDeleteCallback={postDeleteCallback}
                             />
+                        ))}
 
-                            <button className="button control__item--settings default__hover">
-                                <img
-                                    src="/assets/img/settings-white.svg"
-                                    alt="settings"
-                                    className="control__item--settings--icon"
-                                />
+                        {!isNewAdminCreating ? (
+                            <button
+                                className="button control__add default__hover"
+                                onClick={onNewAdminCreateStateChange}
+                            >
+                                + add new Admin
                             </button>
-
-                            <button className="button control__item--confirm default__hover">
-                                Conferm
-                            </button>
-                        </div>
-
-                        <button className="button control__add default__hover">
-                            + add new Admin
-                        </button>
+                        ) : (
+                            <UserRow
+                                wallet=""
+                                role={USER_ROLES.ADMIN}
+                                isEditable={true}
+                                postSaveCallback={postSaveCallback}
+                            />
+                        )}
                     </div>
 
                     <div className="control__wrapper">
                         <p className="text bold left m0">Moderator</p>
 
-                        <p className="control__text m0">
-                            Has a limited list of powers.
-                        </p>
+                        <p className="control__text m0">Has a limited list of powers.</p>
 
-                        <p className="control__text m0">
-                            Enter Moderator wallet address:
-                        </p>
+                        <p className="control__text m0">Enter Moderator wallet address:</p>
 
-                        <div className="control__item">
-                            <input
-                                type="text"
-                                readOnly
-                                value="04388fs8v7dfv7d8g878d7g8vd89g89dg89d789fa"
-                                className="input control__input"
-                                placeholder="Admin wallet address"
+                        {moderators.map(sa => (
+                            <UserRow
+                                key={sa}
+                                wallet={sa}
+                                role={USER_ROLES.MODERATOR}
+                                postDeleteCallback={postDeleteCallback}
                             />
+                        ))}
 
-                            <button className="button control__item--settings default__hover">
-                                <img
-                                    src="/assets/img/settings-white.svg"
-                                    alt="settings"
-                                    className="control__item--settings--icon"
-                                />
+                        {!isNewModeratorCreating ? (
+                            <button
+                                className="button control__add default__hover"
+                                onClick={onNewModerCreate}
+                            >
+                                + add new Moder
                             </button>
-
-                            <button className="button control__item--confirm default__hover delete">
-                                Delete
-                            </button>
-                        </div>
-
-                        <div className="control__item">
-                            <input
-                                type="text"
-                                className="input control__input"
-                                placeholder="Admin wallet address"
+                        ) : (
+                            <UserRow
+                                wallet=""
+                                role={USER_ROLES.MODERATOR}
+                                isEditable={true}
+                                postSaveCallback={postSaveCallback}
                             />
-
-                            <button className="button control__item--settings default__hover">
-                                <img
-                                    src="/assets/img/settings-white.svg"
-                                    alt="settings"
-                                    className="control__item--settings--icon"
-                                />
-                            </button>
-
-                            <button className="button control__item--confirm default__hover save">
-                                Save
-                            </button>
-                        </div>
-
-                        <button className="button control__add default__hover">
-                            + add new Moder
-                        </button>
+                        )}
                     </div>
 
                     <div className="control__wrapper">
@@ -170,17 +221,21 @@ const ControlPanel = () => {
 
                         <p className="control__text m0">Set preferences.</p>
 
-                        {pages.isLoading
-                        ? <p className="control__subtext">Loading..</p>
-                        : <>
-                            {pages.pages.length > 0 ? pages.pages.map((data, id) => (
-                                <PageItem key={id} data={data} />
-                            )) : <p className="control__subtext">Pages not found</p>}
+                        {/* {!pages || pages.isLoading ? (
+                            <p className="control__subtext">Loading..</p>
+                        ) : (
+                            <>
+                                {pages.pages.length > 0 ? (
+                                    pages.pages.map((data, id) => <PageItem key={id} data={data} />)
+                                ) : (
+                                    <p className="control__subtext">Pages not found</p>
+                                )}
 
-                            <Link to="createpage" className="control__add default__hover">
-                                + add new Page
-                            </Link>
-                        </>}
+                                <Link to="createpage" className="control__add default__hover">
+                                    + add new Page
+                                </Link>
+                            </>
+                        )} */}
                     </div>
                 </div>
             </div>
