@@ -596,7 +596,7 @@ const CreateItem = () => {
         if (getBlockchainTokensState.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: getBlockchainTokensState.error.message,
+                text: getBlockchainTokensState.error,
             });
         }
     }, [getBlockchainTokensState]);
@@ -614,7 +614,7 @@ const CreateItem = () => {
         if (createPackState.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: createPackState.error.message,
+                text: createPackState.error,
             });
         }
     }, [createPackState]);
