@@ -45,8 +45,8 @@ const PageItem = props => {
 
     useEffect(() => {
         if (deletePageRS.result && deletePageRS.result.data) {
-            console.log({ result: deletePageRS.result });
             dispatch(deletePage(id));
+
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
                 text: 'Page deleted successfuly',

@@ -124,7 +124,6 @@ const UserRow = props => {
             </button>
         );
     }, [isEditable, isProccesing, wallet, confirmSaveTooltip, confirmDeleteTooltip]);
-    console.log({ confirmDeleteTooltip });
 
     useEffect(() => {
         setIsProccesin(false);

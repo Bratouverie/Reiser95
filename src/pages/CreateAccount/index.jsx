@@ -114,7 +114,6 @@ const CreateAccount = () => {
     }, [state.error]);
 
     useEffect(() => {
-        console.log({ result: state.result });
         if (state.result && state.result.data) {
             setBrandId('');
             setLogo('');
