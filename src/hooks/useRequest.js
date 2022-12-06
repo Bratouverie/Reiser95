@@ -63,17 +63,19 @@ export const useRequest = ({
 
     const [state, setState] = useState(DEFAULT_STATE);
 
+    const accessToken = window.sessionStorage.getItem('access_token');
+
     const auth = axios.create({
         baseURL: 'https://checkbrandcom.site/auth_service/auth/api/v1/',
         headers: {
-            Authorization: `Bearer ${authInfo.accessToken}`,
+            Authorization: `Bearer ${authInfo.accessToken || accessToken}`,
         },
     });
 
     const user = axios.create({
         baseURL: 'https://checkbrandcom.site/auth_service/user/api/v1/',
         headers: {
-            Authorization: `Bearer ${authInfo.accessToken}`,
+            Authorization: `Bearer ${authInfo.accessToken || accessToken}`,
         },
     });
 
@@ -105,8 +107,7 @@ export const useRequest = ({
             if (isAuth) {
                 reqHeaders = {
                     ...reqHeaders,
-                    Authorization:
-                        'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY3MDE3MTM2MywianRpIjoiOTg2ZTExNDItODQwNy00N2M3LTkxMmQtZmUyY2Y5ZWZjMGU0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6IjB4NDViY2Q5YTljNGM4ZWJkMmQ4YzdkOWRiYTgxMDdhNmRkNDc3NjhmYSIsIm5iZiI6MTY3MDE3MTM2MywiZXhwIjoxNjcwMTc0OTYzfQ.D2uU1MTG04uG3BW8ntYinPEDcsyQWH1eBnSXqZAlYMA',
+                    Authorization: `Bearer ${authInfo.accessToken || accessToken}`,
                 };
             }
 

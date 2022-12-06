@@ -1,0 +1,22 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tooltip {
+    left: 10px;
+    font-family: 'Gilroy', sans-serif;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 20px !important;
+    background-color: #101010 !important;
+    border-radius: 8px;
+}
+
+.arrow {
+    position: absolute !important;
+    top: 7px !important;
+    right: calc(50% - 4px) !important;
+    color: #101010 !important;
+}

@@ -59,15 +59,13 @@ const CreatePack = () => {
     const requestsQueueRef = useRef(new AsyncQueue({ maxParallelTasks: 2 }));
 
     const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
-    const [createdPack, setCreatedPack] = useState({ id: '33cb653d-bad2-4579-be96-c5c2385e112c' });
+    const [createdPack, setCreatedPack] = useState({});
 
     const [name, setName] = useState('');
     const [tokenCommonName, setTokenCommonName] = useState('Common name');
     const [numbering, setNumbering] = useState('1');
     const [tokenPrice, setTokenPrice] = useState(0.1);
-    const [tokenIdForPayment, setTokenIdForPayment] = useState(
-        'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
-    );
+    const [tokenIdForPayment, setTokenIdForPayment] = useState();
     const [investorRoyalty, setInvestorRoyalty] = useState(0.5);
     const [creatorRoyalty, setCreatorRoyalty] = useState(0.5);
     const [isTokenNameEqualFileName, setIsTokenNameEqualFileName] = useState(false);
@@ -433,7 +431,8 @@ const CreatePack = () => {
                             url: TOKEN_BY_PACK,
                             headers: {
                                 'Content-Type': 'application/json',
-                                Authorization: authInfo.accessToken || `Bearer ${FAKE_TOKEN}`,
+                                Authorization:
+                                    `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
                             },
                             data: {
                                 pack: createdPack.id,
@@ -520,7 +519,8 @@ const CreatePack = () => {
                                 url: CONFIRME_UPLOAD_TOKEN(res.data.id),
                                 headers: {
                                     'Content-Type': 'application/json',
-                                    Authorization: authInfo.accessToken || `Bearer ${FAKE_TOKEN}`,
+                                    Authorization:
+                                        `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
                                 },
                                 data: {
                                     file_1_name_ext: res.data.file_1_pre_signed_url_data.fields.key,
@@ -591,7 +591,7 @@ const CreatePack = () => {
         if (getBlockchainTokensState.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: getBlockchainTokensState.error.message,
+                text: getBlockchainTokensState.error,
             });
         }
     }, [getBlockchainTokensState]);
@@ -609,7 +609,7 @@ const CreatePack = () => {
         if (createPackState.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: createPackState.error.message,
+                text: createPackState.error,
             });
         }
     }, [createPackState]);

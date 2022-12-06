@@ -1,16 +1,13 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
-import './index.css';
-
 import Preloader from '../../common/Preloader';
 import PageItem from '../../components/PageItem';
 import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
-import { NotificationContext } from '../../context/NotificationContext';
-import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { USER_ROLES } from '../../const/users/USER_ROLES';
 import UserRow from './UserRow';
+
+import './index.css';
 
 const ControlPanel = () => {
     const auth = useSelector(state => state.auth);
@@ -22,10 +19,6 @@ const ControlPanel = () => {
 
     const [isNewAdminCreating, setIsNewAdminCreating] = useState(false);
     const [isNewModeratorCreating, setIsNewModeratorCreating] = useState(false);
-
-    const {
-        actions: { addNotification },
-    } = useContext(NotificationContext);
 
     const { state: getSuperAdminsRS, request: onGetSuperAdmins } = useRequest({
         url: '/users_by_role/super_admin',
@@ -94,12 +87,6 @@ const ControlPanel = () => {
             setModerators(getModeratorsRS.result.data.users);
         }
     }, [getModeratorsRS]);
-
-    console.log({
-        superAdmins,
-        admins,
-        moderators,
-    });
 
     useEffect(() => {
         onGetSuperAdmins({});
@@ -221,12 +208,14 @@ const ControlPanel = () => {
 
                         <p className="control__text m0">Set preferences.</p>
 
-                        {/* {!pages || pages.isLoading ? (
+                        {!pages || !pages.pages || pages.isLoading ? (
                             <p className="control__subtext">Loading..</p>
                         ) : (
                             <>
                                 {pages.pages.length > 0 ? (
-                                    pages.pages.map((data, id) => <PageItem key={id} data={data} />)
+                                    pages.pages.map(page => (
+                                        <PageItem key={page.id} name={page.name} id={page.id} />
+                                    ))
                                 ) : (
                                     <p className="control__subtext">Pages not found</p>
                                 )}
@@ -235,7 +224,7 @@ const ControlPanel = () => {
                                     + add new Page
                                 </Link>
                             </>
-                        )} */}
+                        )}
                     </div>
                 </div>
             </div>
