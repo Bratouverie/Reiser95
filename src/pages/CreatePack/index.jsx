@@ -59,15 +59,13 @@ const CreatePack = () => {
     const requestsQueueRef = useRef(new AsyncQueue({ maxParallelTasks: 2 }));
 
     const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
-    const [createdPack, setCreatedPack] = useState({ id: '33cb653d-bad2-4579-be96-c5c2385e112c' });
+    const [createdPack, setCreatedPack] = useState({});
 
     const [name, setName] = useState('');
     const [tokenCommonName, setTokenCommonName] = useState('Common name');
     const [numbering, setNumbering] = useState('1');
     const [tokenPrice, setTokenPrice] = useState(0.1);
-    const [tokenIdForPayment, setTokenIdForPayment] = useState(
-        'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
-    );
+    const [tokenIdForPayment, setTokenIdForPayment] = useState();
     const [investorRoyalty, setInvestorRoyalty] = useState(0.5);
     const [creatorRoyalty, setCreatorRoyalty] = useState(0.5);
     const [isTokenNameEqualFileName, setIsTokenNameEqualFileName] = useState(false);

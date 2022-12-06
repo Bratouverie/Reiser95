@@ -60,15 +60,12 @@ const CreateItem = () => {
     const requestsQueueRef = useRef(new AsyncQueue({ maxParallelTasks: 2 }));
 
     const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
-    const [createdPack, setCreatedPack] = useState({ id: '33cb653d-bad2-4579-be96-c5c2385e112c' });
 
     const [packId, setPackId] = useState('');
     const [tokenCommonName, setTokenCommonName] = useState('Common name');
     const [numbering, setNumbering] = useState('1');
     const [tokenPrice, setTokenPrice] = useState(0.1);
-    const [tokenIdForPayment, setTokenIdForPayment] = useState(
-        'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
-    );
+    const [tokenIdForPayment, setTokenIdForPayment] = useState('');
     const [investorRoyalty, setInvestorRoyalty] = useState(0.5);
     const [creatorRoyalty, setCreatorRoyalty] = useState(0.5);
     const [isTokenNameEqualFileName, setIsTokenNameEqualFileName] = useState(false);
@@ -99,13 +96,6 @@ const CreateItem = () => {
 
     const { state: getBlockchainTokensState, request: onGetBlockchainTokens } = useRequest({
         url: 'currency_token/',
-        requestType: REQUEST_TYPE.DATA,
-        isAuth: true,
-    });
-
-    const { state: createPackState, request: onCreatePack } = useRequest({
-        url: 'pack/',
-        method: HTTP_METHODS.POST,
         requestType: REQUEST_TYPE.DATA,
         isAuth: true,
     });
@@ -268,163 +258,12 @@ const CreateItem = () => {
         setStats(stats);
     }, []);
 
-    const onSavePackHandler = useCallback(() => {
-        let status_price = 'price';
-
-        if (isAuction) {
-            status_price = 'auction';
-        }
-
-        if (isNoPrice) {
-            status_price = 'no_price';
-        }
-
-        if (
-            !collectionId ||
-            !packId ||
-            !tokenPrice ||
-            !tokenIdForPayment ||
-            !description ||
-            !investorRoyalty ||
-            !creatorRoyalty
-        ) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: 'Fill all required fields',
-            });
-
-            return;
-        }
-
-        if (
-            Number(selectedCollection.percentage_fee) !==
-            Number(investorRoyalty) + Number(creatorRoyalty)
-        ) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text:
-                    'The sum of investor and creator royalty should be equal to collection percentage fee',
-            });
-            return;
-        }
-        const incomeSumRoyaltyPerc = incomeRoyaltyDestribution.reduce(
-            (a, c) => a + Number(c.percentage),
-            0,
-        );
-        const creatorSumRoyaltyPerc = creatorRoyaltyDestribution.reduce(
-            (a, c) => a + Number(c.percentage),
-            0,
-        );
-
-        if (incomeSumRoyaltyPerc < 100) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: 'The total royalties of the income must be equal to 100%',
-            });
-
-            return;
-        }
-
-        if (creatorSumRoyaltyPerc < 100) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: 'The total royalties of the creators must be equal to 100%',
-            });
-
-            return;
-        }
-
-        const data = {
-            collection: collectionId,
-            type: 'standard',
-            packId,
-            price: Number(tokenPrice),
-            currency_token: tokenIdForPayment,
-            status_price: status_price,
-            investor_royalty: Number(investorRoyalty),
-            creator_royalty: Number(creatorRoyalty),
-            description: description,
-            unlockable: unlockable,
-            unlockable_content: unlockableContent,
-            income_distribution: incomeRoyaltyDestribution.map(el => ({
-                wallet: el.wallet,
-                percent: Number(el.percentage),
-            })),
-            creator_royalty_distribution: creatorRoyaltyDestribution.map(el => ({
-                wallet: el.wallet,
-                percent: Number(el.percentage),
-            })),
-            opensea: opensea,
-            checkbrandcom: checkbrandcom,
-            properties: properties.map(p => {
-                // if (p.value) {
-                //     return {
-                //         name: p.name,
-                //         type: p.type,
-                //     };
-                // }
-
-                return {
-                    name: p.name,
-                    type: p.type,
-                };
-            }),
-        };
-
-        // const mockData = {
-        //     checkbrandcom: 'eqwqeweqw',
-        //     collection: '5dfbc65f-0275-48ab-b3aa-edbe2d02897b',
-        //     creator_royalty: 0.5,
-        //     investor_royalty: 0.5,
-        //     creator_royalty_distribution: [
-        //         {
-        //             wallet: 'rwqeqweqw',
-        //             percent: 100,
-        //         },
-        //     ],
-        //     currency_token: 'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
-        //     description: 'eqweqweqw',
-        //     income_distribution: [
-        //         {
-        //             wallet: 'eqwewewq',
-        //             percent: 100,
-        //         },
-        //     ],
-        //     name: 'eqweqw2',
-        //     opensea: 'eqeeqwqewweq',
-        //     price: 0.01,
-        //     status_price: 'price',
-        //     type: 'standard',
-        //     unlockable: false,
-        //     unlockable_content: '',
-        //     close: false,
-        // };
-
-        onCreatePack({
-            data,
-        });
-    }, [
-        collectionId,
-        packId,
-        tokenPrice,
-        tokenIdForPayment,
-        incomeRoyaltyDestribution,
-        creatorRoyaltyDestribution,
-        description,
-        opensea,
-        checkbrandcom,
-        unlockable,
-        unlockableContent,
-        isAuction,
-        isNoPrice,
-        investorRoyalty,
-        creatorRoyalty,
-        properties,
-        selectedCollection,
-    ]);
-
     const onUploadTokensHandler = useCallback(async () => {
-        if (!genrateTablesRow.length || !createdPack) {
+        if (!genrateTablesRow.length || !packId) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'No pack selected or no files upload',
+            });
             return;
         }
 
@@ -438,10 +277,11 @@ const CreateItem = () => {
                             url: TOKEN_BY_PACK,
                             headers: {
                                 'Content-Type': 'application/json',
-                                Authorization: authInfo.accessToken || `Bearer ${FAKE_TOKEN}`,
+                                Authorization:
+                                    `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
                             },
                             data: {
-                                pack: createdPack.id,
+                                pack: packId,
                                 name: token.name,
                                 price: token.tokenPrice,
                                 currency_token: tokenIdForPayment,
@@ -525,7 +365,8 @@ const CreateItem = () => {
                                 url: CONFIRME_UPLOAD_TOKEN(res.data.id),
                                 headers: {
                                     'Content-Type': 'application/json',
-                                    Authorization: authInfo.accessToken || `Bearer ${FAKE_TOKEN}`,
+                                    Authorization:
+                                        `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
                                 },
                                 data: {
                                     file_1_name_ext: res.data.file_1_pre_signed_url_data.fields.key,
@@ -576,7 +417,7 @@ const CreateItem = () => {
                 });
             }),
         );
-    }, [genrateTablesRow, authInfo.accessToken, createdPack, tokenIdForPayment]);
+    }, [packId, genrateTablesRow, authInfo.accessToken, tokenIdForPayment]);
 
     useEffect(() => {
         if (selectedBlockchain) {
@@ -600,24 +441,6 @@ const CreateItem = () => {
             });
         }
     }, [getBlockchainTokensState]);
-
-    useEffect(() => {
-        if (createPackState.result && createPackState.result.data) {
-            setCreatedPack(createPackState.result.data);
-
-            addNotification({
-                type: NOTIFICATION_TYPES.SUCCESS,
-                text: 'Pack successfuly created, now you are able to upload pack tokens',
-            });
-        }
-
-        if (createPackState.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: createPackState.error,
-            });
-        }
-    }, [createPackState]);
 
     return (
         <>
@@ -1249,13 +1072,13 @@ const CreateItem = () => {
 
                         <div className="create__button--content">
                             <div className="create__button--wrapper">
-                                <button
+                                {/* <button
                                     className="button create__button default__hover"
                                     onClick={onSavePackHandler}
                                     disabled={createPackState.isProcessing}
                                 >
                                     Upload on site
-                                </button>
+                                </button> */}
 
                                 {/* <button className="button create__button filled">
                                     Upload in Blockchane
