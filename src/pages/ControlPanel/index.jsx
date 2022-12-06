@@ -93,7 +93,7 @@ const ControlPanel = () => {
         onGetAdmins({});
         onGetModerators({});
     }, []);
-    console.log({ pages: pages.pages });
+
     if (
         auth.loadAuth ||
         getAdminsRS.isProcessing ||
