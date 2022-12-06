@@ -137,6 +137,15 @@
     height: 50px !important;
 }
 
+.ControlPanel_pageRow_confirmBtn {
+    margin-top: 10px;
+    height: 50px !important;
+}
+
+.ControlPanel_pageRow_confirmBtn:hover {
+    background: #2e2f30;
+}
+
 .ControlPanel__popover {
     background-color: rgba(0, 0, 0, 0) !important;
 }

@@ -1,74 +1,101 @@
-import React from 'react';
+import React, { useContext, useCallback, useState, useRef, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { deletePage } from '../../redux/slices/pages';
-
-import { hidePage } from '../../functions/data';
+import { useDialog } from '../../hooks/useDialog';
+import { NotificationContext } from '../../context/NotificationContext';
+import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
+import { Popover } from '../../common/Popover';
+import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
+import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 
 const PageItem = props => {
     const { name, id } = props;
 
     const auth = useSelector(state => state.auth);
-
-    const [edit, setEdit] = React.useState(false);
-    const [del, setDel] = React.useState(false);
-    const [loading, setLoading] = React.useState(false);
-
     const dispatch = useDispatch();
 
-    const confirmFunc = attr => {
-        if (attr === 'edit') {
-            setDel(false);
-            setEdit(!edit);
-        } else {
-            setEdit(false);
-            setDel(!del);
-        }
-    };
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
 
-    const deletePageFunc = () => {
+    const [loading, setLoading] = useState(false);
+
+    const deleteBtnRef = useRef();
+
+    const confirmDialog = useDialog();
+
+    const { state: deletePageRS, request: onDeletePage, onClearState: clearPageState } = useRequest(
+        {
+            method: HTTP_METHODS.PATCH,
+            requestType: REQUEST_TYPE.DATA,
+            isAuth: true,
+        },
+    );
+
+    const onDeletePageHandler = useCallback(() => {
         setLoading(true);
-        const res = hidePage(id, auth.accessToken);
+        onDeletePage({
+            url: `page/hide/${id}/`,
+            data: {
+                hide: true,
+            },
+        });
+        confirmDialog.onClose();
+    }, [auth.accessToken, id]);
 
-        res.then(data => {
+    useEffect(() => {
+        if (deletePageRS.result && deletePageRS.result.data) {
+            console.log({ result: deletePageRS.result });
             dispatch(deletePage(id));
-            alert('Page deleted');
-        })
-            .catch(e => {
-                console.log(e);
-            })
-            .finally(() => {
-                setLoading(false);
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Page deleted successfuly',
             });
-    };
+        }
+
+        if (deletePageRS && deletePageRS.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: deletePageRS.error,
+            });
+        }
+
+        setLoading(false);
+    }, [deletePageRS]);
 
     return (
         <div className={`control__item${loading ? ' loading' : ''}`}>
             <input type="text" readOnly placeholder={name} className="input control__input" />
 
-            <button
-                className="button control__item--settings default__hover"
-                onClick={() => confirmFunc('edit')}
-            >
+            <button className="button control__item--settings default__hover">
                 <img
                     src="/assets/img/settings-white.svg"
                     alt="settings"
                     className="control__item--settings--icon"
                 />
-
-                {edit && <span className="control__button--confirm">Edit</span>}
             </button>
 
             <button
                 className="button control__item--confirm default__hover delete"
-                onClick={() => confirmFunc('delete')}
+                onClick={confirmDialog.onShow}
+                ref={deleteBtnRef}
             >
                 Delete
-                {del && (
-                    <span className="control__button--confirm" onClick={deletePageFunc}>
-                        Confirm
-                    </span>
-                )}
             </button>
+
+            <Popover
+                open={confirmDialog.visible}
+                onClose={confirmDialog.onClose}
+                classes={{ paper: 'ControlPanel__popover' }}
+                anchorEl={deleteBtnRef.current}
+            >
+                <button
+                    className="button control__item--confirm default__hover ControlPanel_pageRow_confirmBtn delete"
+                    onClick={onDeletePageHandler}
+                >
+                    Confirm
+                </button>
+            </Popover>
         </div>
     );
 };

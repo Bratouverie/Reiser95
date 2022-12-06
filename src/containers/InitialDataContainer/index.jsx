@@ -69,7 +69,7 @@ const InitialDataContainer = ({ children }) => {
         if (stateGetPages.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: stateGetPages.error.message,
+                text: stateGetPages.error,
             });
         }
     }, [stateGetPages]);
@@ -82,7 +82,7 @@ const InitialDataContainer = ({ children }) => {
         if (stateGetAccounts.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: stateGetAccounts.error.message,
+                text: stateGetAccounts.error,
             });
         }
     }, [stateGetAccounts]);
@@ -95,7 +95,7 @@ const InitialDataContainer = ({ children }) => {
         if (stateGetBlockchains.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: stateGetBlockchains.error.message,
+                text: stateGetBlockchains.error,
             });
         }
     }, [stateGetBlockchains]);
@@ -108,7 +108,7 @@ const InitialDataContainer = ({ children }) => {
         if (stateGetTokens.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: stateGetTokens.error.message,
+                text: stateGetTokens.error,
             });
         }
     }, [stateGetTokens]);
@@ -121,7 +121,7 @@ const InitialDataContainer = ({ children }) => {
         if (stateGetCollections.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: stateGetCollections.error.message,
+                text: stateGetCollections.error,
             });
         }
     }, [stateGetCollections]);
@@ -134,7 +134,7 @@ const InitialDataContainer = ({ children }) => {
         if (stateGetPacks.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: stateGetPacks.error.message,
+                text: stateGetPacks.error,
             });
         }
     }, [stateGetPacks]);

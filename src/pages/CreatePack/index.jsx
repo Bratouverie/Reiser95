@@ -433,7 +433,8 @@ const CreatePack = () => {
                             url: TOKEN_BY_PACK,
                             headers: {
                                 'Content-Type': 'application/json',
-                                Authorization: authInfo.accessToken || `Bearer ${FAKE_TOKEN}`,
+                                Authorization:
+                                    `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
                             },
                             data: {
                                 pack: createdPack.id,
@@ -520,7 +521,8 @@ const CreatePack = () => {
                                 url: CONFIRME_UPLOAD_TOKEN(res.data.id),
                                 headers: {
                                     'Content-Type': 'application/json',
-                                    Authorization: authInfo.accessToken || `Bearer ${FAKE_TOKEN}`,
+                                    Authorization:
+                                        `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
                                 },
                                 data: {
                                     file_1_name_ext: res.data.file_1_pre_signed_url_data.fields.key,
@@ -591,7 +593,7 @@ const CreatePack = () => {
         if (getBlockchainTokensState.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: getBlockchainTokensState.error.message,
+                text: getBlockchainTokensState.error,
             });
         }
     }, [getBlockchainTokensState]);
@@ -609,7 +611,7 @@ const CreatePack = () => {
         if (createPackState.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: createPackState.error.message,
+                text: createPackState.error,
             });
         }
     }, [createPackState]);
