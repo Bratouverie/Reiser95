@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useContext, useRef } from 'react';
 import axios from 'axios';
-import _, { uniqueId } from 'lodash';
+import _, { isArray, uniqueId } from 'lodash';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import FileDropzone from '../../common/FileDropzone';
@@ -89,6 +89,8 @@ const CreateItem = () => {
     const [numericIndicatorInProccess, setNumericIndicatorInProccess] = useState([]);
     const [numericIndicatorDone, setNumericIndicatorDone] = useState([]);
     const [numericIndicatorFailed, setNumericIndicatorFailed] = useState([]);
+
+    const [isTokenUploadStarted, setIsTokenUploadSarted] = useState(false);
 
     const propertiesDialog = useDialog();
     const levelsDialog = useDialog();
@@ -267,11 +269,68 @@ const CreateItem = () => {
             return;
         }
 
+        setIsTokenUploadSarted(true);
+
+        let status_price = 'price';
+
+        if (isAuction) {
+            status_price = 'auction';
+        }
+
+        if (isNoPrice) {
+            status_price = 'no_price';
+        }
+
+        const data = {
+            pack: packId,
+            currency_token: tokenIdForPayment,
+            investor_royalty: investorRoyalty,
+            creator_royalty: creatorRoyalty,
+            status_price,
+            investor_royalty: Number(investorRoyalty),
+            creator_royalty: Number(creatorRoyalty),
+            description,
+            unlockable: unlockable,
+            unlockable_content: unlockableContent,
+            income_distribution: incomeRoyaltyDestribution.map(el => ({
+                wallet: el.wallet,
+                percent: Number(el.percentage),
+            })),
+            creator_royalty_distribution: creatorRoyaltyDestribution.map(el => ({
+                wallet: el.wallet,
+                percent: Number(el.percentage),
+            })),
+            opensea: opensea,
+            checkbrandcom: checkbrandcom,
+            properties: properties.map(p => {
+                return {
+                    name: p.name,
+                    type: p.type,
+                };
+            }),
+        };
+
+        Object.keys(data).forEach(key => {
+            if (isArray(data[key])) {
+                console.log({
+                    cons: data[key] === [],
+                    value: data[key],
+                });
+            }
+            if (!data[key] || (isArray(data[key]) && !data[key].length)) {
+                delete data[key];
+            }
+        });
+
         await Promise.all(
             genrateTablesRow.map(token => {
                 return new Promise(resolve => {
                     const task = async () => {
                         setNumericIndicatorInProccess(p => [...p, token.numericIndicator]);
+                        setNumericIndicatorFailed(p =>
+                            p.filter(num => num !== token.numericIndicator),
+                        );
+
                         const res = await axios.request({
                             method: HTTP_METHODS.POST,
                             url: TOKEN_BY_PACK,
@@ -281,12 +340,9 @@ const CreateItem = () => {
                                     `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
                             },
                             data: {
-                                pack: packId,
+                                ...data,
                                 name: token.name,
                                 price: token.tokenPrice,
-                                currency_token: tokenIdForPayment,
-                                investor_royalty: investorRoyalty,
-                                creator_royalty: creatorRoyalty,
                                 file_1_name_ext: token.tokenImgName,
                                 file_2_name_ext: token.tokenPreviewName,
                             },
@@ -405,9 +461,20 @@ const CreateItem = () => {
                                 setNumericIndicatorInProccess(p => {
                                     return p.filter(el => el !== token.numericIndicator);
                                 });
+
+                                const errorKeys = Object.keys(e.response.data);
+
+                                let error = `${e}`;
+
+                                if (typeof e.response.data === 'object') {
+                                    error = `${errorKeys
+                                        .map(k => `${k} - ${e.response.data[k]}`)
+                                        .join(', ')}`;
+                                }
+
                                 addNotification({
                                     type: NOTIFICATION_TYPES.ERROR,
-                                    text: `${e}`,
+                                    text: error,
                                 });
                                 // setTimeout(() => getUploadsUrls(true), 5000);
                             });
@@ -417,7 +484,26 @@ const CreateItem = () => {
                 });
             }),
         );
-    }, [packId, genrateTablesRow, authInfo.accessToken, tokenIdForPayment]);
+
+        setIsTokenUploadSarted(false);
+    }, [
+        packId,
+        genrateTablesRow,
+        authInfo.accessToken,
+        tokenIdForPayment,
+        isAuction,
+        isNoPrice,
+        investorRoyalty,
+        creatorRoyalty,
+        description,
+        unlockable,
+        unlockableContent,
+        incomeRoyaltyDestribution,
+        creatorRoyaltyDestribution,
+        opensea,
+        checkbrandcom,
+        properties,
+    ]);
 
     useEffect(() => {
         if (selectedBlockchain) {
@@ -466,6 +552,7 @@ const CreateItem = () => {
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
+                                            disabled={isTokenUploadStarted}
                                             value={packId}
                                             placeholder="Select Pack"
                                             onChange={onPackIdChangeHandler}
@@ -488,6 +575,7 @@ const CreateItem = () => {
                                     multiple
                                     availableFormats={['image/png', 'image/gif', 'image/jpeg']}
                                     values={tokenImgValues}
+                                    disabled={isTokenUploadStarted}
                                     onAdd={onAddTokenImg}
                                     id="createpackImgs"
                                     onDelete={onDeleteTokenImg}
@@ -515,6 +603,7 @@ const CreateItem = () => {
                                     multiple
                                     availableFormats={['image/png', 'image/gif', 'image/jpeg']}
                                     values={tokenPreviewValues}
+                                    disabled={isTokenUploadStarted}
                                     onAdd={onAddTokenPreview}
                                     id="createpackPreview"
                                     onDelete={onDeleteTokenPreview}
@@ -636,6 +725,7 @@ const CreateItem = () => {
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
+                                            disabled={isTokenUploadStarted}
                                             value={collectionId}
                                             placeholder="Select Collection"
                                             onChange={onCollectionIdChangeHandler}
@@ -649,6 +739,7 @@ const CreateItem = () => {
                                     text="Choose a “common name” so that all tokens have the same name."
                                     placeholder="Enter common name"
                                     required
+                                    disabled={isTokenUploadStarted}
                                     value={tokenCommonName}
                                     setValue={setTokenCommonName}
                                 />
@@ -681,6 +772,7 @@ const CreateItem = () => {
                                     type={INPUT_TYPE.NUMERIC}
                                     maxValue={MAX_NUMERIC_INDICATOR_START}
                                     required
+                                    disabled={isTokenUploadStarted}
                                     value={numbering}
                                     setValue={setNumbering}
                                 />
@@ -716,6 +808,7 @@ const CreateItem = () => {
                                                         value: c.id,
                                                         name: c.name,
                                                     }))}
+                                                    disabled={isTokenUploadStarted}
                                                     value={tokenIdForPayment}
                                                     placeholder="Select Collection"
                                                     onChange={onSelectTokenNameForPayment}
@@ -729,6 +822,7 @@ const CreateItem = () => {
                                                 isAuction ? 'active' : ''
                                             } createPack_priceItemContainer_button`}
                                             onClick={onAuctionClickHandler}
+                                            disabled={isTokenUploadStarted}
                                         >
                                             Auction
                                             {isAuction && (
@@ -746,6 +840,7 @@ const CreateItem = () => {
                                                 isNoPrice ? 'active' : ''
                                             } createPack_priceItemContainer_button
                                         `}
+                                            disabled={isTokenUploadStarted}
                                             onClick={onNoPriceClickHandler}
                                         >
                                             No price
@@ -766,6 +861,7 @@ const CreateItem = () => {
                                 text="Enter the percentage that will be accrued to the first owner of the
                             token from the second and subsequent sales."
                                 placeholder="4.5"
+                                disabled={isTokenUploadStarted}
                                 required
                                 value={investorRoyalty}
                                 setValue={setInvestorRoyalty}
@@ -776,6 +872,7 @@ const CreateItem = () => {
                                 text="Enter the percentage that will be accrued to the team of token
                                 creators from the first and subsequent sales."
                                 placeholder="0.5"
+                                disabled={isTokenUploadStarted}
                                 required
                                 value={creatorRoyalty}
                                 setValue={setCreatorRoyalty}
@@ -813,12 +910,14 @@ const CreateItem = () => {
                                 CheckBrand.com page:"
                                 placeholder="https://OpenSea.io/collection/collectionname"
                                 value={opensea}
+                                disabled={isTokenUploadStarted}
                                 setValue={setOpensea}
                             />
                             <Input
                                 text="This link will be displayed on item&rsquo;s detail OpenSea.io page:"
                                 placeholder="https://checkbrand.com/collection/custom URL"
                                 value={checkbrandcom}
+                                disabled={isTokenUploadStarted}
                                 setValue={setCheckbrandcom}
                             />
                             <Input
@@ -828,6 +927,7 @@ const CreateItem = () => {
                                 textarea
                                 required
                                 value={description}
+                                disabled={isTokenUploadStarted}
                                 setValue={setDescriprion}
                             />
                             <div className="create__item">
@@ -853,6 +953,7 @@ const CreateItem = () => {
                                     <button
                                         className="button create__item--add"
                                         onClick={propertiesDialog.onShow}
+                                        disabled={isTokenUploadStarted}
                                     >
                                         <img
                                             src="/assets/img/plus.png"
@@ -886,6 +987,7 @@ const CreateItem = () => {
                                     <button
                                         className="button create__item--add"
                                         onClick={levelsDialog.onShow}
+                                        disabled={isTokenUploadStarted}
                                     >
                                         <img
                                             src="/assets/img/plus.png"
@@ -919,6 +1021,7 @@ const CreateItem = () => {
                                     <button
                                         className="button create__item--add"
                                         onClick={statsDialog.onShow}
+                                        disabled={isTokenUploadStarted}
                                     >
                                         <img
                                             src="/assets/img/plus.png"
@@ -956,6 +1059,7 @@ const CreateItem = () => {
                                             className="create__item--checkbox"
                                             id="lock"
                                             onClick={() => setUnlockable(p => !p)}
+                                            disabled={isTokenUploadStarted}
                                             value={unlockable}
                                         />
 
@@ -970,6 +1074,7 @@ const CreateItem = () => {
                                     placeholder="Markdown syntax is supported. 0 of 1000 characters used."
                                     textarea
                                     value={unlockableContent}
+                                    disabled={isTokenUploadStarted}
                                     setValue={setUnlockableContent}
                                 />
                             </div>

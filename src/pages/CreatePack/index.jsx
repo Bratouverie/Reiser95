@@ -329,14 +329,13 @@ const CreatePack = () => {
 
         const data = {
             collection: collectionId,
-            type: 'standard',
             name: name,
             price: Number(tokenPrice),
             currency_token: tokenIdForPayment,
-            status_price: status_price,
+            status_price,
             investor_royalty: Number(investorRoyalty),
             creator_royalty: Number(creatorRoyalty),
-            description: description,
+            description,
             unlockable: unlockable,
             unlockable_content: unlockableContent,
             income_distribution: incomeRoyaltyDestribution.map(el => ({
@@ -350,13 +349,6 @@ const CreatePack = () => {
             opensea: opensea,
             checkbrandcom: checkbrandcom,
             properties: properties.map(p => {
-                // if (p.value) {
-                //     return {
-                //         name: p.name,
-                //         type: p.type,
-                //     };
-                // }
-
                 return {
                     name: p.name,
                     type: p.type,
@@ -559,9 +551,25 @@ const CreatePack = () => {
                                 setNumericIndicatorInProccess(p => {
                                     return p.filter(el => el !== token.numericIndicator);
                                 });
+
+                                const errorKeys = Object.keys(e.response.data);
+
+                                let error = `${e}`;
+
+                                if (typeof e.response.data === 'object') {
+                                    error = `${errorKeys
+                                        .map(k => `${k} - ${e.response.data[k]}`)
+                                        .join(', ')}`;
+                                }
+
                                 addNotification({
                                     type: NOTIFICATION_TYPES.ERROR,
-                                    text: `${e}`,
+                                    text: error,
+                                });
+
+                                addNotification({
+                                    type: NOTIFICATION_TYPES.ERROR,
+                                    text: error.slice(0, 200),
                                 });
                                 // setTimeout(() => getUploadsUrls(true), 5000);
                             });
