@@ -77,7 +77,11 @@ const Autocomplite = props => {
             });
 
             setTimeout(() => {
-                handleChange(JSON.stringify(result));
+                if (JSON.stringify(result) === '[]') {
+                    handleChange([]);
+                } else {
+                    handleChange(JSON.stringify(result));
+                }
             }, 0);
         },
         [handleChange, value],
