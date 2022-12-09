@@ -155,7 +155,9 @@ const CreatePack = () => {
                 return null;
             }
 
-            const tokenPreviewImg = tokenPreviewValues.find(tpv => tpv.file.name === tiv.file.name);
+            const tokenPreviewImg = tokenPreviewValues.find(
+                tpv => getFileNameAndExt(tpv.file.name).fileName === fileNameAndExt.fileName,
+            );
             const numericIndicator = generateNumericIndicator(Number(numbering) + i);
 
             res.push({
@@ -249,8 +251,8 @@ const CreatePack = () => {
         setCollectionId(value);
     }, []);
 
-    const setPropertiesHandler = useCallback(propertiesA => {
-        setProperties(propertiesA);
+    const setPropertiesHandler = useCallback(properties => {
+        setProperties(properties);
     }, []);
 
     const setLevelsHandler = useCallback(levels => {

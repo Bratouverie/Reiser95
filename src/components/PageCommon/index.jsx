@@ -26,7 +26,6 @@ const PageCommon = () => {
         api.post('page/', formData)
             .then(data => {
                 alert('Page created!');
-                console.log(data);
             })
             .catch(e => {
                 alert('Please fill all inputs');

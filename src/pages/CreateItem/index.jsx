@@ -150,7 +150,9 @@ const CreateItem = () => {
                 return null;
             }
 
-            const tokenPreviewImg = tokenPreviewValues.find(tpv => tpv.file.name === tiv.file.name);
+            const tokenPreviewImg = tokenPreviewValues.find(
+                tpv => getFileNameAndExt(tpv.file.name).fileName === fileNameAndExt.fileName,
+            );
             const numericIndicator = generateNumericIndicator(Number(numbering) + i);
 
             res.push({
@@ -311,12 +313,6 @@ const CreateItem = () => {
         };
 
         Object.keys(data).forEach(key => {
-            if (isArray(data[key])) {
-                console.log({
-                    cons: data[key] === [],
-                    value: data[key],
-                });
-            }
             if (!data[key] || (isArray(data[key]) && !data[key].length)) {
                 delete data[key];
             }
