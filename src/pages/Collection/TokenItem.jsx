@@ -69,7 +69,7 @@ const TokenItem = props => {
             <Link
                 to={`/token/${token.id}`}
                 style={{
-                    backgroundImage: `url('${token.file_1}')`,
+                    backgroundImage: `url('${token.file_2}')`,
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat',
                 }}
@@ -80,7 +80,7 @@ const TokenItem = props => {
                 <div className="collection__item--data--card">
                     <p className="collection__item--title">{token.name}</p>
 
-                    <p className="collection__item--text">{token.name}</p>
+                    <p className="collection__item--text">{token.collection.name}</p>
                 </div>
 
                 <div className="collection__item--data--price">

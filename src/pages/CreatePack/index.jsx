@@ -77,7 +77,6 @@ const CreatePack = () => {
     const [stats, setStats] = useState([]);
     const [opensea, setOpensea] = useState('');
     const [checkbrandcom, setCheckbrandcom] = useState('');
-
     const [creatorRoyaltyDestribution, setCreatorRoyaltyDestribution] = useState([]);
     const [incomeRoyaltyDestribution, setIncomeRoyaltyDestribution] = useState([]);
 
@@ -435,8 +434,8 @@ const CreatePack = () => {
                                 currency_token: tokenIdForPayment,
                                 investor_royalty: investorRoyalty,
                                 creator_royalty: creatorRoyalty,
-                                file_1_name_ext: token.tokenImgName,
-                                file_2_name_ext: token.tokenPreviewName,
+                                file_2_name_ext: token.tokenImgName,
+                                file_1_name_ext: token.tokenPreviewName,
                             },
                         });
 
@@ -740,11 +739,11 @@ const CreatePack = () => {
                                                     {row.nameComponent}
                                                 </p>
 
-                                                <p className="create__loading--text">
+                                                <p className="create__loading--text hide-overflow-ellipsis">
                                                     {row.tokenImgName}
                                                 </p>
 
-                                                <p className="create__loading--text">
+                                                <p className="create__loading--text hide-overflow-ellipsis">
                                                     {row.tokenPreviewName}
                                                 </p>
 

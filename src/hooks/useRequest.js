@@ -39,17 +39,24 @@ const sendRequest = async (axiosInstance, url, method, data, query, body, header
             headers: response.headers,
         };
     } catch (err) {
+        console.log({ err });
         const { response } = err;
 
         if (!response) {
             throw err;
         }
 
-        const {
-            data: { detail },
-        } = response;
+        const { data } = response;
 
-        throw detail;
+        const errorKeys = Object.keys(data);
+
+        let error = `${data}`;
+
+        if (typeof data === 'object') {
+            error = `${errorKeys.map(k => `${k} - ${data[k]}`).join(', ')}`;
+        }
+
+        throw error;
     }
 };
 
