@@ -108,7 +108,7 @@ const CreateAccount = () => {
         if (state && state.error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: 'Fill all required fields',
+                text: state.error,
             });
         }
     }, [state.error]);

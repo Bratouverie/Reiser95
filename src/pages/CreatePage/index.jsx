@@ -1,29 +1,47 @@
-import React from 'react';
-
-import { createPage } from '../../functions/data';
-
-import './index.css';
-
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
+import { NotificationContext } from '../../context/NotificationContext';
 import Input from '../../common/Input';
 import File from '../../common/File';
-import { useSelector } from 'react-redux';
+
+import './index.css';
+import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
+import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 
 const CreatePage = () => {
-    const auth = useSelector(state => state.auth);
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
 
-    const [name, setName] = React.useState('');
-    const [number, setNumber] = React.useState('');
-    const [url, setUrl] = React.useState('');
-    const [banner, setBanner] = React.useState('');
-    const [title1, setTitle1] = React.useState('');
-    const [description, setDescription] = React.useState('');
-    const [title2, setTitle2] = React.useState('');
-    const [isLoading, setIsLoading] = React.useState(false);
+    const { state, request, onClearState } = useRequest({
+        requestType: REQUEST_TYPE.DATA,
+        method: HTTP_METHODS.POST,
+        url: 'page/',
+        isAuth: true,
+    });
 
-    const createPageFunc = () => {
+    const [name, setName] = useState('');
+    const [number, setNumber] = useState('');
+    const [url, setUrl] = useState('');
+    const [banner, setBanner] = useState('');
+    const [title1, setTitle1] = useState('');
+    const [description, setDescription] = useState('');
+    const [title2, setTitle2] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const createPageFunc = useCallback(() => {
+        if (!name || !url || !number || !banner || !title1 || !description || !title2) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Fill all required fields',
+            });
+            return;
+        }
+
         setIsLoading(true);
 
         let formData = new FormData();
+
         formData.append('name', name);
         formData.append('number', parseInt(number));
         formData.append('url', url);
@@ -32,27 +50,39 @@ const CreatePage = () => {
         formData.append('description', description);
         formData.append('title_2', title2);
 
-        const createdPage = createPage(formData, auth.accessToken);
+        request({
+            data: formData,
+        });
+    }, [name, number, url, banner, title1, description, title2]);
 
-        createdPage
-            .then(d => {
-                alert('Page created!');
-                setName('');
-                setNumber('');
-                setUrl('');
-                setBanner('');
-                setTitle1('');
-                setDescription('');
-                setTitle2('');
-            })
-            .catch(e => {
-                alert('Please fill all inputs');
-                console.log(e);
-            })
-            .finally(() => {
-                setIsLoading(false);
+    useEffect(() => {
+        if (state.result && state.result.data) {
+            setName('');
+            setNumber('');
+            setUrl('');
+            setBanner('');
+            setTitle1('');
+            setDescription('');
+            setTitle2('');
+            setIsLoading('');
+
+            onClearState();
+
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Page successfuly created',
             });
-    };
+        }
+
+        if (state && state.error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: state.error,
+            });
+        }
+
+        setIsLoading(false);
+    }, [state]);
 
     return (
         <div className="default__padding createpage">

@@ -339,8 +339,8 @@ const CreateItem = () => {
                                 ...data,
                                 name: token.name,
                                 price: token.tokenPrice,
-                                file_1_name_ext: token.tokenImgName,
-                                file_2_name_ext: token.tokenPreviewName,
+                                file_2_name_ext: token.tokenImgName,
+                                file_1_name_ext: token.tokenPreviewName,
                             },
                         });
 

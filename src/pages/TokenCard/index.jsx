@@ -1,12 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
+import { VideoPlayer } from '../../common/VideoPlayer';
 import StatChart from '../../components/StatChart';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
 import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
-import { roundInt } from '../../utils/roundInt';
+import { isVideo } from '../../utils/isVideo';
+import TokenItem from '../Collection/TokenItem';
 
 import './index.css';
 // token item type
@@ -76,6 +79,8 @@ import './index.css';
 // }
 
 const TokenCard = () => {
+    const tokens = useSelector(state => state.tokens);
+
     const { id } = useParams();
 
     const {
@@ -97,6 +102,16 @@ const TokenCard = () => {
     const [act, setAct] = useState(true);
 
     const [token, setToken] = useState();
+
+    const collectionTokens = useMemo(() => {
+        if (!tokens.tokens || !token) {
+            return [];
+        }
+
+        return tokens.tokens
+            .filter(t => t.collection.id === token.collection.id && t.id !== token.id)
+            .slice(0, 4);
+    }, [tokens, token]);
 
     useEffect(() => {
         onGetToken({
@@ -173,15 +188,20 @@ const TokenCard = () => {
                                         />
                                     </button>
                                 </div>
-
-                                <div
-                                    style={{
-                                        backgroundImage: `url('${token.file_1}')`,
-                                        backgroundSize: 'contain',
-                                        backgroundRepeat: 'no-repeat',
-                                    }}
-                                    className="token__card--img"
-                                ></div>
+                                {isVideo(token.file_2_name_ext) ? (
+                                    <div className="player-wrapper token__card--img">
+                                        <VideoPlayer src={token.file_1} />
+                                    </div>
+                                ) : (
+                                    <div
+                                        style={{
+                                            backgroundImage: `url('${token.file_1}')`,
+                                            backgroundSize: 'contain',
+                                            backgroundRepeat: 'no-repeat',
+                                        }}
+                                        className="token__card--img"
+                                    />
+                                )}
                             </div>
 
                             <div className="token__card--wrap stack mobileoff">
@@ -1765,176 +1785,25 @@ const TokenCard = () => {
                             {more && (
                                 <>
                                     <div className="token__card--item--bottom token__card--list">
-                                        <div className="collection__item">
-                                            <Link
-                                                to="/token/1"
-                                                className="collection__item--img--inner"
-                                            ></Link>
-
-                                            <div className="collection__item--data--inner">
-                                                <div className="collection__item--data--card">
-                                                    <p className="collection__item--title">
-                                                        Unique card #005
-                                                    </p>
-
-                                                    <p className="collection__item--text">
-                                                        Versace NFT Certificates
-                                                    </p>
-                                                </div>
+                                        {!collectionTokens || !collectionTokens.length ? (
+                                            <div className="collection__items--none">
+                                                No items to display
                                             </div>
-
-                                            <div className="collection__item--button--inner end">
-                                                <p className="collection__item--text right bold">
-                                                    Last
-                                                    <img
-                                                        src="/assets/img/eth.svg"
-                                                        alt="eth"
-                                                        className="eth m"
-                                                    />
-                                                    0.01
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="collection__item">
-                                            <Link
-                                                to="/token/1"
-                                                className="collection__item--img--inner"
-                                            ></Link>
-
-                                            <div className="collection__item--data--inner">
-                                                <div className="collection__item--data--card">
-                                                    <p className="collection__item--title">
-                                                        Unique card #005
-                                                    </p>
-
-                                                    <p className="collection__item--text">
-                                                        Versace NFT Certificates
-                                                    </p>
-                                                </div>
-
-                                                <div className="collection__item--data--price">
-                                                    <p className="collection__item--text right">
-                                                        Price
-                                                    </p>
-
-                                                    <p className="collection__item--text right bold">
-                                                        <img
-                                                            src="/assets/img/eth.svg"
-                                                            alt="eth"
-                                                            className="eth"
-                                                        />
-                                                        0.01
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div className="collection__item--button--inner end">
-                                                <p className="collection__item--text right bold">
-                                                    Last
-                                                    <img
-                                                        src="/assets/img/eth.svg"
-                                                        alt="eth"
-                                                        className="eth m"
-                                                    />
-                                                    0.01
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="collection__item">
-                                            <Link
-                                                to="/token/1"
-                                                className="collection__item--img--inner"
-                                            ></Link>
-
-                                            <div className="collection__item--data--inner">
-                                                <div className="collection__item--data--card">
-                                                    <p className="collection__item--title">
-                                                        Unique card #001
-                                                    </p>
-
-                                                    <p className="collection__item--text">
-                                                        Versace NFT Certificates
-                                                    </p>
-                                                </div>
-
-                                                <div className="collection__item--data--price">
-                                                    <p className="collection__item--text right">
-                                                        Price
-                                                    </p>
-
-                                                    <p className="collection__item--text right bold">
-                                                        <img
-                                                            src="/assets/img/eth.svg"
-                                                            alt="eth"
-                                                            className="eth"
-                                                        />
-                                                        0.01
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div className="collection__item--button--inner">
-                                                <button className="button collection__item--button green">
-                                                    Book
-                                                </button>
-
-                                                <p className="collection__item--button--text">
-                                                    Investor&rsquo;s royalty 4.5%
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="collection__item">
-                                            <Link
-                                                to="/token/1"
-                                                className="collection__item--img--inner"
-                                            ></Link>
-
-                                            <div className="collection__item--data--inner">
-                                                <div className="collection__item--data--card">
-                                                    <p className="collection__item--title">
-                                                        Unique card #003
-                                                    </p>
-
-                                                    <p className="collection__item--text">
-                                                        Versace NFT Certificates
-                                                    </p>
-                                                </div>
-
-                                                <div className="collection__item--data--price">
-                                                    <p className="collection__item--text right">
-                                                        Price
-                                                    </p>
-
-                                                    <p className="collection__item--text right bold">
-                                                        <img
-                                                            src="/assets/img/eth.svg"
-                                                            alt="eth"
-                                                            className="eth"
-                                                        />
-                                                        0.01
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            <div className="collection__item--button--inner">
-                                                <button className="button collection__item--button white">
-                                                    Booked
-                                                </button>
-
-                                                <p className="collection__item--button--text">
-                                                    Investor&rsquo;s royalty 4.5%
-                                                </p>
-                                            </div>
-                                        </div>
+                                        ) : (
+                                            <>
+                                                {collectionTokens.map(t => (
+                                                    <TokenItem key={t.id} token={t} />
+                                                ))}
+                                            </>
+                                        )}
                                     </div>
 
                                     <div className="token__card--collection--view">
-                                        <button className="button token__card--collection--button">
-                                            View collection
-                                        </button>
+                                        <Link to={`/collection/${token.collection.id}`}>
+                                            <button className="button token__card--collection--button">
+                                                View collection
+                                            </button>
+                                        </Link>
                                     </div>
                                 </>
                             )}
