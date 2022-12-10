@@ -657,11 +657,11 @@ const CreateItem = () => {
                                                     {row.nameComponent}
                                                 </p>
 
-                                                <p className="create__loading--text">
+                                                <p className="create__loading--text hide-overflow-ellipsis">
                                                     {row.tokenImgName}
                                                 </p>
 
-                                                <p className="create__loading--text">
+                                                <p className="create__loading--text hide-overflow-ellipsis">
                                                     {row.tokenPreviewName}
                                                 </p>
 

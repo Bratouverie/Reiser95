@@ -310,3 +310,10 @@
     border-top: 3px solid #fec83d;
     margin: 0;
 }
+
+.hide-overflow-ellipsis {
+    width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
