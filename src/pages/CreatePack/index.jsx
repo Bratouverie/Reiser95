@@ -89,6 +89,8 @@ const CreatePack = () => {
     const [numericIndicatorDone, setNumericIndicatorDone] = useState([]);
     const [numericIndicatorFailed, setNumericIndicatorFailed] = useState([]);
 
+    const [isTokenUploadInProcessing, setIsTokenUploadInProcessing] = useState(false);
+
     const propertiesDialog = useDialog();
     const levelsDialog = useDialog();
     const statsDialog = useDialog();
@@ -410,9 +412,11 @@ const CreatePack = () => {
     ]);
 
     const onUploadTokensHandler = useCallback(async () => {
-        if (!genrateTablesRow.length || !createdPack) {
+        if (!genrateTablesRow.length || !createdPack || isTokenUploadInProcessing) {
             return;
         }
+        console.log('i am here');
+        setIsTokenUploadInProcessing(true);
 
         await Promise.all(
             genrateTablesRow
@@ -588,12 +592,15 @@ const CreatePack = () => {
                     });
                 }),
         );
+
+        setIsTokenUploadInProcessing(false);
     }, [
         genrateTablesRow,
         authInfo.accessToken,
         createdPack,
         numericIndicatorDone,
         tokenIdForPayment,
+        isTokenUploadInProcessing,
     ]);
 
     useEffect(() => {
