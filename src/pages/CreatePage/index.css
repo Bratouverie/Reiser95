@@ -248,4 +248,8 @@
     .create__button--wrapper .create__button{
         width: 100%;
     }
+
+    .create__item--title{
+        font-size: 1.6rem;
+    }
 }

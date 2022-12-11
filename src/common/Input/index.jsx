@@ -41,7 +41,7 @@ const Input = ({
 
     return (
         <div className={className || `create__item${half ? ' half' : ''}`}>
-            <p className={`create__item--title${required ? ' required' : ''}`}>{title}</p>
+            {title && <p className={`create__item--title${required ? ' required' : ''}`}>{title}</p>}
 
             {text && <p className="create__item--text">{text}</p>}
 

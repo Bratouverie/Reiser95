@@ -210,6 +210,10 @@ input::-webkit-inner-spin-button{
 	margin-top: 1.5rem;
 }
 
+.default__button{
+	color: #fff;
+}
+
 /* Адаптив */
 @media(max-width: 1260px){
 	.container{
