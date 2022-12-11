@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { CustomSelect } from '../../common/CustomSelect';
 import File from '../../common/File';
 import Input from '../../common/Input';
+import Loader from '../../common/Loader';
 import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
@@ -275,7 +276,6 @@ const CreateCollection = () => {
     }, [blockchainId]);
 
     useEffect(() => {
-        setIsLoading(false);
         if (state.result && state.result.data) {
             setLogo('');
             setAdminSmart('');
@@ -303,6 +303,16 @@ const CreateCollection = () => {
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
                 text: 'Collection successfuly created',
+            });
+
+            setIsLoading(false);
+        }
+
+        if (state.error) {
+            setIsLoading(false);
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: state.error,
             });
         }
     }, [state]);
@@ -674,13 +684,18 @@ const CreateCollection = () => {
 
                     <div className="create__button--content">
                         <div className="create__button--wrapper">
-                            <button
-                                className="button create__button default__hover"
-                                disabled={isLoading}
-                                onClick={onSubmitHandler}
-                            >
-                                {isLoading ? 'Loading...' : 'Create'}
-                            </button>
+                            {isLoading ? (
+                                <div className="createCollection__loaderContainer">
+                                    <Loader className="createCollection__loader" />
+                                </div>
+                            ) : (
+                                <button
+                                    className="button create__button default__hover"
+                                    onClick={onSubmitHandler}
+                                >
+                                    Create
+                                </button>
+                            )}
 
                             {/* <button className="button create__button filled">
                                 Upload in Blockchane

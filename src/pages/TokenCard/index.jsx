@@ -9,6 +9,7 @@ import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
 import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { isVideo } from '../../utils/isVideo';
+import { roundInt } from '../../utils/roundInt';
 import TokenItem from '../Collection/TokenItem';
 
 import './index.css';
@@ -80,6 +81,7 @@ import './index.css';
 
 const TokenCard = () => {
     const tokens = useSelector(state => state.tokens);
+    const collections = useSelector(state => state.collections);
 
     const { id } = useParams();
 
@@ -112,6 +114,14 @@ const TokenCard = () => {
             .filter(t => t.collection.id === token.collection.id && t.id !== token.id)
             .slice(0, 4);
     }, [tokens, token]);
+
+    const currentTokenCollection = useMemo(() => {
+        if (!collections.collections || !token) {
+            return [];
+        }
+
+        return collections.collections.find(c => c.id === token.collection.id);
+    }, [collections, token]);
 
     useEffect(() => {
         onGetToken({
@@ -195,9 +205,11 @@ const TokenCard = () => {
                                 ) : (
                                     <div
                                         style={{
-                                            backgroundImage: `url('${token.file_1}')`,
-                                            backgroundSize: 'contain',
-                                            backgroundRepeat: 'no-repeat',
+                                            backgroundImage: `url('${token.file_1 ||
+                                                token.file_2}')`,
+                                            backgroundSize: 'cover',
+                                            objectFit: 'cover',
+                                            backgroundPosition: 'center',
                                         }}
                                         className="token__card--img"
                                     />
@@ -280,7 +292,7 @@ const TokenCard = () => {
                                                         className="token__card--item--prop--item"
                                                     >
                                                         <p className="token__card--item--prop--item--subtitle">
-                                                            Bloodline
+                                                            {p.type}
                                                         </p>
 
                                                         <p className="token__card--item--prop--item--title">
@@ -288,7 +300,7 @@ const TokenCard = () => {
                                                         </p>
 
                                                         <p className="token__card--item--prop--item--text">
-                                                            {p.type}
+                                                            10% have this trait
                                                         </p>
                                                     </div>
                                                 ))}
@@ -327,16 +339,18 @@ const TokenCard = () => {
                                         <div className="token__card--item--bottom">
                                             <div className="token__card--item--about">
                                                 <div className="token__card--item--about--item">
-                                                    <div className="token__card--item--about--img"></div>
+                                                    <div
+                                                        style={{
+                                                            backgroundImage: `url('${currentTokenCollection.logo}')`,
+                                                            backgroundSize: 'cover',
+                                                            objectFit: 'cover',
+                                                            backgroundPosition: 'center',
+                                                        }}
+                                                        className="token__card--item--about--img"
+                                                    />
 
                                                     <p className="token__card--item--about--text">
-                                                        Information about the token Information
-                                                        about the token Information about the token
-                                                        Information about the token Information
-                                                        about the token Information about the token
-                                                        Information about the token Information
-                                                        about the token Information about the token
-                                                        Information about the token
+                                                        {currentTokenCollection.description}
                                                     </p>
                                                 </div>
 
@@ -452,8 +466,14 @@ const TokenCard = () => {
                                                     </p>
 
                                                     <p className="token__card--item--details--item--text bold">
-                                                        {Number(token.investor_royalty)}/
-                                                        {Number(token.creator_royalty)}%
+                                                        {roundInt({
+                                                            num: Number(token.investor_royalty),
+                                                        })}
+                                                        /
+                                                        {roundInt({
+                                                            num: Number(token.creator_royalty),
+                                                        })}
+                                                        %
                                                     </p>
                                                 </div>
                                             </div>
@@ -566,7 +586,7 @@ const TokenCard = () => {
                                         />
 
                                         <p className="token__card--content--price--val">
-                                            {token.price}
+                                            {roundInt({ num: Number(token.price) })}
                                         </p>
 
                                         <p className="token__card--price--text">($34.18)</p>

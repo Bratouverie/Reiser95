@@ -150,8 +150,8 @@ const CreateItem = () => {
                 return null;
             }
 
-            const tokenPreviewImg = tokenPreviewValues.find(
-                tpv => getFileNameAndExt(tpv.file.name).fileName === fileNameAndExt.fileName,
+            const tokenPreviewImg = tokenPreviewValues.find(tpv =>
+                getFileNameAndExt(tpv.file.name).fileName.includes(fileNameAndExt.fileName),
             );
             const numericIndicator = generateNumericIndicator(Number(numbering) + i);
 

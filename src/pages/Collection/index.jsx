@@ -114,8 +114,9 @@ const Collection = () => {
                 className="collection__header"
                 style={{
                     backgroundImage: `url('${collection.banner}')`,
-                    backgroundSize: 'contain',
-                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover',
+                    objectFit: 'cover',
+                    backgroundPosition: 'center',
                 }}
             >
                 <div className="container collection__container posr">
