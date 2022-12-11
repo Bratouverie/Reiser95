@@ -569,7 +569,15 @@ const CreateItem = () => {
 
                                 <FileDropzone
                                     multiple
-                                    availableFormats={['image/png', 'image/gif', 'image/jpeg']}
+                                    availableFormats={[
+                                        'image/png',
+                                        'image/gif',
+                                        'image/jpeg',
+                                        'image/jpg',
+                                        'video/mp4',
+                                        'video/mpeg',
+                                        'video/webm',
+                                    ]}
                                     values={tokenImgValues}
                                     disabled={isTokenUploadStarted}
                                     onAdd={onAddTokenImg}
@@ -597,7 +605,12 @@ const CreateItem = () => {
 
                                 <FileDropzone
                                     multiple
-                                    availableFormats={['image/png', 'image/gif', 'image/jpeg']}
+                                    availableFormats={[
+                                        'image/png',
+                                        'image/gif',
+                                        'image/jpg',
+                                        'image/jpeg',
+                                    ]}
                                     values={tokenPreviewValues}
                                     disabled={isTokenUploadStarted}
                                     onAdd={onAddTokenPreview}

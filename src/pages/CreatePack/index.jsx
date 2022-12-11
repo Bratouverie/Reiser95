@@ -667,7 +667,15 @@ const CreatePack = () => {
 
                                 <FileDropzone
                                     multiple
-                                    availableFormats={['image/png', 'image/gif', 'image/jpeg']}
+                                    availableFormats={[
+                                        'image/png',
+                                        'image/gif',
+                                        'image/jpeg',
+                                        'image/jpg',
+                                        'video/mp4',
+                                        'video/mpeg',
+                                        'video/webm',
+                                    ]}
                                     values={tokenImgValues}
                                     onAdd={onAddTokenImg}
                                     id="createpackImgs"
@@ -694,7 +702,12 @@ const CreatePack = () => {
 
                                 <FileDropzone
                                     multiple
-                                    availableFormats={['image/png', 'image/gif', 'image/jpeg']}
+                                    availableFormats={[
+                                        'image/png',
+                                        'image/gif',
+                                        'image/jpg',
+                                        'image/jpeg',
+                                    ]}
                                     values={tokenPreviewValues}
                                     onAdd={onAddTokenPreview}
                                     id="createpackPreview"

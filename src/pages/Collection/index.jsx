@@ -9,6 +9,7 @@ import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
 
 import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
+import { roundInt } from '../../utils/roundInt';
 
 import './index.css';
 import TokenItem from './TokenItem';
@@ -264,7 +265,7 @@ const Collection = () => {
                                         alt="eth"
                                         className="collection__data--eth"
                                     />
-                                    {collection.floor_price_count}
+                                    {roundInt({ num: Number(collection.floor_price_count) })}
                                 </h3>
 
                                 <p className="collection__data--text">floor price</p>
@@ -277,7 +278,7 @@ const Collection = () => {
                                         alt="eth"
                                         className="collection__data--eth"
                                     />
-                                    {collection.volume_troded_count}
+                                    {roundInt({ num: Number(collection.volume_troded_count) })}
                                 </h3>
 
                                 <p className="collection__data--text">volume traded</p>
