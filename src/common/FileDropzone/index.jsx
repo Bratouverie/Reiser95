@@ -44,7 +44,7 @@ const FileDropzone = ({
         disabled: disabled || isFilesLimitReached,
         accept: availableFormats ? availableFormats.join(',') : '',
         maxFiles,
-        maxSize: 20971520, // 20mb
+        maxSize: 100 * 1048576, // 100mb
     });
 
     useEffect(() => {
