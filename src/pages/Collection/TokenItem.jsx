@@ -69,7 +69,7 @@ const TokenItem = props => {
             <Link
                 to={`/token/${token.id}`}
                 style={{
-                    backgroundImage: `url('${token.file_2}')`,
+                    backgroundImage: `url('${token.file_2 || token.file_1}')`,
                     backgroundSize: 'cover',
                     objectFit: 'cover',
                     backgroundPosition: 'center',

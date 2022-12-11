@@ -12,6 +12,7 @@ import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 
 import './index.css';
 import TokenItem from './TokenItem';
+
 // collection type example
 // {
 //     "id": "0bb70e6c-4d51-4904-8d7b-209d0cb31055",
