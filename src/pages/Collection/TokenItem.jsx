@@ -70,8 +70,9 @@ const TokenItem = props => {
                 to={`/token/${token.id}`}
                 style={{
                     backgroundImage: `url('${token.file_2}')`,
-                    backgroundSize: 'contain',
-                    backgroundRepeat: 'no-repeat',
+                    backgroundSize: 'cover',
+                    objectFit: 'cover',
+                    backgroundPosition: 'center',
                 }}
                 className="collection__item--img--inner"
             ></Link>
@@ -97,7 +98,7 @@ const TokenItem = props => {
                 <button className="button collection__item--button blue__button">Mint</button>
 
                 <p className="collection__item--button--text">
-                    Investor&rsquo;s royalty {Number(token.investor_royalty)}%
+                    Investor&rsquo;s royalty {roundInt({ num: Number(token.investor_royalty) })}%
                 </p>
             </div>
         </div>

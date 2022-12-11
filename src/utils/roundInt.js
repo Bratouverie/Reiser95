@@ -1,3 +1,6 @@
 export const roundInt = ({ num }) => {
-    return Math.round((num * 100) / 100);
+    const roundedString = num.toFixed(4);
+    const rounded = Number(roundedString);
+
+    return rounded;
 };
