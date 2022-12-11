@@ -263,7 +263,7 @@ const CreateItem = () => {
     }, []);
 
     const onUploadTokensHandler = useCallback(async () => {
-        if (!genrateTablesRow.length || !packId) {
+        if (!genrateTablesRow.length || !packId || isTokenUploadStarted) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
                 text: 'No pack selected or no files upload',
@@ -319,166 +319,174 @@ const CreateItem = () => {
         });
 
         await Promise.all(
-            genrateTablesRow.map(token => {
-                return new Promise(resolve => {
-                    const task = async () => {
-                        setNumericIndicatorInProccess(p => [...p, token.numericIndicator]);
-                        setNumericIndicatorFailed(p =>
-                            p.filter(num => num !== token.numericIndicator),
-                        );
+            genrateTablesRow
+                .filter(t => !numericIndicatorDone.includes(t.numericIndicator))
+                .map(token => {
+                    return new Promise(resolve => {
+                        const task = async () => {
+                            setNumericIndicatorInProccess(p => [...p, token.numericIndicator]);
+                            setNumericIndicatorFailed(p =>
+                                p.filter(num => num !== token.numericIndicator),
+                            );
 
-                        const res = await axios.request({
-                            method: HTTP_METHODS.POST,
-                            url: TOKEN_BY_PACK,
-                            headers: {
-                                'Content-Type': 'application/json',
-                                Authorization:
-                                    `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
-                            },
-                            data: {
-                                ...data,
-                                name: token.name,
-                                price: token.tokenPrice,
-                                file_2_name_ext: token.tokenImgName,
-                                file_1_name_ext: token.tokenPreviewName,
-                            },
-                        });
-
-                        if (!res.data.file_1_pre_signed_url_data) {
-                            throw 'Bad request';
-                        }
-
-                        const dataImage = new FormData();
-
-                        dataImage.append('key', res.data.file_1_pre_signed_url_data.fields.key);
-                        dataImage.append(
-                            'AWSAccessKeyId',
-                            res.data.file_1_pre_signed_url_data.fields.AWSAccessKeyId,
-                        );
-                        dataImage.append(
-                            'policy',
-                            res.data.file_1_pre_signed_url_data.fields.policy,
-                        );
-                        dataImage.append(
-                            'signature',
-                            res.data.file_1_pre_signed_url_data.fields.signature,
-                        );
-                        dataImage.append('file', token.tokenImgFile);
-
-                        try {
-                            await axios.request({
+                            const res = await axios.request({
                                 method: HTTP_METHODS.POST,
-                                url: res.data.file_1_pre_signed_url_data.url,
-                                headers: {
-                                    'Content-Type': 'multipart/form-data',
-                                },
-                                data: dataImage,
-                            });
-                        } catch (e) {
-                            console.log({ e });
-                            throw `Token ${token.name} image upload failed`;
-                        }
-
-                        const dataPreview = new FormData();
-
-                        dataPreview.append('key', res.data.file_2_pre_signed_url_data.fields.key);
-                        dataPreview.append(
-                            'AWSAccessKeyId',
-                            res.data.file_2_pre_signed_url_data.fields.AWSAccessKeyId,
-                        );
-                        dataPreview.append(
-                            'policy',
-                            res.data.file_2_pre_signed_url_data.fields.policy,
-                        );
-                        dataPreview.append(
-                            'signature',
-                            res.data.file_2_pre_signed_url_data.fields.signature,
-                        );
-                        dataPreview.append('file', token.tokenPreviewFile);
-
-                        try {
-                            await axios.request({
-                                method: HTTP_METHODS.POST,
-                                url: res.data.file_1_pre_signed_url_data.url,
-                                headers: {
-                                    'Content-Type': 'multipart/form-data',
-                                },
-                                data: dataPreview,
-                            });
-                        } catch (e) {
-                            console.log(e);
-                            throw `Token ${token.name} preview upload failed`;
-                        }
-
-                        let updateToken;
-                        try {
-                            updateToken = await axios.request({
-                                method: HTTP_METHODS.PATCH,
-                                url: CONFIRME_UPLOAD_TOKEN(res.data.id),
+                                url: TOKEN_BY_PACK,
                                 headers: {
                                     'Content-Type': 'application/json',
                                     Authorization:
                                         `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
                                 },
                                 data: {
-                                    file_1_name_ext: res.data.file_1_pre_signed_url_data.fields.key,
-                                    file_2_name_ext: res.data.file_2_pre_signed_url_data.fields.key,
+                                    ...data,
+                                    name: token.name,
+                                    price: token.tokenPrice,
+                                    file_2_name_ext: token.tokenImgName,
+                                    file_1_name_ext: token.tokenPreviewName,
                                 },
                             });
-                        } catch (e) {
-                            console.log(e);
-                            throw `Token ${token.name} update failed`;
-                        }
 
-                        return updateToken;
-                    };
+                            if (!res.data.file_1_pre_signed_url_data) {
+                                throw 'Bad request';
+                            }
 
-                    const getUploadsUrls = urgently => {
-                        requestsQueueRef.current
-                            .addTask(
-                                {
-                                    key: token.numericIndicator,
-                                    task,
-                                },
-                                urgently,
-                            )
-                            .then(res => {
-                                setNumericIndicatorInProccess(p => {
-                                    return p.filter(el => el !== token.numericIndicator);
+                            const dataImage = new FormData();
+
+                            dataImage.append('key', res.data.file_1_pre_signed_url_data.fields.key);
+                            dataImage.append(
+                                'AWSAccessKeyId',
+                                res.data.file_1_pre_signed_url_data.fields.AWSAccessKeyId,
+                            );
+                            dataImage.append(
+                                'policy',
+                                res.data.file_1_pre_signed_url_data.fields.policy,
+                            );
+                            dataImage.append(
+                                'signature',
+                                res.data.file_1_pre_signed_url_data.fields.signature,
+                            );
+                            dataImage.append('file', token.tokenImgFile);
+
+                            try {
+                                await axios.request({
+                                    method: HTTP_METHODS.POST,
+                                    url: res.data.file_1_pre_signed_url_data.url,
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data',
+                                    },
+                                    data: dataImage,
                                 });
-                                setNumericIndicatorDone(p => [...p, token.numericIndicator]);
-                                return resolve({
-                                    numericId: token.numericIndicator,
-                                });
-                            })
-                            .catch(e => {
+                            } catch (e) {
                                 console.log({ e });
-                                setNumericIndicatorFailed(p => [...p, token.numericIndicator]);
-                                setNumericIndicatorInProccess(p => {
-                                    return p.filter(el => el !== token.numericIndicator);
+                                throw `Token ${token.name} image upload failed`;
+                            }
+
+                            const dataPreview = new FormData();
+
+                            dataPreview.append(
+                                'key',
+                                res.data.file_2_pre_signed_url_data.fields.key,
+                            );
+                            dataPreview.append(
+                                'AWSAccessKeyId',
+                                res.data.file_2_pre_signed_url_data.fields.AWSAccessKeyId,
+                            );
+                            dataPreview.append(
+                                'policy',
+                                res.data.file_2_pre_signed_url_data.fields.policy,
+                            );
+                            dataPreview.append(
+                                'signature',
+                                res.data.file_2_pre_signed_url_data.fields.signature,
+                            );
+                            dataPreview.append('file', token.tokenPreviewFile);
+
+                            try {
+                                await axios.request({
+                                    method: HTTP_METHODS.POST,
+                                    url: res.data.file_1_pre_signed_url_data.url,
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data',
+                                    },
+                                    data: dataPreview,
                                 });
+                            } catch (e) {
+                                console.log(e);
+                                throw `Token ${token.name} preview upload failed`;
+                            }
 
-                                const errorKeys = Object.keys(e.response.data);
-
-                                let error = `${e}`;
-
-                                if (typeof e.response.data === 'object') {
-                                    error = `${errorKeys
-                                        .map(k => `${k} - ${e.response.data[k]}`)
-                                        .join(', ')}`;
-                                }
-
-                                addNotification({
-                                    type: NOTIFICATION_TYPES.ERROR,
-                                    text: error,
+                            let updateToken;
+                            try {
+                                updateToken = await axios.request({
+                                    method: HTTP_METHODS.PATCH,
+                                    url: CONFIRME_UPLOAD_TOKEN(res.data.id),
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        Authorization:
+                                            `Bearer ${authInfo.accessToken}` ||
+                                            `Bearer ${FAKE_TOKEN}`,
+                                    },
+                                    data: {
+                                        file_1_name_ext:
+                                            res.data.file_1_pre_signed_url_data.fields.key,
+                                        file_2_name_ext:
+                                            res.data.file_2_pre_signed_url_data.fields.key,
+                                    },
                                 });
-                                // setTimeout(() => getUploadsUrls(true), 5000);
-                            });
-                    };
+                            } catch (e) {
+                                console.log(e);
+                                throw `Token ${token.name} update failed`;
+                            }
 
-                    getUploadsUrls(true);
-                });
-            }),
+                            return updateToken;
+                        };
+
+                        const getUploadsUrls = urgently => {
+                            requestsQueueRef.current
+                                .addTask(
+                                    {
+                                        key: token.numericIndicator,
+                                        task,
+                                    },
+                                    urgently,
+                                )
+                                .then(res => {
+                                    setNumericIndicatorInProccess(p => {
+                                        return p.filter(el => el !== token.numericIndicator);
+                                    });
+                                    setNumericIndicatorDone(p => [...p, token.numericIndicator]);
+                                    return resolve({
+                                        numericId: token.numericIndicator,
+                                    });
+                                })
+                                .catch(e => {
+                                    console.log({ e });
+                                    setNumericIndicatorFailed(p => [...p, token.numericIndicator]);
+                                    setNumericIndicatorInProccess(p => {
+                                        return p.filter(el => el !== token.numericIndicator);
+                                    });
+
+                                    const errorKeys = Object.keys(e.response.data);
+
+                                    let error = `${e}`;
+
+                                    if (typeof e.response.data === 'object') {
+                                        error = `${errorKeys
+                                            .map(k => `${k} - ${e.response.data[k]}`)
+                                            .join(', ')}`;
+                                    }
+
+                                    addNotification({
+                                        type: NOTIFICATION_TYPES.ERROR,
+                                        text: error,
+                                    });
+                                    // setTimeout(() => getUploadsUrls(true), 5000);
+                                });
+                        };
+
+                        getUploadsUrls(true);
+                    });
+                }),
         );
 
         setIsTokenUploadSarted(false);
@@ -495,7 +503,9 @@ const CreateItem = () => {
         unlockable,
         unlockableContent,
         incomeRoyaltyDestribution,
+        numericIndicatorDone,
         creatorRoyaltyDestribution,
+        isTokenUploadStarted,
         opensea,
         checkbrandcom,
         properties,
