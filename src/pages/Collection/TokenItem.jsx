@@ -89,7 +89,7 @@ const TokenItem = props => {
 
                     <p className="collection__item--text right bold">
                         <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-                        {token.price}
+                        {roundInt({ num: Number(token.price) })}
                     </p>
                 </div>
             </div>
