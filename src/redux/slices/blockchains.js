@@ -1,30 +1,44 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-    isLoading: false,
-    blockchains: [],
-};
+const blockchainsAdapter = createEntityAdapter({
+    selectId: blockchain => blockchain.id,
+    sortComparer: (a, b) => a.name.localeCompare(b.name),
+});
 
 export const blockchainsSlice = createSlice({
     name: 'blockchains',
-    initialState,
+    initialState: blockchainsAdapter.getInitialState({
+        isLoading: false,
+        error: null,
+    }),
     reducers: {
-        setIsAuth: (state, action) => {
-            state.isLoading = action.payload;
+        addPage: blockchainsAdapter.addOne,
+        deletePage: blockchainsAdapter.removeOne,
+        clearError: state => {
+            state.error = null;
         },
-        setBlockchains: (state, action) => {
-            state.blockchains = action.payload;
-        },
-        deleteBlockchain: (state, action) => {
-            let newBlockchainsList = state.blockchains.filter(val => {
-                return val.id !== action.payload;
-            });
+    },
+    extraReducers: builder => {
+        // GET ALL BLOCKCHAINS LIST
+        builder.addCase(getAllBlockchains.pending, state => {
+            state.error = null;
+            state.isLoading = true;
+        });
 
-            state.blockchains = newBlockchainsList;
-        },
+        builder.addCase(getAllBlockchains.fulfilled, (state, action) => {
+            blockchainsAdapter.upsertMany(state, action.payload);
+            state.isLoading = false;
+        });
+
+        builder.addCase(getAllBlockchains.rejected, ({ error, isLoading }, action) => {
+            error = action.payload;
+            isLoading = false;
+        });
     },
 });
 
-export const { setIsAuth, setBlockchains, deleteBlockchain } = blockchainsSlice.actions;
+export const blockchainsSelectors = blockchainsAdapter.getSelectors(state => state.blockchains);
+
+export const { addPage, deletePage, clearError } = blockchainsSlice.actions;
 
 export default blockchainsSlice.reducer;

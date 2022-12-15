@@ -1,15 +1,15 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-
-import Input from '../../common/Input';
-import File from '../../common/File';
-import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
-import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
-
-import './index.css';
-import { useContext } from 'react';
 import { NotificationContext } from '../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
+import { normilizeError } from '../../utils/http/normilizeError';
+import { useCreateAccountMutation, useGetPagesQuery } from '../../redux/api/dataService';
+import Input from '../../common/Input';
+import File from '../../common/File';
+import CenteredContainer from '../../common/CenteredContainer';
+import Loader from '../../common/Loader';
+
+import './index.css';
 
 const SocialLinks = {
     OPENSEA: {
@@ -39,16 +39,16 @@ const SOCIAL_LINKS_ARR = Object.values(SocialLinks);
 const CreateAccount = () => {
     const pages = useSelector(state => state.pages);
 
+    const [
+        onCreateAccountRequest,
+        { isLoading, error, isSuccess, reset },
+    ] = useCreateAccountMutation();
+
+    const { isLoading: isPagesLoading } = useGetPagesQuery();
+
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
-
-    const { state, request, onClearState } = useRequest({
-        requestType: REQUEST_TYPE.DATA,
-        method: HTTP_METHODS.POST,
-        url: 'account/',
-        isAuth: true,
-    });
 
     const [brandId, setBrandId] = useState('');
     const [logo, setLogo] = useState('');
@@ -88,9 +88,7 @@ const CreateAccount = () => {
         formData.append('url', url);
         formData.append('description', descriprion);
 
-        request({
-            data: formData,
-        });
+        onCreateAccountRequest(formData);
     }, [brandId, logo, accountName, cover, banner, url, descriprion, social]);
 
     const changeBrandHandler = useCallback(id => {
@@ -105,16 +103,16 @@ const CreateAccount = () => {
     }, []);
 
     useEffect(() => {
-        if (state && state.error) {
+        if (error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: state.error,
+                text: normilizeError(error),
             });
         }
-    }, [state.error]);
+    }, [error]);
 
     useEffect(() => {
-        if (state.result && state.result.data) {
+        if (isSuccess) {
             setBrandId('');
             setLogo('');
             setAccountName('');
@@ -129,14 +127,28 @@ const CreateAccount = () => {
                 instagram: '',
                 twitter: '',
             });
-            onClearState();
 
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
                 text: 'Accaunt successfuly created',
             });
         }
-    }, [state]);
+    }, [isSuccess]);
+
+    useEffect(
+        () => () => {
+            reset();
+        },
+        [],
+    );
+
+    if (isPagesLoading) {
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
+    }
 
     return (
         <div className="default__padding createpage">
@@ -251,7 +263,7 @@ const CreateAccount = () => {
 
                     <div className="create__button--content">
                         <div className="create__button--content">
-                            {state.isProcessing ? (
+                            {isLoading ? (
                                 <button className="button create__button disabled">
                                     Loading...
                                 </button>

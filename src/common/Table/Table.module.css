@@ -1,0 +1,101 @@
+.tablewWrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+.tableContainer {
+    background: var(--white);
+    border-radius: 16px;
+    height: 100%;
+    max-width: 1440px;
+    overflow: hidden;
+}
+
+.table {
+    height: 100%;
+}
+.controllerArrows {
+    display: flex;
+    padding: 0;
+}
+.headerRow {
+    color: var(--dark-gray);
+    border: none;
+    padding: 16px 20px 16px 20px;
+    border-bottom: 1px solid var(--gray-10);
+    min-height: 55px;
+}
+
+.tableRow {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-10);
+}
+
+.tableRow:hover {
+    background: var(--gray-5);
+}
+
+.tableBody {
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    padding-left: 20px;
+    padding-right: 20px;
+    border-right: 6px solid transparent;
+    scrollbar-gutter: stable;
+}
+
+.tableBody::-webkit-scrollbar-thumb {
+    background: var(--overlay-dark-gray-01);
+    border-right: 6px solid transparent;
+}
+
+.bodyCellText {
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cellWrapper {
+    height: 100%;
+    padding: 5px;
+}
+
+.pagination {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    max-width: var(--standart-width);
+    overflow: hidden;
+}
+
+.pagination .paginationToolbar {
+    padding-right: 35px;
+    width: 100%;
+}
+
+.paginatorWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    background: var(--gray-5);
+}
+
+.rowHoverEffect {
+    cursor: pointer;
+}
+
+.centeredContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

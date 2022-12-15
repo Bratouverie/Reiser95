@@ -8,6 +8,7 @@ import MenuMobile from '../MenuMobile';
 import MenuMobileAdmin from '../MenuMobileAdmin';
 import AuthElements from '../AuthElements';
 import WalletMenu from '../WalletMenu';
+import { pagesSelectors } from '../../redux/slices/pages';
 
 // import { getPages } from '../../functions/data';
 // import { setIsAuth, setPages } from '../../redux/slices/pages';
@@ -16,7 +17,7 @@ const Header = ({ isAdminPage = false }) => {
     const [menu, setMenu] = React.useState(false);
     const [menuAdmin, setMenuAdmin] = React.useState(false);
     const [walletMenu, setWalletMenu] = React.useState(false);
-    const pages = useSelector(state => state.pages);
+    const pages = useSelector(pagesSelectors.selectAll);
     // const dispatch = useDispatch();
 
     // // Перенести запрос страниц с шапки в отдельную функцию, которая 100% будет подгружаться при загрузке сайта
@@ -35,7 +36,7 @@ const Header = ({ isAdminPage = false }) => {
     //     }
     // }, []);
 
-    if (pages.isLoading || !pages.pages) {
+    if (!pages) {
         return ''; //Типо прелоадер
     }
 
@@ -126,13 +127,13 @@ const Header = ({ isAdminPage = false }) => {
                             </nav>
                         ) : (
                             <nav className="header__nav">
-                                {pages.pages.map((data, id) => (
+                                {pages.map(page => (
                                     <Link
-                                        key={id}
-                                        to={`/${data.url}`}
+                                        key={page.id}
+                                        to={`/${page.url}`}
                                         className="header__nav--link"
                                     >
-                                        {data.name}
+                                        {page.name}
                                     </Link>
                                 ))}
 

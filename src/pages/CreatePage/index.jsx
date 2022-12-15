@@ -1,24 +1,19 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { NotificationContext } from '../../context/NotificationContext';
 import Input from '../../common/Input';
 import File from '../../common/File';
+import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 
 import './index.css';
-import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
-import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
+import { useCreatePageMutation } from '../../redux/api/dataService';
+import { normilizeError } from '../../utils/http/normilizeError';
 
 const CreatePage = () => {
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
 
-    const { state, request, onClearState } = useRequest({
-        requestType: REQUEST_TYPE.DATA,
-        method: HTTP_METHODS.POST,
-        url: 'page/',
-        isAuth: true,
-    });
+    const [onCreatePageRequest, { isLoading, error, isSuccess, reset }] = useCreatePageMutation();
 
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
@@ -27,9 +22,12 @@ const CreatePage = () => {
     const [title1, setTitle1] = useState('');
     const [description, setDescription] = useState('');
     const [title2, setTitle2] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
 
     const createPageFunc = useCallback(() => {
+        if (isLoading) {
+            return;
+        }
+
         if (!name || !url || !number || !banner || !title1 || !description || !title2) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
@@ -37,8 +35,6 @@ const CreatePage = () => {
             });
             return;
         }
-
-        setIsLoading(true);
 
         let formData = new FormData();
 
@@ -50,13 +46,20 @@ const CreatePage = () => {
         formData.append('description', description);
         formData.append('title_2', title2);
 
-        request({
-            data: formData,
-        });
-    }, [name, number, url, banner, title1, description, title2]);
+        onCreatePageRequest(formData);
+    }, [name, number, url, banner, title1, description, title2, isLoading]);
 
     useEffect(() => {
-        if (state.result && state.result.data) {
+        if (error) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(error),
+            });
+        }
+    }, [error]);
+
+    useEffect(() => {
+        if (isSuccess) {
             setName('');
             setNumber('');
             setUrl('');
@@ -64,25 +67,13 @@ const CreatePage = () => {
             setTitle1('');
             setDescription('');
             setTitle2('');
-            setIsLoading('');
-
-            onClearState();
 
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
                 text: 'Page successfuly created',
             });
         }
-
-        if (state && state.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: state.error,
-            });
-        }
-
-        setIsLoading(false);
-    }, [state]);
+    }, [isSuccess]);
 
     return (
         <div className="default__padding createpage">

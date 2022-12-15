@@ -9,25 +9,27 @@ import RoyaltyDestribution from '../../common/RoyaltyDestribution';
 import LevelsDialog from '../../components/LevelsDialog';
 import PropertiesDialog from '../../components/PropertiesDialog';
 import StatsDialog from '../../components/StatsDialog';
-import { ONLY_NUMBERS_REGEX_ONLY_G } from '../../const/regExp';
 import { NotificationContext } from '../../context/NotificationContext';
 import { useDialog } from '../../hooks/useDialog';
 import { useFileDropzone } from '../../hooks/useFileDropzone';
-import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { generateNumericIndicator } from '../../utils/generateNumericIndicator';
 import { getFileNameAndExt } from '../../utils/getFilenameAndExt';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 import { CustomSelect } from '../../common/CustomSelect';
 import AsyncQueue from '../../utils/asyncQueue';
-import Loader from '../../common/Loader';
 import { TOKEN_BY_PACK, CONFIRME_UPLOAD_TOKEN } from '../../const/http/API_URLS';
+import { convertFileToBase64 } from '../../utils/convertFileToBase64';
+import { arrayBufferToBinary } from '../../utils/arrayBufferToBinary';
+import { useCreatePackMutation } from '../../redux/api/dataService';
+import { normilizeError } from '../../utils/http/normilizeError';
+import CenteredContainer from '../../common/CenteredContainer';
+import Loader from '../../common/Loader';
 
 import './index.css';
 
 const UPLOAD_FILES_MAX_LIMIT = 1000;
 const MAX_NUMERIC_INDICATOR_START = 1000;
-const ONE_HUNDRED = 100;
 
 // FILE TYPE
 // type FileValue = {
@@ -49,8 +51,19 @@ const FAKE_TOKEN =
 
 const CreatePack = () => {
     const authInfo = useSelector(state => state.auth);
-    const collections = useSelector(state => state.collections);
-    const blockchains = useSelector(state => state.blockchains);
+
+    const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
+    const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionsQuery(0, 1000);
+
+    const {
+        data: availablePaymentTokens,
+        refetch: refetchCurrencyTokens,
+    } = useGetCurrencyTokensQuery({}, { skip: true });
+
+    const [
+        onCreatePackRequest,
+        { data: createdPackData, isLoading, error, isSuccess, reset },
+    ] = useCreatePackMutation();
 
     const {
         actions: { addNotification },
@@ -58,7 +71,10 @@ const CreatePack = () => {
 
     const requestsQueueRef = useRef(new AsyncQueue({ maxParallelTasks: 2 }));
 
-    const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
+    const propertiesDialog = useDialog();
+    const levelsDialog = useDialog();
+    const statsDialog = useDialog();
+
     const [createdPack, setCreatedPack] = useState({});
 
     const [name, setName] = useState('');
@@ -91,23 +107,6 @@ const CreatePack = () => {
 
     const [isTokenUploadInProcessing, setIsTokenUploadInProcessing] = useState(false);
 
-    const propertiesDialog = useDialog();
-    const levelsDialog = useDialog();
-    const statsDialog = useDialog();
-
-    const { state: getBlockchainTokensState, request: onGetBlockchainTokens } = useRequest({
-        url: 'currency_token/',
-        requestType: REQUEST_TYPE.DATA,
-        isAuth: true,
-    });
-
-    const { state: createPackState, request: onCreatePack } = useRequest({
-        url: 'pack/',
-        method: HTTP_METHODS.POST,
-        requestType: REQUEST_TYPE.DATA,
-        isAuth: true,
-    });
-
     const {
         values: tokenImgValues,
         onAdd: onAddTokenImg,
@@ -131,15 +130,15 @@ const CreatePack = () => {
             return null;
         }
 
-        return collections.collections.find(c => c.id === collectionId);
+        return collections.collections.results.find(c => c.id === collectionId);
     }, [collections.collections, collectionId]);
 
     const selectedBlockchain = useMemo(() => {
-        if (!selectedCollection || !blockchains || !blockchains.blockchains) {
+        if (!selectedCollection || !blockchains || !blockchains) {
             return null;
         }
 
-        return blockchains.blockchains.find(b => b.id === selectedCollection.blockchain.id);
+        return blockchains.find(b => b.id === selectedCollection.blockchain.id);
     }, [selectedCollection, blockchains]);
 
     const genrateTablesRow = useMemo(() => {
@@ -388,9 +387,7 @@ const CreatePack = () => {
         //     close: false,
         // };
 
-        onCreatePack({
-            data,
-        });
+        onCreatePackRequest(data);
     }, [
         collectionId,
         name,
@@ -415,7 +412,7 @@ const CreatePack = () => {
         if (!genrateTablesRow.length || !createdPack || isTokenUploadInProcessing) {
             return;
         }
-        console.log('i am here');
+
         setIsTokenUploadInProcessing(true);
 
         await Promise.all(
@@ -425,13 +422,16 @@ const CreatePack = () => {
                     return new Promise(resolve => {
                         const task = async () => {
                             setNumericIndicatorInProccess(p => [...p, token.numericIndicator]);
+                            setNumericIndicatorFailed(p =>
+                                p.filter(num => num !== token.numericIndicator),
+                            );
+
                             const res = await axios.request({
                                 method: HTTP_METHODS.POST,
                                 url: TOKEN_BY_PACK,
                                 headers: {
                                     'Content-Type': 'application/json',
-                                    Authorization:
-                                        `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
+                                    Authorization: `Bearer ${authInfo.accessToken}`,
                                 },
                                 data: {
                                     pack: createdPack.id,
@@ -449,68 +449,39 @@ const CreatePack = () => {
                                 throw 'Bad request';
                             }
 
-                            const dataImage = new FormData();
-
-                            dataImage.append('key', res.data.file_1_pre_signed_url_data.fields.key);
-                            dataImage.append(
-                                'AWSAccessKeyId',
-                                res.data.file_1_pre_signed_url_data.fields.AWSAccessKeyId,
+                            const imageBuffer = await convertFileToBase64(token.tokenImgFile);
+                            const imageBlob = arrayBufferToBinary(
+                                imageBuffer,
+                                token.tokenImgFile.type,
                             );
-                            dataImage.append(
-                                'policy',
-                                res.data.file_1_pre_signed_url_data.fields.policy,
-                            );
-                            dataImage.append(
-                                'signature',
-                                res.data.file_1_pre_signed_url_data.fields.signature,
-                            );
-                            dataImage.append('file', token.tokenImgFile);
 
                             try {
-                                await axios.request({
-                                    method: HTTP_METHODS.POST,
-                                    url: res.data.file_1_pre_signed_url_data.url,
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data',
-                                    },
-                                    data: dataImage,
+                                await fetch(res.data.file_1_pre_signed_url_data, {
+                                    method: HTTP_METHODS.PUT,
+                                    body: imageBlob,
+                                }).catch(e => {
+                                    console.log('fetcErr', { e });
                                 });
                             } catch (e) {
                                 console.log({ e });
                                 throw `Token ${token.name} image upload failed`;
                             }
 
-                            const dataPreview = new FormData();
-
-                            dataPreview.append(
-                                'key',
-                                res.data.file_2_pre_signed_url_data.fields.key,
+                            const previewBuffer = await convertFileToBase64(token.tokenPreviewFile);
+                            const previewBlob = arrayBufferToBinary(
+                                previewBuffer,
+                                token.tokenPreviewFile.type,
                             );
-                            dataPreview.append(
-                                'AWSAccessKeyId',
-                                res.data.file_2_pre_signed_url_data.fields.AWSAccessKeyId,
-                            );
-                            dataPreview.append(
-                                'policy',
-                                res.data.file_2_pre_signed_url_data.fields.policy,
-                            );
-                            dataPreview.append(
-                                'signature',
-                                res.data.file_2_pre_signed_url_data.fields.signature,
-                            );
-                            dataPreview.append('file', token.tokenPreviewFile);
 
                             try {
-                                await axios.request({
-                                    method: HTTP_METHODS.POST,
-                                    url: res.data.file_1_pre_signed_url_data.url,
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data',
-                                    },
-                                    data: dataPreview,
+                                await fetch(res.data.file_2_pre_signed_url_data, {
+                                    method: HTTP_METHODS.PUT,
+                                    body: previewBlob,
+                                }).catch(e => {
+                                    console.log('fetcErr', { e });
                                 });
                             } catch (e) {
-                                console.log(e);
+                                console.log({ e });
                                 throw `Token ${token.name} preview upload failed`;
                             }
 
@@ -521,15 +492,11 @@ const CreatePack = () => {
                                     url: CONFIRME_UPLOAD_TOKEN(res.data.id),
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        Authorization:
-                                            `Bearer ${authInfo.accessToken}` ||
-                                            `Bearer ${FAKE_TOKEN}`,
+                                        Authorization: `Bearer ${authInfo.accessToken}`,
                                     },
                                     data: {
-                                        file_1_name_ext:
-                                            res.data.file_1_pre_signed_url_data.fields.key,
-                                        file_2_name_ext:
-                                            res.data.file_2_pre_signed_url_data.fields.key,
+                                        file_1_name_ext: res.file_1_name_ext,
+                                        file_2_name_ext: res.data.file_2_name_ext,
                                     },
                                 });
                             } catch (e) {
@@ -605,44 +572,44 @@ const CreatePack = () => {
 
     useEffect(() => {
         if (selectedBlockchain) {
-            onGetBlockchainTokens({
-                query: {
-                    blockchain_id: selectedBlockchain.id,
-                },
-            });
+            refetchCurrencyTokens(selectedBlockchain.id);
         }
     }, [selectedBlockchain]);
 
     useEffect(() => {
-        if (getBlockchainTokensState.result && getBlockchainTokensState.result.data) {
-            setAvailablePaymentTokens(getBlockchainTokensState.result.data);
-        }
-
-        if (getBlockchainTokensState.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: getBlockchainTokensState.error,
-            });
-        }
-    }, [getBlockchainTokensState]);
-
-    useEffect(() => {
-        if (createPackState.result && createPackState.result.data) {
-            setCreatedPack(createPackState.result.data);
+        if (isSuccess && createdPackData) {
+            setCreatedPack(createdPackData);
 
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
                 text: 'Pack successfuly created, now you are able to upload pack tokens',
             });
         }
+    }, [isSuccess, createdPackData]);
 
-        if (createPackState.error) {
+    useEffect(() => {
+        if (error) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: createPackState.error,
+                text: normilizeError(error),
             });
         }
-    }, [createPackState]);
+    }, [error]);
+
+    useEffect(
+        () => () => {
+            reset();
+        },
+        [],
+    );
+
+    if (isBlockchainsLoading || isCollectionsLoading) {
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
+    }
 
     return (
         <>
@@ -840,10 +807,14 @@ const CreatePack = () => {
                                     This is the collection where your items Pack will appear.
                                 </p>
 
-                                {Boolean(collections && collections.collections) && (
+                                {Boolean(
+                                    collections &&
+                                        collections.collections &&
+                                        collections.collections.results,
+                                ) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={collections.collections.map(c => ({
+                                            optionsList={collections.collections.results.map(c => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -919,7 +890,7 @@ const CreatePack = () => {
                                                     className="select create__item--select"
                                                     disabled={!availablePaymentTokens.length}
                                                 >
-                                                    <option>Select collection</option>
+                                                    <option>Select blockchain</option>
                                                 </select>
                                             ) : (
                                                 <CustomSelect
@@ -1283,13 +1254,16 @@ const CreatePack = () => {
 
                         <div className="create__button--content">
                             <div className="create__button--wrapper">
-                                <button
-                                    className="button create__button default__hover"
-                                    onClick={onSavePackHandler}
-                                    disabled={createPackState.isProcessing}
-                                >
-                                    Upload on site
-                                </button>
+                                {isLoading ? (
+                                    <button className="button create__button">Loading...</button>
+                                ) : (
+                                    <button
+                                        className="button create__button default__hover"
+                                        onClick={onSavePackHandler}
+                                    >
+                                        Upload on site
+                                    </button>
+                                )}
 
                                 {/* <button className="button create__button filled">
                                     Upload in Blockchane

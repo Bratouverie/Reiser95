@@ -1,0 +1,32 @@
+.paginationToolbar {
+    height: 36px;
+    min-height: 36px;
+    padding: 0;
+    justify-content: flex-start;
+}
+
+.paginationSelectLabel {
+    margin: 0;
+    font-family: var(--font-family-default);
+    font-weight: 400;
+}
+
+.paginationSelect {
+    font-family: var(--font-family-default);
+    margin-left: 0;
+}
+
+.paginationSpacer {
+    width: 0;
+    min-width: 0;
+}
+
+.paginationDisplayedRows {
+    font-family: var(--font-family-default);
+}
+
+.paginationSelectRoot {
+    font-family: var(--font-family-default);
+    margin-left: 0;
+    margin-right: 40px;
+}

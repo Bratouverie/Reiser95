@@ -80,7 +80,7 @@ const Collection = () => {
             return [];
         }
 
-        return tokens.tokens.filter(t => t.collection.id === collection.id);
+        return tokens.tokens.results.filter(t => t.collection.id === collection.id);
     }, [tokens, collection]);
 
     useEffect(() => {

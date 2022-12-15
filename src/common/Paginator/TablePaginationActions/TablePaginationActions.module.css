@@ -1,0 +1,32 @@
+@import '../../../../../shared/uikit/styles/rem';
+
+.container {
+  display: flex;
+  width: rem(290px);
+  min-width: rem(290px);
+  margin-left: rem(40px);
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+
+.navList {
+  flex-wrap: nowrap;
+}
+
+.page {
+  width: rem(36px);
+  height: rem(36px);
+  font-family: var(--font-family-default);
+  font-weight: 400;
+}
+
+.button {
+  background-color: var(--white);
+  box-shadow: var(--button-shadow);
+}
+
+.root.selected {
+  font-weight: 500;
+  color: var(--blue);
+  background-color: transparent;
+}
