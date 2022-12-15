@@ -1,30 +1,61 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { dataApi } from '../api/dataService';
 
-const initialState = {
-    isLoading: false,
-    pages: []
-}
-
-export const pagesSlice = createSlice({
-    name: "pages",
-    initialState,
-    reducers: {
-        setIsAuth: (state, action) => {
-            state.isLoading = action.payload;
-        },
-        setPages: (state, action) => {
-            state.pages = action.payload;
-        },
-        deletePage: (state, action) => {
-            let newPagesList = state.pages.filter(val => {
-                return val.id !== action.payload;
-            });
-
-            state.pages = newPagesList;
-        }
-    }
+const pagesAdapter = createEntityAdapter({
+    selectId: page => page.id,
+    sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
-export const {setIsAuth, setPages, deletePage} = pagesSlice.actions;
+export const pagesSlice = createSlice({
+    name: 'pages',
+    initialState: pagesAdapter.getInitialState({
+        isLoading: false,
+        isPageCreationProccessing: false,
+        error: null,
+    }),
+    reducers: {
+        addPage: pagesAdapter.addOne,
+        deletePage: pagesAdapter.removeOne,
+        clearError: state => {
+            state.error = null;
+        },
+    },
+    extraReducers: builder => {
+        // GET ALL PAGES LIST
+        builder.addMatcher(dataApi.endpoints.getPages.matchFulfilled, (state, action) => {
+            state.isLoading = false;
+            pagesAdapter.upsertMany(state, action.payload);
+        });
+
+        builder.addMatcher(dataApi.endpoints.getPages.matchPending, (state, action) => {
+            state.error = null;
+            state.isLoading = true;
+        });
+
+        builder.addMatcher(dataApi.endpoints.getPages.matchRejected, (state, action) => {
+            state.error = action.payload;
+            state.isLoading = false;
+        });
+        // CREATE PAGE
+        builder.addMatcher(dataApi.endpoints.createPage.matchPending, (state, action) => {
+            state.error = null;
+            state.isPageCreationProccessing = true;
+        });
+
+        builder.addMatcher(dataApi.endpoints.createPage.matchFulfilled, (state, action) => {
+            pagesAdapter.addOne(state, action.payload);
+            state.isPageCreationProccessing = false;
+        });
+
+        builder.addMatcher(dataApi.endpoints.createPage.matchRejected, (state, action) => {
+            state.error = action.payload;
+            state.isPageCreationProccessing = false;
+        });
+    },
+});
+
+export const pagesSelectors = pagesAdapter.getSelectors(state => state.pages);
+
+export const { addPage, deletePage, clearError } = pagesSlice.actions;
 
 export default pagesSlice.reducer;

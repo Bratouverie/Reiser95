@@ -1,9 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import { StyledEngineProvider } from '@mui/material/styles';
-
-import { checkAuth } from './functions/auth';
 
 import './App.css';
 
@@ -30,14 +27,9 @@ import CreateItem from './pages/CreateItem';
 import InitialDataWrapper from './containers/InitialDataContainer';
 import { NotificationsContainer } from './containers/NotificationsContainer';
 import { NotificationProvider } from './context/NotificationContext';
+import { useGetProfileQuery } from './redux/api/authService';
 
 const App = () => {
-    const dispatch = useDispatch();
-
-    React.useEffect(() => {
-        checkAuth(dispatch);
-    }, [dispatch]);
-
     return (
         <>
             <img src="/assets/img/main-bg.png" alt="bg" className="main__bg" />

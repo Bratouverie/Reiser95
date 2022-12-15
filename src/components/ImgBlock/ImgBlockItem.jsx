@@ -10,7 +10,9 @@ const ImgBlockItem = ({ path, id, alt = 'img' }) => {
 
     // TODO: set accountId when accaunts page will be created
     const firstCollectionId = useMemo(() => {
-        const currentAccauntCollections = collections.collections.filter(c => c.account === id);
+        const currentAccauntCollections = collections.collections.results.filter(
+            c => c.account === id,
+        );
 
         if (currentAccauntCollections.length === 0) {
             return null;

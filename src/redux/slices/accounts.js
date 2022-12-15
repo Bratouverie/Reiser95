@@ -1,30 +1,58 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { dataApi } from '../api/dataService';
 
-const initialState = {
-    isLoading: false,
-    accounts: [],
-};
+const accountsAdapter = createEntityAdapter({
+    selectId: account => account.id,
+    sortComparer: (a, b) => a.name.localeCompare(b.name),
+});
 
 export const accountsSlice = createSlice({
     name: 'accounts',
-    initialState,
+    initialState: accountsAdapter.getInitialState({
+        isLoading: false,
+        error: null,
+    }),
     reducers: {
-        setIsAuth: (state, action) => {
-            state.isLoading = action.payload;
+        addAccount: accountsAdapter.addOne,
+        deleteAccount: accountsAdapter.removeOne,
+        clearError: state => {
+            state.error = null;
         },
-        setAccounts: (state, action) => {
-            state.accounts = action.payload;
-        },
-        deleteAccount: (state, action) => {
-            let newAccountsList = state.accounts.filter(val => {
-                return val.id !== action.payload;
-            });
+    },
+    extraReducers: builder => {
+        // GET ALL ACCOUNTS LIST
+        builder.addMatcher(dataApi.endpoints.getAccounts.matchFulfilled, (state, action) => {
+            state.isLoading = false;
+            accountsAdapter.upsertMany(state, action.payload);
+        });
 
-            state.accounts = newAccountsList;
-        },
+        builder.addMatcher(dataApi.endpoints.getAccounts.matchPending, (state, action) => {
+            state.error = null;
+            state.isLoading = true;
+        });
+
+        builder.addMatcher(dataApi.endpoints.getAccounts.matchRejected, (state, action) => {
+            state.error = action.payload;
+            state.isLoading = false;
+        });
+        // CREATE ACCOUNTS
+        builder.addMatcher(dataApi.endpoints.createAccount.matchPending, (state, action) => {
+            state.error = null;
+            state.isPageCreationProccessing = true;
+        });
+
+        builder.addMatcher(dataApi.endpoints.createAccount.matchFulfilled, (state, action) => {
+            accountsAdapter.addOne(state, action.payload);
+            state.isPageCreationProccessing = false;
+        });
+
+        builder.addMatcher(dataApi.endpoints.createAccount.matchRejected, (state, action) => {
+            state.error = action.payload;
+            state.isPageCreationProccessing = false;
+        });
     },
 });
 
-export const { setIsAuth, setAccounts, deleteAccount } = accountsSlice.actions;
+export const { addAccount, deleteAccount, clearError } = accountsSlice.actions;
 
 export default accountsSlice.reducer;

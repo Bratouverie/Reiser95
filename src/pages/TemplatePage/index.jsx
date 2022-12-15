@@ -10,53 +10,40 @@ import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { NotificationContext } from '../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { useSelector } from 'react-redux';
+import { useGetPageByUrlQuery } from '../../redux/api/dataService';
 
 const TemplatePage = () => {
     const accounts = useSelector(state => state.accounts);
+    
+    const { url } = useParams();
 
-    const [pageInfo, setPageInfo] = useState();
-    const [loading, setLoading] = useState(true);
+    const { data: pageInfo, isLoading: isPageLoading, isSuccess: isPageLoadedSuccessfully, error: gettingPageError, reset: resetGettingPage } = useGetPageByUrlQuery(url);
 
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
-
-    const { url } = useParams();
-
-    const { state: getPageInfoRS, request: onGerPageInfo } = useRequest({
-        requestType: REQUEST_TYPE.DATA,
-    });
 
     const pageAccaunts = useMemo(() => {
         if (!pageInfo || !accounts.accounts) {
             return [];
         }
 
-        return accounts.accounts.filter(a => a.page === pageInfo.id);
+        return accounts.accounts.results.filter(a => a.page === pageInfo.id);
     }, [accounts.accounts, pageInfo]);
 
     useEffect(() => {
-        setLoading(true);
-        onGerPageInfo({
-            url: `page/${url}/`,
-        });
-    }, [url]);
+        if (isPageLoadedSuccessfully) {
+
+        }
+    }, [isPageLoadedSuccessfully])
 
     useEffect(() => {
-        setLoading(false);
-        if (getPageInfoRS.result && getPageInfoRS.result.data) {
-            setPageInfo(getPageInfoRS.result.data);
+        if (gettingPageError) {
+            window.location = '/';
         }
+    }, [gettingPageError])
 
-        if (getPageInfoRS.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: getPageInfoRS.error,
-            });
-        }
-    }, [getPageInfoRS]);
-
-    if (loading || getPageInfoRS.isProcessing || !pageInfo) {
+    if (isPageLoading || ) {
         return <Preloader />;
     }
 
