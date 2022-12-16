@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-export const useDebounce = (callback, timeout = 1000) => {
+export const useDebounce = (callback, deps, timeout = 1000) => {
     const timeoutId = useRef();
 
     useEffect(() => {

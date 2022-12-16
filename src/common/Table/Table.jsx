@@ -3,7 +3,7 @@ import { cnb } from 'cnbuilder';
 import { Paginator } from '../Paginator';
 import { Grid } from '@mui/material';
 import TableRowComponent from './TableRowComponent';
-import { Loader } from '../Loader';
+import Loader from '../Loader';
 
 import css from './Table.module.css';
 
@@ -37,7 +37,7 @@ const Table = props => {
         notFoundPlug,
         isNoResultFound,
         isLoading,
-        classes,
+        classes = {},
         onPageChange,
         onRowsPerPageChange,
     } = props;
@@ -61,7 +61,7 @@ const Table = props => {
                     <TableRowComponent
                         key={row.id}
                         row={row}
-                        classes={{ tableRowRoot: classes?.tableRowRoot }}
+                        classes={{ tableRowRoot: classes.tableRowRoot }}
                     />
                 ))}
             </>

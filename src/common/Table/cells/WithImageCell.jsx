@@ -1,5 +1,7 @@
 import React from 'react';
 
+import css from '../Table.module.css';
+
 const WithImageCell = props => {
     const { imageUrl, classes, value } = props;
 

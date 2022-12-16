@@ -9,8 +9,12 @@ import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
 import {
     useCreateCollectionMutation,
+    useGetAccountsQuery,
+    useGetBlockchainsQuery,
     useGetCurrencyTokensQuery,
+    useGetPagesQuery,
 } from '../../redux/api/dataService';
+import { normilizeError } from '../../utils/http/normilizeError';
 
 import './index.css';
 
@@ -77,7 +81,7 @@ const CreateCollection = () => {
 
     const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
     const { isLoading: isPagesLoading } = useGetPagesQuery();
-    // TODo rewrite to another endpoimt
+    // TODo rewrite to another endpoint
     const { data: accounts, isLoading: isAccountsLoading } = useGetAccountsQuery(0, 1000);
     const {
         data: currencyTokens,
@@ -247,28 +251,6 @@ const CreateCollection = () => {
         blockchainId,
         tokenId,
     ]);
-
-    useEffect(() => {
-        if (state && state.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: 'Fill all required fields',
-            });
-        }
-    }, [state.error]);
-
-    useEffect(() => {
-        if (getBlockchainTokensState.result && getBlockchainTokensState.result.data) {
-            setAvailablePaymentTokens(getBlockchainTokensState.result.data);
-        }
-
-        if (getBlockchainTokensState.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: getBlockchainTokensState.error,
-            });
-        }
-    }, [getBlockchainTokensState]);
 
     useEffect(() => {
         if (blockchainId) {

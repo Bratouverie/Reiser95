@@ -14,10 +14,16 @@ import { useGetPageByUrlQuery } from '../../redux/api/dataService';
 
 const TemplatePage = () => {
     const accounts = useSelector(state => state.accounts);
-    
+
     const { url } = useParams();
 
-    const { data: pageInfo, isLoading: isPageLoading, isSuccess: isPageLoadedSuccessfully, error: gettingPageError, reset: resetGettingPage } = useGetPageByUrlQuery(url);
+    const {
+        data: pageInfo,
+        isLoading: isPageLoading,
+        isSuccess: isPageLoadedSuccessfully,
+        error: gettingPageError,
+        reset: resetGettingPage,
+    } = useGetPageByUrlQuery(url);
 
     const {
         actions: { addNotification },
@@ -33,17 +39,16 @@ const TemplatePage = () => {
 
     useEffect(() => {
         if (isPageLoadedSuccessfully) {
-
         }
-    }, [isPageLoadedSuccessfully])
+    }, [isPageLoadedSuccessfully]);
 
     useEffect(() => {
         if (gettingPageError) {
             window.location = '/';
         }
-    }, [gettingPageError])
+    }, [gettingPageError]);
 
-    if (isPageLoading || ) {
+    if (isPageLoading) {
         return <Preloader />;
     }
 

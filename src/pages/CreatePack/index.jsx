@@ -21,7 +21,12 @@ import AsyncQueue from '../../utils/asyncQueue';
 import { TOKEN_BY_PACK, CONFIRME_UPLOAD_TOKEN } from '../../const/http/API_URLS';
 import { convertFileToBase64 } from '../../utils/convertFileToBase64';
 import { arrayBufferToBinary } from '../../utils/arrayBufferToBinary';
-import { useCreatePackMutation } from '../../redux/api/dataService';
+import {
+    useCreatePackMutation,
+    useGetBlockchainsQuery,
+    useGetCollectionsQuery,
+    useGetCurrencyTokensQuery,
+} from '../../redux/api/dataService';
 import { normilizeError } from '../../utils/http/normilizeError';
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';

@@ -21,7 +21,6 @@ export const dataApi = createApi({
     }),
     endpoints: builder => ({
         // GET
-        // pages
         getPages: builder.query({
             query: () => ({
                 url: 'page/',
@@ -33,22 +32,25 @@ export const dataApi = createApi({
             }),
         }),
         getAccounts: builder.query({
-            query: (page, pageSize) => ({
-                url: `account/${generateQuery({ page, page_size: pageSize })}`,
-            }),
+            query: ({ page, pageSize }) => {
+                console.log({ page, pageSize });
+                return {
+                    url: `account/${generateQuery({ page, page_size: pageSize })}`,
+                };
+            },
         }),
         getCollections: builder.query({
-            query: (page, pageSize) => ({
+            query: ({ page, pageSize }) => ({
                 url: `collection/${generateQuery({ page, page_size: pageSize })}`,
             }),
         }),
         getPacks: builder.query({
-            query: (page, pageSize) => ({
+            query: ({ page, pageSize }) => ({
                 url: `pack/${generateQuery({ page, page_size: pageSize })}`,
             }),
         }),
         getTokens: builder.query({
-            query: (page, pageSize) => ({
+            query: ({ page, pageSize }) => ({
                 url: `token/${generateQuery({ page, page_size: pageSize })}`,
             }),
         }),
@@ -62,6 +64,36 @@ export const dataApi = createApi({
                 url: `blockchain/`,
             }),
         }),
+
+        // WITH FILTER PAGINATED
+        getFilteredCollection: builder.query({
+            query: ({ page, pageSize, accountId }) => ({
+                url: `collection_filter/${generateQuery({
+                    page,
+                    page_size: pageSize,
+                    account_id: accountId,
+                })}`,
+            }),
+        }),
+        getFilteredPacks: builder.query({
+            query: ({ page, pageSize, collectionId }) => ({
+                url: `pack_filter/${generateQuery({
+                    page,
+                    page_size: pageSize,
+                    collection_id: collectionId,
+                })}`,
+            }),
+        }),
+        getFilteredTokens: builder.query({
+            query: ({ page, pageSize, packId }) => ({
+                url: `token_filter/${generateQuery({
+                    page,
+                    page_size: pageSize,
+                    pack_id: packId,
+                })}`,
+            }),
+        }),
+
         // POST
         createPage: builder.mutation({
             query: data => ({
@@ -104,6 +136,10 @@ export const {
     useGetTokensQuery,
     useGetCurrencyTokensQuery,
     useGetBlockchainsQuery,
+
+    useGetFilteredCollectionQuery,
+    useGetFilteredPacksQuery,
+    useGetFilteredTokensQuery,
 
     useCreatePageMutation,
     useCreateAccountMutation,

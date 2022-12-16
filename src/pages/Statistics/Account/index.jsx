@@ -1,11 +1,16 @@
-import React, { useMemo, useRef, useState, useLayoutEffect } from 'react';
-import ActionsCell from '../../../common/Table/cells/ActionsCell';
+import React, { useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
 import WithImageCell from '../../../common/Table/cells/WithImageCell';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useGetAccountsQuery } from '../../../redux/api/dataService';
 import ActionsComponent from '../ActionsComponent';
+import { CommonCell, ActionsCell } from '../../../common/Table/cells';
+import { Table } from '../../../common/Table';
+import { normilizeError } from '../../../utils/http/normilizeError';
+import CenteredContainer from '../../../common/CenteredContainer';
+import Loader from '../../../common/Loader';
+import { STATISTICS_ACCOUNT_COLLECTIONS_LIST } from '../../../const/http/CLIENT_URLS';
 
-import css from './Statistics.module.css';
+import css from '../Statistics.module.css';
 
 const HEDER_CELLS = {
     BRAND: 'Brand',
@@ -45,20 +50,23 @@ const HEADER_CELLS_ARR = [
 
 const TABLE_BOTTOM_MARGIN = 20;
 
-const Account = () => {
+const AccountsList = () => {
     const beforeTableDiv = useRef(null);
 
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(25);
-    const [tableHeight, setTableHeight] = useState < number > 0;
+    const [rowsPerPage, setRowsPerPage] = useState(25);
+    const [tableHeight, setTableHeight] = useState(0);
 
-    const { data: accounts, isLoading, refetch } = useGetAccountsQuery({ page, pageSize });
+    const { data: accounts, error, isLoading, refetch } = useGetAccountsQuery({
+        page,
+        pageSize: rowsPerPage,
+    });
 
     const onEditHandler = useCallback(id => {
         console.log({ id });
     }, []);
 
-    const onDeleteHandler = useCellback(id => {
+    const onDeleteHandler = useCallback(id => {
         console.log({ id });
     }, []);
 
@@ -67,14 +75,7 @@ const Account = () => {
             label: cell.label,
             labelComponent: (
                 <div className={css.headingCellBox}>
-                    <span
-                        className={css.headerText}
-                        size={TextSizes.S16}
-                        lineHeight={TextLineHeights.Lh22}
-                        weight={TextWeights.MEDIUM}
-                    >
-                        {label}
-                    </span>
+                    <span className={css.headerText}>{cell.label}</span>
                 </div>
             ),
             xs: cell.xs,
@@ -132,7 +133,7 @@ const Account = () => {
                             component: (
                                 <CommonCell
                                     classes={{ cellRoot: css[`${name}Cell`] }}
-                                    value={String(c[name])}
+                                    value={String(a[name])}
                                 />
                             ),
                         });
@@ -140,13 +141,14 @@ const Account = () => {
             });
 
             return {
-                id: c.id,
+                id: a.id,
+                linkUrl: STATISTICS_ACCOUNT_COLLECTIONS_LIST({ accountId: a.id }),
                 items: cellsArray,
             };
         });
 
         return bodyRows;
-    }, []);
+    }, [accounts]);
 
     const handleChangePage = useCallback((_, newPage) => {
         setPage(newPage);
@@ -161,10 +163,10 @@ const Account = () => {
         () => {
             refetch({
                 page,
-                pageSize,
+                pageSize: rowsPerPage,
             });
         },
-        [page, pageSize],
+        [page, rowsPerPage],
         500,
     );
 
@@ -178,13 +180,23 @@ const Account = () => {
         }
     }, [accounts]);
 
-    useEffect(
-        () => () => {
-            resetGetUsersForTableStores();
-            resetSearchUsersInput();
-        },
-        [],
-    );
+    console.log({ error });
+
+    if (isLoading) {
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
+    }
+
+    if (error || isLoading) {
+        return (
+            <div>
+                <span style={{ color: 'white' }}>{normilizeError(error)}</span>
+            </div>
+        );
+    }
 
     return (
         <div className="statistics__inner">
@@ -207,4 +219,4 @@ const Account = () => {
     );
 };
 
-export default Account;
+export default React.memo(AccountsList);

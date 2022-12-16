@@ -18,23 +18,6 @@ export const blockchainsSlice = createSlice({
             state.error = null;
         },
     },
-    extraReducers: builder => {
-        // GET ALL BLOCKCHAINS LIST
-        builder.addCase(getAllBlockchains.pending, state => {
-            state.error = null;
-            state.isLoading = true;
-        });
-
-        builder.addCase(getAllBlockchains.fulfilled, (state, action) => {
-            blockchainsAdapter.upsertMany(state, action.payload);
-            state.isLoading = false;
-        });
-
-        builder.addCase(getAllBlockchains.rejected, ({ error, isLoading }, action) => {
-            error = action.payload;
-            isLoading = false;
-        });
-    },
 });
 
 export const blockchainsSelectors = blockchainsAdapter.getSelectors(state => state.blockchains);

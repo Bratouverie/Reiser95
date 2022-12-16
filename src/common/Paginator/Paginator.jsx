@@ -4,7 +4,7 @@ import { cnb } from 'cnbuilder';
 
 import { TablePaginationActions } from './TablePaginationActions';
 
-import css from './Paginator.module.scss';
+import css from './Paginator.module.css';
 
 // type Props = {
 //   classes?: {
@@ -29,7 +29,7 @@ import css from './Paginator.module.scss';
 const Paginator = props => {
     const {
         count,
-        classes,
+        classes = {},
         rowsPerPageOptions,
         SelectProps,
         rowsPerPage,

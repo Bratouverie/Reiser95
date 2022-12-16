@@ -15,10 +15,7 @@ const InitialDataContainer = ({ children }) => {
         checkAuth(dispatch);
     }, [dispatch]);
 
-    if (
-        isPagesLoading
-        // || autn.loadAuth
-    ) {
+    if (isPagesLoading || autn.loadAuth) {
         return (
             <CenteredContainer>
                 <Loader />

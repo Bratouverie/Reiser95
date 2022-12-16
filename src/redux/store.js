@@ -26,7 +26,7 @@ listenerMiddleware.startListening({
     actionCreator: refreshToken,
     effect: async (action, { delay, dispatch }) => {
         console.log(action);
-        await delay(300000);
+        await delay(3000);
         dispatch(refreshTokenRequest());
         dispatch(refreshToken());
     },

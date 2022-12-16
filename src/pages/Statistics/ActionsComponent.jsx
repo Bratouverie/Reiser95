@@ -21,9 +21,9 @@ const ActionsComponent = props => {
         e => {
             e.stopPropagation();
             e.preventDefault();
-            onDelete(user);
+            onDelete(id);
         },
-        [onDelete, user],
+        [onDelete, id],
     );
 
     return (

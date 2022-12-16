@@ -13,7 +13,7 @@ import css from './Table.module.css';
 // };
 
 const TableRowComponent = props => {
-    const { row, classes } = props;
+    const { row, classes = {} } = props;
 
     const navigate = useNavigate();
 
@@ -25,11 +25,15 @@ const TableRowComponent = props => {
             const link = `${row.linkUrl}`;
             if (event.button === 1) {
                 event.preventDefault();
-                window.open(link, '_blank')?.focus();
+                if (window.open(link, '_blank')) {
+                    window.open(link, '_blank').focus();
+                }
             }
             if (event.button == 2) {
                 event.preventDefault();
-                window.open(link, '_blank')?.focus();
+                if (window.open(link, '_blank')) {
+                    window.open(link, '_blank').focus();
+                }
             }
         },
         [row.linkUrl],
@@ -49,7 +53,7 @@ const TableRowComponent = props => {
             wrap="nowrap"
             justifyContent="space-between"
             alignItems="flex-start"
-            className={cnb(css.tableRow, classes?.tableRowRoot, {
+            className={cnb(css.tableRow, classes.tableRowRoot, {
                 [css.rowHoverEffect]: row.linkUrl,
             })}
             onMouseDown={mouseDownHandler}
