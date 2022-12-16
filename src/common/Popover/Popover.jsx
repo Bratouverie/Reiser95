@@ -5,7 +5,7 @@ const Popover = props => {
     const {
         open,
         className,
-        classes,
+        classes = {},
         anchorEl,
         onClose,
         anchorOrigin,

@@ -29,7 +29,7 @@ const Autocomplite = props => {
         getOptionLabel,
         renderOption,
         disableDropdownArrow,
-        classes,
+        classes = {},
         optionsFieldsFilteringWhiteList,
         disabled = false,
         inputValue,

@@ -19,13 +19,18 @@ import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 import { CustomSelect } from '../../common/CustomSelect';
 import AsyncQueue from '../../utils/asyncQueue';
-import Loader from '../../common/Loader';
 import { TOKEN_BY_PACK, CONFIRME_UPLOAD_TOKEN } from '../../const/http/API_URLS';
 import { convertFileToBase64 } from '../../utils/convertFileToBase64';
-import Loader from '../../common/Loader';
 import { arrayBufferToBinary } from '../../utils/arrayBufferToBinary';
 import CenteredContainer from '../../common/CenteredContainer';
 import './index.css';
+import Loader from '../../common/Loader';
+import {
+    useGetBlockchainsQuery,
+    useGetCollectionsQuery,
+    useGetCurrencyTokensQuery,
+    useGetPacksQuery,
+} from '../../redux/api/dataService';
 
 const UPLOAD_FILES_MAX_LIMIT = 1000;
 const MAX_NUMERIC_INDICATOR_START = 1000;

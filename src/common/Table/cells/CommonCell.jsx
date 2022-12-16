@@ -13,7 +13,7 @@ const CommonCell = props => {
     const { value, classes } = props;
 
     return (
-        <div className={classes?.cellRoot}>
+        <div className={classes.cellRoot}>
             <span className={css.bodyCellText}>{value || '-'}</span>
         </div>
     );
