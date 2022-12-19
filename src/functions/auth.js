@@ -27,6 +27,7 @@ export const connectWallet = async dispatch => {
         const signature = await signer.signMessage(`I am signing my one-time nonce:${nonce}`);
         const tokens = await getTokens(address, signature);
         const profile = await getProfileData(tokens['access_token']);
+        console.log({ tokens });
         const { public_address, id, username, image_url, created } = profile.data;
 
         window.sessionStorage.setItem('access_token', tokens['access_token']);

@@ -2,7 +2,7 @@ import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { dataApi } from '../api/dataService';
 
 const packsAdapter = createEntityAdapter({
-    selectId: account => account.id,
+    selectId: pack => pack.id,
     sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
@@ -20,21 +20,6 @@ export const packsSlice = createSlice({
         },
     },
     extraReducers: builder => {
-        // GET ALL PACKS LIST
-        builder.addMatcher(dataApi.endpoints.getPacks.matchFulfilled, (state, action) => {
-            state.isLoading = false;
-            packsAdapter.upsertMany(state, action.payload);
-        });
-
-        builder.addMatcher(dataApi.endpoints.getPacks.matchPending, (state, action) => {
-            state.error = null;
-            state.isLoading = true;
-        });
-
-        builder.addMatcher(dataApi.endpoints.getPacks.matchRejected, (state, action) => {
-            state.error = action.payload;
-            state.isLoading = false;
-        });
         // CREATE PACK
         builder.addMatcher(dataApi.endpoints.createPack.matchPending, (state, action) => {
             state.error = null;

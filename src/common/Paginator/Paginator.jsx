@@ -49,7 +49,7 @@ const Paginator = props => {
                 displayedRows: cnb(css.paginationDisplayedRows, classes.displayedRows),
             }}
             SelectProps={{
-                className: cnb(css.paginationSelectRoot, SelectProps.className),
+                className: cnb(css.paginationSelectRoot, classes.className),
             }}
             rowsPerPageOptions={rowsPerPageOptions}
             component="div"

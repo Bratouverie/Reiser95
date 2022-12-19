@@ -2,43 +2,39 @@
     color: #fff;
     font-weight: 600;
     text-align: center;
-    font-size: 1.4rem;
+    font-size: 18px;
 }
 
 .buttonsCell {
     display: flex;
     justify-content: space-between;
-    gap: rem(8px);
+    gap: 8px;
 }
 
 .trashIconBox,
 .editIconBox {
-    width: rem(36px);
-    height: rem(36px);
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: rem(50%);
-    background-color: var(--gray-10);
+    border-radius: 50%;
+    background-color: white;
     cursor: pointer;
 }
 
 .trashIconBox:hover {
-    background-color: var(--blue);
+    background-color: rgba(255, 255, 255, 0.665);
 }
 .editIconBox:hover {
-    background-color: var(--blue);
-}
-.trashIconBox:hover .trashIcon {
-    color: var(--white);
-}
-.editIconBox:hover .editIcon {
-    color: var(--white);
+    background-color: rgba(255, 255, 255, 0.665);
 }
 
 .trashIcon,
 .editIcon {
-    color: var(--black);
+    width: 24px !important;
+    height: 24px !important;
+    color: black;
 }
 
 .notFoundContainer {
@@ -52,4 +48,23 @@
 .beforeTableElement {
     height: 16px;
     width: 100%;
+}
+
+.imageRoot {
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    margin-right: 8px;
+}
+
+.cellRoot {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.notFoundContainer {
+    font-size: 16px;
+    color: #fff;
+    font-weight: 500;
 }

@@ -3,7 +3,11 @@ import { useSelector } from 'react-redux';
 import { NotificationContext } from '../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { normilizeError } from '../../utils/http/normilizeError';
-import { useCreateAccountMutation, useGetPagesQuery } from '../../redux/api/dataService';
+import {
+    useCreateAccountMutation,
+    useGetAccountQuery,
+    useGetPagesQuery,
+} from '../../redux/api/dataService';
 import Input from '../../common/Input';
 import File from '../../common/File';
 import CenteredContainer from '../../common/CenteredContainer';
@@ -36,7 +40,9 @@ const SocialLinks = {
 
 const SOCIAL_LINKS_ARR = Object.values(SocialLinks);
 
-const CreateAccount = () => {
+const CreateAccount = props => {
+    const { accountForEditId } = props;
+
     const pages = useSelector(state => state.pages);
 
     const [
@@ -44,6 +50,13 @@ const CreateAccount = () => {
         { isLoading, error, isSuccess, reset },
     ] = useCreateAccountMutation();
 
+    const {
+        data: accountForEditing,
+        isSuccess: isAccountForEditSuccess,
+        isLoading: isAccountForEditLoading,
+        refetch: getAccountForEditing,
+        error: getAccountForEditError,
+    } = useGetAccountQuery({}, { skip: true });
     const { isLoading: isPagesLoading } = useGetPagesQuery();
 
     const {
@@ -135,6 +148,30 @@ const CreateAccount = () => {
         }
     }, [isSuccess]);
 
+    useEffect(() => {
+        if (accountForEditing && isAccountForEditSuccess) {
+            setBrandId(accountForEditing.page);
+            // setLogo(accountForEditing.);
+            // setAccountName(accountForEditing.);
+            // setCover(accountForEditing.);
+            // setBanner(accountForEditing.);
+            // setUrl(accountForEditing.);
+            // setDescriprion(accountForEditing.);
+        }
+    }, [accountForEditing, isAccountForEditSuccess]);
+
+    useEffect(() => {
+        if (accountForEditId) {
+            getAccountForEditing({ id: accountForEditId });
+        }
+    }, [accountForEditId]);
+
+    useEffect(() => {
+        if (getAccountForEditError) {
+            console.log({ getAccountForEditError });
+        }
+    }, [getAccountForEditError]);
+
     useEffect(
         () => () => {
             reset();
@@ -142,7 +179,7 @@ const CreateAccount = () => {
         [],
     );
 
-    if (isPagesLoading) {
+    if (isPagesLoading || isAccountForEditLoading || getAccountForEditError) {
         return (
             <CenteredContainer>
                 <Loader />

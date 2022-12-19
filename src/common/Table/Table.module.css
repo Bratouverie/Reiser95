@@ -6,7 +6,6 @@
     align-items: flex-start;
 }
 .tableContainer {
-    background: var(--white);
     border-radius: 16px;
     height: 100%;
     max-width: 1440px;
@@ -21,20 +20,27 @@
     padding: 0;
 }
 .headerRow {
-    color: var(--dark-gray);
     border: none;
     padding: 16px 20px 16px 20px;
-    border-bottom: 1px solid var(--gray-10);
     min-height: 55px;
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+    margin-bottom: 4px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tableRow {
-    background: var(--white);
-    border-bottom: 1px solid var(--gray-10);
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .tableRow:hover {
-    background: var(--gray-5);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .tableBody {
@@ -42,19 +48,20 @@
     height: 100%;
     overflow-x: auto;
     padding-left: 20px;
-    padding-right: 20px;
-    border-right: 6px solid transparent;
+    padding-right: 10px;
+    border-right: 3px solid transparent;
     scrollbar-gutter: stable;
 }
 
 .tableBody::-webkit-scrollbar-thumb {
-    background: var(--overlay-dark-gray-01);
-    border-right: 6px solid transparent;
+    background: rgba(255, 255, 255, 0.6);
+    border-right: 3px solid transparent;
 }
 
 .bodyCellText {
     font-size: 16px;
     font-weight: 500;
+    max-width: 150px;
     color: white;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -72,7 +79,7 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    max-width: var(--standart-width);
+    max-width: 1440px;
     overflow: hidden;
 }
 
@@ -85,7 +92,6 @@
     width: 100%;
     display: flex;
     justify-content: flex-end;
-    background: var(--gray-5);
 }
 
 .rowHoverEffect {
@@ -98,4 +104,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.overflowWrapper {
+    word-wrap: break-word;
+    color: white;
+    word-break: break-all;
 }

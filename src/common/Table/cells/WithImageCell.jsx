@@ -7,7 +7,7 @@ const WithImageCell = props => {
 
     return (
         <div className={classes.cellRoot}>
-            <img src={imageUrl} className={classes.image} />
+            <img src={imageUrl} className={classes.imageRoot} />
             <span className={css.bodyCellText}>{value || '-'}</span>
         </div>
     );

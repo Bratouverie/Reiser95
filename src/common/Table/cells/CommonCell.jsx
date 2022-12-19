@@ -14,7 +14,7 @@ const CommonCell = props => {
 
     return (
         <div className={classes.cellRoot}>
-            <span className={css.bodyCellText}>{value || '-'}</span>
+            <span className={css.bodyCellText}>{value || '---'}</span>
         </div>
     );
 };

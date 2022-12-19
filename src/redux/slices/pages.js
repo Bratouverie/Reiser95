@@ -51,6 +51,17 @@ export const pagesSlice = createSlice({
             state.error = action.payload;
             state.isPageCreationProccessing = false;
         });
+        // UPDATE PAGE
+        builder.addMatcher(dataApi.endpoints.updatePage.matchFulfilled, (state, action) => {
+            pagesAdapter.updateOne(state, {
+                id: action.payload.id,
+                changes: action.payload,
+            });
+        });
+        // HIDE PAGE
+        builder.addMatcher(dataApi.endpoints.hidePage.matchFulfilled, (state, action) => {
+            console.log({ payload: action.payload });
+        });
     },
 });
 

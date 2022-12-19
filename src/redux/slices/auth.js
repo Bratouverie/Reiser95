@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 import { BASE_AUTH_API_URL } from '../../const/http/API_URLS';
+import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 import { authApi } from '../api/authService';
 
 const initialState = {
@@ -18,14 +20,22 @@ const initialState = {
 
 export const refreshTokenRequest = createAsyncThunk('refreshToken', async (_, { getState }) => {
     const { auth } = getState();
+    console.log({ auth });
+    if (!auth.refreshToken) {
+        return;
+    }
 
-    const response = await fetch(`${BASE_AUTH_API_URL}refresh`, {
+    const response = await axios.request({
+        url: `${BASE_AUTH_API_URL}refresh`,
+        method: HTTP_METHODS.POST,
         headers: {
             Authorization: `Bearer ${auth.refreshToken}`,
         },
     });
 
-    return response;
+    if (response && response.data) {
+        return response.data;
+    }
 });
 
 export const authSlice = createSlice({
@@ -59,8 +69,8 @@ export const authSlice = createSlice({
         initImage: (state, action) => {
             state.image = action.payload;
         },
-        refreshToken: () => {
-            console.log('refetch token');
+        refreshToken: (state, action) => {
+            console.log('refresh token');
         },
         initCreated: (state, action) => {
             // Приводим дату в нормальный вид сразу, пример: 09.10.2022
@@ -79,10 +89,14 @@ export const authSlice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(refreshTokenRequest.fulfilled, (state, action) => {
-            console.log({
-                state,
-                action,
-            });
+            console.log({ payload: action });
+            if (action.payload && action.payload.access_token && action.payload.refresh_token) {
+                window.sessionStorage.setItem('access_token', action.payload.access_token);
+                window.sessionStorage.setItem('refresh_token', action.payload.refresh_token);
+
+                state.refreshToken = action.payload.refresh_token;
+                state.accessToken = action.payload.access_token;
+            }
         });
         builder.addMatcher(authApi.endpoints.getProfile.matchFulfilled, (state, action) => {
             console.log({

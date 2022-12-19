@@ -10,20 +10,14 @@ import TokensList from './Token';
 
 const Statistics = () => {
     return (
-        <section className="default__padding statistics">
+        <section className="statistics">
             <div className="container">
                 <Routes>
-                    <Route path="/">
-                        <Route index element={<AccountsList />}>
-                            <Route path=":accountId" element={<CollectionsList />}>
-                                <Route path=":collectionId" element={<PacksList />}>
-                                    <Route path=":packId" element={<TokensList />} />
-                                </Route>
-                            </Route>
-                        </Route>
-
-                        <Route path="*" element={<Navigate to="/" />} />
-                    </Route>
+                    <Route index element={<AccountsList />} />
+                    <Route path=":accountId" element={<CollectionsList />} />
+                    <Route path=":accountId/:collectionId" element={<PacksList />} />
+                    <Route path=":accountId/:collectionId/:packId" element={<TokensList />} />
+                    <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             </div>
         </section>

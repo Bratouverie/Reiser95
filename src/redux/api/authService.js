@@ -6,13 +6,17 @@ export const authApi = createApi({
     reducerPath: 'authApi',
     baseQuery: fetchBaseQuery({
         baseUrl: BASE_AUTH_API_URL,
-        prepareHeaders: (headers, { getState }) => {
+        prepareHeaders: (headers, { getState, endpoint }) => {
             const {
-                auth: { accessToken },
+                auth: { accessToken, refreshToken },
             } = getState();
 
-            if (accessToken) {
+            if (endpoint !== 'refreshToken' && accessToken) {
                 headers.set('Authorization', `Bearer ${accessToken}`);
+            }
+
+            if (endpoint === 'refreshToken' && refreshToken) {
+                headers.set('Authorization', `Bearer ${refreshToken}`);
             }
 
             return headers;
@@ -23,9 +27,12 @@ export const authApi = createApi({
             query: () => ({
                 url: 'profile/my',
             }),
-            transformResponse: response => {
-                console.log({ response });
-            },
+        }),
+        refreshToken: builder.mutation({
+            query: () => ({
+                url: 'refresh',
+                method: HTTP_METHODS.POST,
+            }),
         }),
     }),
 });

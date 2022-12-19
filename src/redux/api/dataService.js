@@ -21,6 +21,7 @@ export const dataApi = createApi({
     }),
     endpoints: builder => ({
         // GET
+        // PAGE
         getPages: builder.query({
             query: () => ({
                 url: 'page/',
@@ -31,29 +32,55 @@ export const dataApi = createApi({
                 url: `page/${url}`,
             }),
         }),
+        // ACCOUNT
         getAccounts: builder.query({
             query: ({ page, pageSize }) => {
-                console.log({ page, pageSize });
                 return {
                     url: `account/${generateQuery({ page, page_size: pageSize })}`,
                 };
             },
         }),
+        getAccount: builder.query({
+            query: ({ id }) => {
+                return {
+                    url: `account/${id}`,
+                };
+            },
+        }),
+        // COLLECTION
         getCollections: builder.query({
             query: ({ page, pageSize }) => ({
                 url: `collection/${generateQuery({ page, page_size: pageSize })}`,
             }),
         }),
+        getCollection: builder.query({
+            query: ({ id }) => ({
+                url: `collection/${id}`,
+            }),
+        }),
+        // PACK
         getPacks: builder.query({
             query: ({ page, pageSize }) => ({
                 url: `pack/${generateQuery({ page, page_size: pageSize })}`,
             }),
         }),
+        getPack: builder.query({
+            query: ({ id }) => ({
+                url: `pack/${id}`,
+            }),
+        }),
+        // TOKEN
         getTokens: builder.query({
             query: ({ page, pageSize }) => ({
                 url: `token/${generateQuery({ page, page_size: pageSize })}`,
             }),
         }),
+        getToken: builder.query({
+            query: ({ id }) => ({
+                url: `token/${id}`,
+            }),
+        }),
+
         getCurrencyTokens: builder.query({
             query: blockchainId => ({
                 url: `currency_token/${generateQuery({ blockchain_id: blockchainId })}`,
@@ -123,6 +150,83 @@ export const dataApi = createApi({
                 body: data,
             }),
         }),
+
+        // PUT
+        updatePage: builder.mutation({
+            query: ({ url, data }) => ({
+                url: `page/${url}`,
+                method: HTTP_METHODS.PUT,
+                body: data,
+            }),
+        }),
+        updateAccount: builder.mutation({
+            query: ({ id, data }) => ({
+                url: `account/${id}`,
+                method: HTTP_METHODS.PUT,
+                body: data,
+            }),
+        }),
+        updateCollection: builder.mutation({
+            query: ({ id, data }) => ({
+                url: `collection/${id}`,
+                method: HTTP_METHODS.PUT,
+                body: data,
+            }),
+        }),
+        updatePack: builder.mutation({
+            query: ({ id, data }) => ({
+                url: `pack/${id}`,
+                method: HTTP_METHODS.PUT,
+                body: data,
+            }),
+        }),
+
+        // HIDE ENTITY
+        hidePage: builder.mutation({
+            query: ({ id, isHide }) => ({
+                url: `page/hide/${id}/`,
+                method: HTTP_METHODS.PATCH,
+                body: {
+                    hide: isHide,
+                },
+            }),
+        }),
+        hideAccount: builder.mutation({
+            query: ({ id, isHide }) => ({
+                url: `account/hide/${id}/`,
+                method: HTTP_METHODS.PATCH,
+                body: {
+                    hide: isHide,
+                },
+            }),
+        }),
+        hideCollection: builder.mutation({
+            query: ({ id, isHide }) => ({
+                url: `collection/hide/${id}/`,
+                method: HTTP_METHODS.PATCH,
+                body: {
+                    hide: isHide,
+                },
+            }),
+        }),
+        hidePack: builder.mutation({
+            query: ({ id, isHide }) => ({
+                url: `pack/hide/${id}/`,
+                method: HTTP_METHODS.PATCH,
+                body: {
+                    hide: isHide,
+                },
+            }),
+        }),
+        hideToken: builder.mutation({
+            query: ({ id, isHide }) => ({
+                url: `token/hide/${id}/`,
+                method: HTTP_METHODS.PATCH,
+                body: {
+                    hide: isHide,
+                },
+            }),
+        }),
     }),
 });
 
@@ -131,9 +235,17 @@ export const {
     useGetPageByUrlQuery,
 
     useGetAccountsQuery,
+    useGetAccountQuery,
+
     useGetCollectionsQuery,
+    useGetCollectionQuery,
+
     useGetPacksQuery,
+    useGetPackQuery,
+
     useGetTokensQuery,
+    useGetTokenQuery,
+
     useGetCurrencyTokensQuery,
     useGetBlockchainsQuery,
 
@@ -145,4 +257,15 @@ export const {
     useCreateAccountMutation,
     useCreateCollectionMutation,
     useCreatePackMutation,
+
+    useUpdatePageMutation,
+    useUpdateAccountMutation,
+    useUpdateCollectionMutation,
+    useUpdatePackMutation,
+
+    useHidePageMutation,
+    useHideAccountMutation,
+    useHideCollectionMutation,
+    useHidePackMutation,
+    useHideTokenMutation,
 } = dataApi;

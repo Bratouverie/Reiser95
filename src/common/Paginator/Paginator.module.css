@@ -7,13 +7,21 @@
 
 .paginationSelectLabel {
     margin: 0;
-    font-family: var(--font-family-default);
+    font-family: 'Gilroy', sans-serif;
     font-weight: 400;
+    color: white;
+    font-size: 16px !important;
 }
 
 .paginationSelect {
-    font-family: var(--font-family-default);
+    font-family: 'Gilroy', sans-serif !important;
     margin-left: 0;
+    color: white !important;
+    font-weight: 400 !important;
+    line-height: 22px !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 5px !important;
+    font-size: 16px !important;
 }
 
 .paginationSpacer {
@@ -22,11 +30,15 @@
 }
 
 .paginationDisplayedRows {
-    font-family: var(--font-family-default);
+    font-family: 'Gilroy', sans-serif;
+    color: white;
+    font-size: 16px !important;
 }
 
 .paginationSelectRoot {
-    font-family: var(--font-family-default);
+    font-family: 'Gilroy', sans-serif;
+    color: white;
+    font-size: 16px !important;
     margin-left: 0;
     margin-right: 40px;
 }
