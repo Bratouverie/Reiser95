@@ -1,49 +1,66 @@
-import React from 'react';
+import React, {
+    useMemo,
+    useRef,
+    useState,
+    useLayoutEffect,
+    useCallback,
+    useEffect,
+    useContext,
+} from 'react';
+import { format } from 'date-fns';
+import { cnb } from 'cnbuilder';
+import { useDispatch, useSelector } from 'react-redux';
+import DeleteEntityDialog from '../../../components/DeleteEntityDialog/DeleteEntityDialog';
+import { onOpen, onClose } from '../../../redux/dialogs/deleteEntityDialog';
 import WithImageCell from '../../../common/Table/cells/WithImageCell';
 import { useDebounce } from '../../../hooks/useDebounce';
+import {
+    useGetFilteredCollectionQuery,
+    useHideCollectionMutation,
+} from '../../../redux/api/dataService';
 import ActionsComponent from '../ActionsComponent';
 import { CommonCell, ActionsCell } from '../../../common/Table/cells';
 import { Table } from '../../../common/Table';
 import { normilizeError } from '../../../utils/http/normilizeError';
 import CenteredContainer from '../../../common/CenteredContainer';
 import Loader from '../../../common/Loader';
+import { useParams } from 'react-router-dom';
 import { STATISTICS_COLLECTION_PACKS_LIST } from '../../../const/http/CLIENT_URLS';
+import { NotificationContext } from '../../../context/NotificationContext';
+import NOTIFICATION_TYPES from '../../../const/notifications/NOTIFICATION_TYPES';
+
 import css from '../Statistics.module.css';
-import { useGetFilteredCollectionQuery } from '../../../redux/api/dataService';
 
 const HEDER_CELLS = {
-    BRAND: 'Brand',
-    COLLECTIONS: 'Collections',
-    PROFITS: 'Profit',
-    DESCRIPTION: 'Description',
-    URL: 'Url',
-    CATEGORY: 'Category',
-    ADMINISTRATOR: 'Administrator',
-    BIRTH: 'Birth',
+    STATUS: 'Status',
+    NAME: 'Name',
+    ITEMS: 'Items',
+    PROFIT: 'Profit',
+    BLOCKCHAIN: 'Blockchain',
+    CREATOR_FEE: 'Creator fee',
+    LISTED: 'Listed',
     ACTION: 'Action',
 };
 
 const BODY_CELLS = {
+    STATUS: 'status',
     NAME: 'name',
-    COLLECTIONS_COUNT: 'collections_count',
+    ITEMS: 'items_count',
     PROFIT: 'profit',
-    DESCRITPION: 'description',
-    URL: 'url',
-    CATEGORY: 'name',
-    ADMINISTRATOR: 'name',
-    BIRTH: 'name',
+    BLOCKCHAIN: 'blockchain',
+    CREATOR_FEE: 'creator_fee',
+    LISTED: 'created_at',
     ACTION: 'action',
 };
 
 const HEADER_CELLS_ARR = [
-    { label: HEDER_CELLS.BRAND, xs: 3 },
-    { label: HEDER_CELLS.COLLECTIONS, xs: 2 },
-    { label: HEDER_CELLS.PROFITS, xs: 2 },
-    { label: HEDER_CELLS.DESCRIPTION, xs: 2 },
-    { label: HEDER_CELLS.URL, xs: 2 },
-    { label: HEDER_CELLS.CATEGORY, xs: 2 },
-    { label: HEDER_CELLS.ADMINISTRATOR, xs: 2 },
-    { label: HEDER_CELLS.BIRTH, xs: 2 },
+    { label: HEDER_CELLS.STATUS, xs: 2 },
+    { label: HEDER_CELLS.NAME, xs: 3 },
+    { label: HEDER_CELLS.ITEMS, xs: 2 },
+    { label: HEDER_CELLS.PROFIT, xs: 2 },
+    { label: HEDER_CELLS.BLOCKCHAIN, xs: 2 },
+    { label: HEDER_CELLS.CREATOR_FEE, xs: 2 },
+    { label: HEDER_CELLS.LISTED, xs: 2 },
     { label: '', xs: 2, isAction: true },
 ];
 
@@ -52,16 +69,37 @@ const TABLE_BOTTOM_MARGIN = 20;
 const CollectionsList = () => {
     const { accountId } = useParams();
 
+    const { isOpen, id: deletedCollectionId } = useSelector(state => state.deleteEntityDialog);
+
+    const dispatch = useDispatch();
+
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
+
     const beforeTableDiv = useRef(null);
 
+    const [collections, setCollections] = useState([]);
+    const [count, setCount] = useState(0);
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [tableHeight, setTableHeight] = useState(0);
-    const { data: collections, error, isLoading, refetch } = useGetFilteredCollectionQuery({
+
+    const { data, error, isLoading, isFetching, refetch } = useGetFilteredCollectionQuery({
         page,
         pageSize: rowsPerPage,
         accountId,
     });
+
+    const [
+        hideCollection,
+        {
+            isSuccess,
+            isLoading: isDeletationProccessing,
+            error: hideCollectionError,
+            reset: resetDeletationState,
+        },
+    ] = useHideCollectionMutation();
 
     const onEditHandler = useCallback(id => {
         console.log({ id });
@@ -69,6 +107,16 @@ const CollectionsList = () => {
 
     const onDeleteHandler = useCallback(id => {
         console.log({ id });
+        hideCollection({ id, isHide: true });
+    }, []);
+
+    const onDeleteCollection = useCallback(id => {
+        console.log({ id });
+        dispatch(onOpen(id));
+    }, []);
+
+    const closeDialogHandler = useCallback(() => {
+        dispatch(onClose());
     }, []);
 
     const headerCellsArray = useMemo(() => {
@@ -100,7 +148,10 @@ const CollectionsList = () => {
                             xs: 3,
                             component: (
                                 <WithImageCell
-                                    classes={{ cellRoot: css[`${name}Cell`] }}
+                                    classes={{
+                                        cellRoot: cnb(css[`${name}Cell`], css.cellRoot),
+                                        imageRoot: css.imageRoot,
+                                    }}
                                     imageUrl={c.logo}
                                     value={c.name}
                                 />
@@ -112,7 +163,7 @@ const CollectionsList = () => {
                             label: name,
                             xs: 2,
                             disableRowClickEvent: true,
-                            horizontalPosition: 'center',
+                            horizontalPosition: 'flex-end',
                             component: (
                                 <ActionsCell
                                     classes={{ cellRoot: css.buttonsCell }}
@@ -120,9 +171,47 @@ const CollectionsList = () => {
                                         <ActionsComponent
                                             id={c.id}
                                             onEdit={onEditHandler}
-                                            onDelete={onDeleteHandler}
+                                            onDelete={onDeleteCollection}
                                         />
                                     }
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.BLOCKCHAIN:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={String(c.blockchain.name)}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.PROFIT:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={`${Number(c.profit)} ${
+                                        c.payment_tokens.length ? c.payment_tokens[0].name : '---'
+                                    }`}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.LISTED:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={format(new Date(c.created_at), 'dd MMM yyyy')}
                                 />
                             ),
                         });
@@ -133,8 +222,8 @@ const CollectionsList = () => {
                             xs: 2,
                             component: (
                                 <CommonCell
-                                    classes={{ cellRoot: css[`${name}Cell`] }}
-                                    value={String(a[name])}
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={c[name]}
                                 />
                             ),
                         });
@@ -182,7 +271,36 @@ const CollectionsList = () => {
         }
     }, [collections]);
 
-    console.log({ error });
+    useEffect(() => {
+        if (hideCollectionError) {
+            console.log({ hideCollectionError });
+            closeDialogHandler();
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(hideCollectionError),
+            });
+        }
+    }, [hideCollectionError]);
+
+    useEffect(() => {
+        if (isSuccess && deletedCollectionId) {
+            setCollections(p => p.filter(c => c.id !== deletedCollectionId));
+
+            closeDialogHandler();
+            resetDeletationState();
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Collection deleted successfuly',
+            });
+        }
+    }, [isSuccess, deletedCollectionId]);
+
+    useEffect(() => {
+        if (data && data.results) {
+            setCollections(data.results);
+            setCount(data.count);
+        }
+    }, [data]);
 
     if (isLoading) {
         return (
@@ -201,23 +319,34 @@ const CollectionsList = () => {
     }
 
     return (
-        <div className="statistics__inner">
-            <h2 className="statistics__title">Collections</h2>
-            <div ref={beforeTableDiv} className={css.beforeTableElement} />
-            <Table
-                tableHeight={tableHeight}
-                tableInfo={bodyRowsArray}
-                headerInfo={headerCellsArray}
-                count={collections.count}
-                page={page - 1}
-                isLoading={isLoading}
-                isNoResultFound={!collections.length}
-                notFoundPlug={<div className={css.notFoundContainer}>No results found</div>}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </div>
+        <>
+            <div className="statistics__inner">
+                <h2 className="statistics__title">Collections</h2>
+                <div ref={beforeTableDiv} className={css.beforeTableElement} />
+                <Table
+                    tableHeight={tableHeight}
+                    tableInfo={bodyRowsArray}
+                    headerInfo={headerCellsArray}
+                    count={count}
+                    page={page - 1}
+                    isLoading={isFetching}
+                    isNoResultFound={!collections.length}
+                    notFoundPlug={<div className={css.notFoundContainer}>No results found</div>}
+                    rowsPerPage={rowsPerPage}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </div>
+            {isOpen && (
+                <DeleteEntityDialog
+                    open={isOpen}
+                    isDeletationProccessing={isDeletationProccessing}
+                    onClose={closeDialogHandler}
+                    onDelete={onDeleteHandler}
+                    title={'Are you sure you want to delete collection?'}
+                />
+            )}
+        </>
     );
 };
 

@@ -30,12 +30,12 @@ const ActionsComponent = props => {
         <div className={css.buttonsCell}>
             <IconButton disableRipple sx={{ padding: 0 }} onClick={onDeleteUserHandler}>
                 <div className={css.trashIconBox}>
-                    <DeleteIcon className={css.trashIcon} />
+                    <DeleteIcon classes={{ root: css.trashIcon }} />
                 </div>
             </IconButton>
             <IconButton disableRipple sx={{ padding: 0 }} onClick={onEditUserHandler}>
                 <div className={css.editIconBox}>
-                    <ModeEditOutlineIcon className={css.editIcon} />
+                    <ModeEditOutlineIcon classes={{ root: css.editIcon }} />
                 </div>
             </IconButton>
         </div>

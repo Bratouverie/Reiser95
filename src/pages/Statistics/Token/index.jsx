@@ -1,49 +1,65 @@
-import React, { useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
-import WithImageCell from '../../../common/Table/cells/WithImageCell';
+import React, {
+    useMemo,
+    useRef,
+    useState,
+    useLayoutEffect,
+    useCallback,
+    useEffect,
+    useContext,
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { cnb } from 'cnbuilder';
+import DeleteEntityDialog from '../../../components/DeleteEntityDialog/DeleteEntityDialog';
+import { onOpen, onClose } from '../../../redux/dialogs/deleteEntityDialog';
+import { useParams } from 'react-router-dom';
+import {
+    WithImageCell,
+    WithOverflowWrapperCell,
+    CommonCell,
+    ActionsCell,
+} from '../../../common/Table/cells';
 import { useDebounce } from '../../../hooks/useDebounce';
-import { useGetFilteredTokensQuery } from '../../../redux/api/dataService';
+import { useGetFilteredTokensQuery, useHideTokenMutation } from '../../../redux/api/dataService';
 import ActionsComponent from '../ActionsComponent';
-import { CommonCell, ActionsCell } from '../../../common/Table/cells';
 import { Table } from '../../../common/Table';
 import { normilizeError } from '../../../utils/http/normilizeError';
 import CenteredContainer from '../../../common/CenteredContainer';
 import Loader from '../../../common/Loader';
+import { NotificationContext } from '../../../context/NotificationContext';
+import NOTIFICATION_TYPES from '../../../const/notifications/NOTIFICATION_TYPES';
 
 import css from '../Statistics.module.css';
 
 const HEDER_CELLS = {
-    BRAND: 'Brand',
-    COLLECTIONS: 'Collections',
-    PROFITS: 'Profit',
+    STATUS: 'Status',
+    NAME: 'Name',
+    ITEMS: 'Items',
+    PROFIT: 'Profit',
     DESCRIPTION: 'Description',
-    URL: 'Url',
-    CATEGORY: 'Category',
-    ADMINISTRATOR: 'Administrator',
-    BIRTH: 'Birth',
+    PROPERTIES: 'Properties',
+    BLOCKCHAIN: 'Blockchain',
     ACTION: 'Action',
 };
 
 const BODY_CELLS = {
+    STATUS: 'status',
     NAME: 'name',
-    COLLECTIONS_COUNT: 'collections_count',
+    ITEMS: 'items_count',
     PROFIT: 'profit',
-    DESCRITPION: 'description',
-    URL: 'url',
-    CATEGORY: 'name',
-    ADMINISTRATOR: 'name',
-    BIRTH: 'name',
+    DESCRIPTION: 'description',
+    PROPERTIES: 'properties',
+    BLOCKCHAIN: 'blockchain',
     ACTION: 'action',
 };
 
 const HEADER_CELLS_ARR = [
-    { label: HEDER_CELLS.BRAND, xs: 3 },
-    { label: HEDER_CELLS.COLLECTIONS, xs: 2 },
-    { label: HEDER_CELLS.PROFITS, xs: 2 },
+    { label: HEDER_CELLS.STATUS, xs: 2 },
+    { label: HEDER_CELLS.NAME, xs: 3 },
+    { label: HEDER_CELLS.ITEMS, xs: 2 },
+    { label: HEDER_CELLS.PROFIT, xs: 2 },
     { label: HEDER_CELLS.DESCRIPTION, xs: 2 },
-    { label: HEDER_CELLS.URL, xs: 2 },
-    { label: HEDER_CELLS.CATEGORY, xs: 2 },
-    { label: HEDER_CELLS.ADMINISTRATOR, xs: 2 },
-    { label: HEDER_CELLS.BIRTH, xs: 2 },
+    { label: HEDER_CELLS.PROPERTIES, xs: 2 },
+    { label: HEDER_CELLS.BLOCKCHAIN, xs: 2 },
     { label: '', xs: 2, isAction: true },
 ];
 
@@ -51,17 +67,38 @@ const TABLE_BOTTOM_MARGIN = 20;
 
 const TokensList = () => {
     const { packId } = useParams();
+
+    const { isOpen, id: deletedTokenId } = useSelector(state => state.deleteEntityDialog);
+
+    const dispatch = useDispatch();
+
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
+
     const beforeTableDiv = useRef(null);
 
+    const [tokens, setTokens] = useState([]);
+    const [count, setCount] = useState(0);
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [tableHeight, setTableHeight] = useState(0);
 
-    const { data: tokens, error, isLoading, refetch } = useGetFilteredTokensQuery({
+    const { data, error, isLoading, isFetching, refetch } = useGetFilteredTokensQuery({
         page,
         pageSize: rowsPerPage,
         packId,
     });
+
+    const [
+        hideToken,
+        {
+            isSuccess,
+            isLoading: isDeletationProccessing,
+            error: hideTokenError,
+            reset: resetDeletationState,
+        },
+    ] = useHideTokenMutation();
 
     const onEditHandler = useCallback(id => {
         console.log({ id });
@@ -69,6 +106,16 @@ const TokensList = () => {
 
     const onDeleteHandler = useCallback(id => {
         console.log({ id });
+        hideToken({ id, isHide: true });
+    }, []);
+
+    const onDeleteToken = useCallback(id => {
+        console.log({ id });
+        dispatch(onOpen(id));
+    }, []);
+
+    const closeDialogHandler = useCallback(() => {
+        dispatch(onClose());
     }, []);
 
     const headerCellsArray = useMemo(() => {
@@ -89,7 +136,7 @@ const TokensList = () => {
         }
         const columns = Object.values(BODY_CELLS);
 
-        const bodyRows = tokens.map(a => {
+        const bodyRows = tokens.map(t => {
             const cellsArray = [];
 
             columns.forEach(name => {
@@ -100,8 +147,11 @@ const TokensList = () => {
                             xs: 3,
                             component: (
                                 <WithImageCell
-                                    classes={{ cellRoot: css[`${name}Cell`] }}
-                                    imageUrl={t.logo}
+                                    classes={{
+                                        cellRoot: cnb(css[`${name}Cell`], css.cellRoot),
+                                        imageRoot: css.imageRoot,
+                                    }}
+                                    imageUrl={t.file_2}
                                     value={t.name}
                                 />
                             ),
@@ -112,7 +162,7 @@ const TokensList = () => {
                             label: name,
                             xs: 2,
                             disableRowClickEvent: true,
-                            horizontalPosition: 'center',
+                            horizontalPosition: 'flex-end',
                             component: (
                                 <ActionsCell
                                     classes={{ cellRoot: css.buttonsCell }}
@@ -127,14 +177,69 @@ const TokensList = () => {
                             ),
                         });
                         return;
+                    case BODY_CELLS.PROPERTIES:
+                        const propertiesStr = t.properties
+                            .map(t => (t.type ? `${t.type}/${t.name}` : t))
+                            .join(', ');
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <WithOverflowWrapperCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={propertiesStr}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.DESCRIPTION:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <WithOverflowWrapperCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={t.description}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.BLOCKCHAIN:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={String(t.blockchain && t.blockchain.name)}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.PROFIT:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={`${Number(t.profit)} ${
+                                        t.payment_tokens && t.payment_tokens.length
+                                            ? t.payment_tokens[0].name
+                                            : '---'
+                                    }`}
+                                />
+                            ),
+                        });
+                        return;
                     default:
                         cellsArray.push({
                             label: name,
                             xs: 2,
                             component: (
                                 <CommonCell
-                                    classes={{ cellRoot: css[`${name}Cell`] }}
-                                    value={String(a[name])}
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={t[name]}
                                 />
                             ),
                         });
@@ -148,7 +253,7 @@ const TokensList = () => {
         });
 
         return bodyRows;
-    }, [tokens, accountId, collectionId]);
+    }, [tokens]);
 
     const handleChangePage = useCallback((_, newPage) => {
         setPage(newPage);
@@ -180,7 +285,35 @@ const TokensList = () => {
         }
     }, [tokens]);
 
-    console.log({ error });
+    useEffect(() => {
+        if (data && data.results) {
+            setTokens(data.results);
+            setCount(data.count);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        if (hideTokenError) {
+            closeDialogHandler();
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(hideTokenError),
+            });
+        }
+    }, [hideTokenError]);
+
+    useEffect(() => {
+        if (isSuccess && deletedTokenId) {
+            setTokens(p => p.filter(t => t.id !== deletedTokenId));
+
+            resetDeletationState();
+            closeDialogHandler();
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Token deleted successfuly',
+            });
+        }
+    }, [isSuccess, deletedTokenId]);
 
     if (isLoading) {
         return (
@@ -199,23 +332,34 @@ const TokensList = () => {
     }
 
     return (
-        <div className="statistics__inner">
-            <h2 className="statistics__title">Accounts</h2>
-            <div ref={beforeTableDiv} className={css.beforeTableElement} />
-            <Table
-                tableHeight={tableHeight}
-                tableInfo={bodyRowsArray}
-                headerInfo={headerCellsArray}
-                count={tokens.count}
-                page={page - 1}
-                isLoading={isLoading}
-                isNoResultFound={!tokens.length}
-                notFoundPlug={<div className={css.notFoundContainer}>No results found</div>}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </div>
+        <>
+            <div className="statistics__inner">
+                <h2 className="statistics__title">Tokens</h2>
+                <div ref={beforeTableDiv} className={css.beforeTableElement} />
+                <Table
+                    tableHeight={tableHeight}
+                    tableInfo={bodyRowsArray}
+                    headerInfo={headerCellsArray}
+                    count={count}
+                    page={page - 1}
+                    isLoading={isFetching}
+                    isNoResultFound={!tokens.length}
+                    notFoundPlug={<div className={css.notFoundContainer}>No results found</div>}
+                    rowsPerPage={rowsPerPage}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </div>
+            {isOpen && (
+                <DeleteEntityDialog
+                    open={isOpen}
+                    isDeletationProccessing={isDeletationProccessing}
+                    onClose={closeDialogHandler}
+                    onDelete={onDeleteHandler}
+                    title={'Are you sure you want to delete token?'}
+                />
+            )}
+        </>
     );
 };
 

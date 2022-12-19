@@ -20,21 +20,21 @@ export const accountsSlice = createSlice({
         },
     },
     extraReducers: builder => {
-        // GET ALL ACCOUNTS LIST
-        builder.addMatcher(dataApi.endpoints.getAccounts.matchFulfilled, (state, action) => {
-            state.isLoading = false;
-            accountsAdapter.upsertMany(state, action.payload);
-        });
+        // // GET ALL ACCOUNTS LIST
+        // builder.addMatcher(dataApi.endpoints.getAccounts.matchFulfilled, (state, action) => {
+        //     state.isLoading = false;
+        //     accountsAdapter.upsertMany(state, action.payload);
+        // });
 
-        builder.addMatcher(dataApi.endpoints.getAccounts.matchPending, (state, action) => {
-            state.error = null;
-            state.isLoading = true;
-        });
+        // builder.addMatcher(dataApi.endpoints.getAccounts.matchPending, (state, action) => {
+        //     state.error = null;
+        //     state.isLoading = true;
+        // });
 
-        builder.addMatcher(dataApi.endpoints.getAccounts.matchRejected, (state, action) => {
-            state.error = action.payload;
-            state.isLoading = false;
-        });
+        // builder.addMatcher(dataApi.endpoints.getAccounts.matchRejected, (state, action) => {
+        //     state.error = action.payload;
+        //     state.isLoading = false;
+        // });
         // CREATE ACCOUNTS
         builder.addMatcher(dataApi.endpoints.createAccount.matchPending, (state, action) => {
             state.error = null;

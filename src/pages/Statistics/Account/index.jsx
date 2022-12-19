@@ -1,7 +1,20 @@
-import React, { useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
+import React, {
+    useMemo,
+    useRef,
+    useState,
+    useLayoutEffect,
+    useCallback,
+    useEffect,
+    useContext,
+} from 'react';
+import { cnb } from 'cnbuilder';
+import { useDispatch, useSelector } from 'react-redux';
+import DeleteEntityDialog from '../../../components/DeleteEntityDialog/DeleteEntityDialog';
+import { pagesSelectors } from '../../../redux/slices/pages';
+import { onOpen, onClose } from '../../../redux/dialogs/deleteEntityDialog';
 import WithImageCell from '../../../common/Table/cells/WithImageCell';
 import { useDebounce } from '../../../hooks/useDebounce';
-import { useGetAccountsQuery } from '../../../redux/api/dataService';
+import { useGetAccountsQuery, useHideAccountMutation } from '../../../redux/api/dataService';
 import ActionsComponent from '../ActionsComponent';
 import { CommonCell, ActionsCell } from '../../../common/Table/cells';
 import { Table } from '../../../common/Table';
@@ -9,6 +22,8 @@ import { normilizeError } from '../../../utils/http/normilizeError';
 import CenteredContainer from '../../../common/CenteredContainer';
 import Loader from '../../../common/Loader';
 import { STATISTICS_ACCOUNT_COLLECTIONS_LIST } from '../../../const/http/CLIENT_URLS';
+import { NotificationContext } from '../../../context/NotificationContext';
+import NOTIFICATION_TYPES from '../../../const/notifications/NOTIFICATION_TYPES';
 
 import css from '../Statistics.module.css';
 
@@ -19,8 +34,6 @@ const HEDER_CELLS = {
     DESCRIPTION: 'Description',
     URL: 'Url',
     CATEGORY: 'Category',
-    ADMINISTRATOR: 'Administrator',
-    BIRTH: 'Birth',
     ACTION: 'Action',
 };
 
@@ -30,9 +43,7 @@ const BODY_CELLS = {
     PROFIT: 'profit',
     DESCRITPION: 'description',
     URL: 'url',
-    CATEGORY: 'name',
-    ADMINISTRATOR: 'name',
-    BIRTH: 'name',
+    CATEGORY: 'category',
     ACTION: 'action',
 };
 
@@ -43,24 +54,44 @@ const HEADER_CELLS_ARR = [
     { label: HEDER_CELLS.DESCRIPTION, xs: 2 },
     { label: HEDER_CELLS.URL, xs: 2 },
     { label: HEDER_CELLS.CATEGORY, xs: 2 },
-    { label: HEDER_CELLS.ADMINISTRATOR, xs: 2 },
-    { label: HEDER_CELLS.BIRTH, xs: 2 },
     { label: '', xs: 2, isAction: true },
 ];
 
 const TABLE_BOTTOM_MARGIN = 20;
 
 const AccountsList = () => {
+    const { isOpen, id: deletedPackId } = useSelector(state => state.deleteEntityDialog);
+
+    const dispatch = useDispatch();
+
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
+
     const beforeTableDiv = useRef(null);
 
+    const pages = useSelector(pagesSelectors.selectAll);
+
+    const [accounts, setAccounts] = useState([]);
+    const [count, setCount] = useState(0);
     const [page, setPage] = useState(1);
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [tableHeight, setTableHeight] = useState(0);
 
-    const { data: accounts, error, isLoading, refetch } = useGetAccountsQuery({
+    const { data, error, isLoading, isFetching, refetch } = useGetAccountsQuery({
         page,
         pageSize: rowsPerPage,
     });
+
+    const [
+        hideAccount,
+        {
+            isSuccess,
+            isLoading: isDeletationProccessing,
+            error: hideAccountError,
+            reset: resetDeletationState,
+        },
+    ] = useHideAccountMutation();
 
     const onEditHandler = useCallback(id => {
         console.log({ id });
@@ -68,6 +99,16 @@ const AccountsList = () => {
 
     const onDeleteHandler = useCallback(id => {
         console.log({ id });
+        hideAccount({ id, isHide: true });
+    }, []);
+
+    const onDeleteAccount = useCallback(id => {
+        console.log({ id });
+        dispatch(onOpen(id));
+    }, []);
+
+    const closeDialogHandler = useCallback(() => {
+        dispatch(onClose());
     }, []);
 
     const headerCellsArray = useMemo(() => {
@@ -86,6 +127,7 @@ const AccountsList = () => {
         if (!accounts || !accounts.length) {
             return [];
         }
+
         const columns = Object.values(BODY_CELLS);
 
         const bodyRows = accounts.map(a => {
@@ -99,7 +141,10 @@ const AccountsList = () => {
                             xs: 3,
                             component: (
                                 <WithImageCell
-                                    classes={{ cellRoot: css[`${name}Cell`] }}
+                                    classes={{
+                                        cellRoot: cnb(css[`${name}Cell`], css.cellRoot),
+                                        imageRoot: css.imageRoot,
+                                    }}
                                     imageUrl={a.logo}
                                     value={a.name}
                                 />
@@ -111,7 +156,7 @@ const AccountsList = () => {
                             label: name,
                             xs: 2,
                             disableRowClickEvent: true,
-                            horizontalPosition: 'center',
+                            horizontalPosition: 'flex-end',
                             component: (
                                 <ActionsCell
                                     classes={{ cellRoot: css.buttonsCell }}
@@ -119,9 +164,35 @@ const AccountsList = () => {
                                         <ActionsComponent
                                             id={a.id}
                                             onEdit={onEditHandler}
-                                            onDelete={onDeleteHandler}
+                                            onDelete={onDeleteAccount}
                                         />
                                     }
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.PROFIT:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={Number(a.profit)}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.CATEGORY:
+                        const currentPage = pages.find(p => p.id === a.page);
+
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={String(currentPage ? currentPage.name : '-')}
                                 />
                             ),
                         });
@@ -132,7 +203,7 @@ const AccountsList = () => {
                             xs: 2,
                             component: (
                                 <CommonCell
-                                    classes={{ cellRoot: css[`${name}Cell`] }}
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
                                     value={String(a[name])}
                                 />
                             ),
@@ -148,7 +219,7 @@ const AccountsList = () => {
         });
 
         return bodyRows;
-    }, [accounts]);
+    }, [accounts, pages]);
 
     const handleChangePage = useCallback((_, newPage) => {
         setPage(newPage);
@@ -180,7 +251,36 @@ const AccountsList = () => {
         }
     }, [accounts]);
 
-    console.log({ error });
+    useEffect(() => {
+        if (hideAccountError) {
+            console.log({ hideAccountError });
+            closeDialogHandler();
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(hideAccountError),
+            });
+        }
+    }, [hideAccountError]);
+
+    useEffect(() => {
+        if (isSuccess && deletedPackId) {
+            setAccounts(p => p.filter(a => a.id !== deletedPackId));
+
+            closeDialogHandler();
+            resetDeletationState();
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Account deleted successfuly',
+            });
+        }
+    }, [isSuccess, deletedPackId]);
+
+    useEffect(() => {
+        if (data && data.results) {
+            setAccounts(data.results);
+            setCount(data.count);
+        }
+    }, [data]);
 
     if (isLoading) {
         return (
@@ -199,24 +299,81 @@ const AccountsList = () => {
     }
 
     return (
-        <div className="statistics__inner">
-            <h2 className="statistics__title">Accounts</h2>
-            <div ref={beforeTableDiv} className={css.beforeTableElement} />
-            <Table
-                tableHeight={tableHeight}
-                tableInfo={bodyRowsArray}
-                headerInfo={headerCellsArray}
-                count={accounts.count}
-                page={page - 1}
-                isLoading={isLoading}
-                isNoResultFound={!accounts.length}
-                notFoundPlug={<div className={css.notFoundContainer}>No results found</div>}
-                rowsPerPage={rowsPerPage}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-            />
-        </div>
+        <>
+            <div className="statistics__inner">
+                <h2 className="statistics__title">Accounts</h2>
+                <div ref={beforeTableDiv} className={css.beforeTableElement} />
+                <Table
+                    tableHeight={tableHeight}
+                    tableInfo={bodyRowsArray}
+                    headerInfo={headerCellsArray}
+                    count={count}
+                    page={page - 1}
+                    isLoading={isFetching}
+                    isNoResultFound={!accounts.length}
+                    notFoundPlug={<div className={css.notFoundContainer}>No results found</div>}
+                    rowsPerPage={rowsPerPage}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </div>
+            {isOpen && (
+                <DeleteEntityDialog
+                    open={isOpen}
+                    isDeletationProccessing={isDeletationProccessing}
+                    onClose={closeDialogHandler}
+                    onDelete={onDeleteHandler}
+                    title={'Are you sure you want to delete acсount?'}
+                />
+            )}
+        </>
     );
 };
 
 export default React.memo(AccountsList);
+// [
+//     {
+//         "id": "be2d2b80-1e84-4778-832b-793be9c28c0f",
+//         "payment_tokens": [
+//             {
+//                 "id": "f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea",
+//                 "name": "ETH1",
+//                 "smart_contract_address": "1111111111111111111",
+//                 "blockchain": "11643bd9-183e-48bc-bad8-07e54c810bc1"
+//             }
+//         ],
+//         "blockchain": {
+//             "id": "11643bd9-183e-48bc-bad8-07e54c810bc1",
+//             "name": "Ethereum"
+//         },
+//         "hide": false,
+//         "created_at": "2022-12-13T13:14:16.845565Z",
+//         "link_opensea": "",
+//         "link_discord": "",
+//         "link_instagram": "",
+//         "link_medium": null,
+//         "link_twitter": "",
+//         "type": "standard",
+//         "logo": "https://gateway.storjshare.io/demo-bucket/collections/004.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221217%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221217T154257Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=f2ebee5fb85a66a448c87791bd96e658279a7717173c2e559391cae05a1998c1",
+//         "featured": "https://gateway.storjshare.io/demo-bucket/collections/001.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221217%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221217T154257Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=06bc19f28eb1cdd55c08cf6af8dc41e4e45189446c50bdae1b22656b0f464087",
+//         "banner": "https://gateway.storjshare.io/demo-bucket/collections/005.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221217%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221217T154257Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=bf47fae583179e7e833400dc268daddcf9c72e6e5035286ca54185012c78099b",
+//         "name": "e2222222eeee2222",
+//         "url": "weq",
+//         "url_opensea": "ewqe",
+//         "category_opensea": "Art",
+//         "percentage_fee": "5.00000000",
+//         "display_theme": "padded",
+//         "description": "ewq",
+//         "upload_blockchain": false,
+//         "smart_contract_address": "wqewq",
+//         "items_count": 2,
+//         "owners_count": 0,
+//         "floor_price_count": "0.10000000",
+//         "volume_troded_count": "0.00000000",
+//         "profit": "0.20000000",
+//         "creator_profit": "0.00000000",
+//         "creator_fee": "0.00000000",
+//         "page": "b0a17740-2c89-4973-8b7d-32b23f41c8c4",
+//         "account": "0f10c95d-7a70-42d7-ae8b-ef1c8b9968f6"
+//     }
+// ]
