@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
@@ -7,7 +6,12 @@ import { VideoPlayer } from '../../common/VideoPlayer';
 import StatChart from '../../components/StatChart';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
-import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
+import {
+    useGetCollectionQuery,
+    useGetFilteredTokensQuery,
+    useGetTokenQuery,
+} from '../../redux/api/dataService';
+import { normilizeError } from '../../utils/http/normilizeError';
 import { isVideo } from '../../utils/isVideo';
 import { roundInt } from '../../utils/roundInt';
 import TokenItem from '../Collection/TokenItem';
@@ -80,18 +84,48 @@ import './index.css';
 // }
 
 const TokenCard = () => {
-    const tokens = useSelector(state => state.tokens);
-    const collections = useSelector(state => state.collections);
-
     const { id } = useParams();
 
+    const { data: token, error: getTokenError, isLoading } = useGetTokenQuery(
+        {
+            id,
+        },
+        {
+            skip: !id,
+        },
+    );
+
+    const {
+        data: collection,
+        error: getCollectionError,
+        isLoading: isTokenCollectionLoading,
+    } = useGetCollectionQuery(
+        {
+            id: token ? token.collection.id : '',
+        },
+        {
+            skip: !token || !token.collection.id,
+        },
+    );
+
+    const {
+        data: collectionTokens,
+        error: getTokensError,
+        isLoading: isTokensLoading,
+    } = useGetFilteredTokensQuery(
+        {
+            page: 1,
+            pageSize: 4,
+            collectionId: token ? token.collection.id : '',
+        },
+        {
+            skip: !token || !token.collection.id,
+        },
+    );
+    console.log({ token });
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
-
-    const { state: getTokenRS, request: onGetToken } = useRequest({
-        requestType: REQUEST_TYPE.DATA,
-    });
 
     const [prop, setProp] = useState(true);
     const [desc, setDesc] = useState(true);
@@ -103,46 +137,34 @@ const TokenCard = () => {
     const [more, setMore] = useState(true);
     const [act, setAct] = useState(true);
 
-    const [token, setToken] = useState();
-
-    const collectionTokens = useMemo(() => {
-        if (!tokens.tokens || !token) {
-            return [];
-        }
-
-        return tokens.tokens
-            .filter(t => t.collection.id === token.collection.id && t.id !== token.id)
-            .slice(0, 4);
-    }, [tokens, token]);
-
-    const currentTokenCollection = useMemo(() => {
-        if (!collections.collections || !token) {
-            return [];
-        }
-
-        return collections.collections.find(c => c.id === token.collection.id);
-    }, [collections, token]);
-
     useEffect(() => {
-        onGetToken({
-            url: `token/${id}/`,
-        });
-    }, [id]);
-
-    useEffect(() => {
-        if (getTokenRS.result && getTokenRS.result.data) {
-            setToken(getTokenRS.result.data);
-        }
-
-        if (getTokenRS.error) {
+        if (getTokenError) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: getTokenRS.error,
+                text: normilizeError(getTokenError),
             });
         }
-    }, [getTokenRS]);
+    }, [getTokenError]);
 
-    if (getTokenRS.isProcessing || !token) {
+    useEffect(() => {
+        if (getCollectionError) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(getCollectionError),
+            });
+        }
+    }, [getCollectionError]);
+
+    useEffect(() => {
+        if (getTokensError) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(getTokensError),
+            });
+        }
+    }, [getTokensError]);
+
+    if (isTokenCollectionLoading || isLoading || isTokensLoading) {
         return (
             <CenteredContainer>
                 <Loader />
@@ -200,13 +222,13 @@ const TokenCard = () => {
                                 </div>
                                 {isVideo(token.file_2_name_ext) ? (
                                     <div className="player-wrapper token__card--img">
-                                        <VideoPlayer src={token.file_1} />
+                                        <VideoPlayer src={token.file_2} />
                                     </div>
                                 ) : (
                                     <div
                                         style={{
-                                            backgroundImage: `url('${token.file_1 ||
-                                                token.file_2}')`,
+                                            backgroundImage: `url('${token.file_2 ||
+                                                token.file_1}')`,
                                             backgroundSize: 'cover',
                                             objectFit: 'cover',
                                             backgroundPosition: 'center',
@@ -341,7 +363,7 @@ const TokenCard = () => {
                                                 <div className="token__card--item--about--item">
                                                     <div
                                                         style={{
-                                                            backgroundImage: `url('${currentTokenCollection.logo}')`,
+                                                            backgroundImage: `url('${collection.logo}')`,
                                                             backgroundSize: 'cover',
                                                             objectFit: 'cover',
                                                             backgroundPosition: 'center',
@@ -350,7 +372,7 @@ const TokenCard = () => {
                                                     />
 
                                                     <p className="token__card--item--about--text">
-                                                        {currentTokenCollection.description}
+                                                        {collection.description}
                                                     </p>
                                                 </div>
 
@@ -1805,13 +1827,13 @@ const TokenCard = () => {
                             {more && (
                                 <>
                                     <div className="token__card--item--bottom token__card--list">
-                                        {!collectionTokens || !collectionTokens.length ? (
+                                        {!collectionTokens || !collectionTokens.results.length ? (
                                             <div className="collection__items--none">
                                                 No items to display
                                             </div>
                                         ) : (
                                             <>
-                                                {collectionTokens.map(t => (
+                                                {collectionTokens.results.map(t => (
                                                     <TokenItem key={t.id} token={t} />
                                                 ))}
                                             </>

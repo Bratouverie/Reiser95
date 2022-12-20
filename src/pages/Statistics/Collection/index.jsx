@@ -85,11 +85,14 @@ const CollectionsList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [tableHeight, setTableHeight] = useState(0);
 
-    const { data, error, isLoading, isFetching, refetch } = useGetFilteredCollectionQuery({
-        page,
-        pageSize: rowsPerPage,
-        accountId,
-    });
+    const { data, error, isLoading, isFetching, refetch } = useGetFilteredCollectionQuery(
+        {
+            page,
+            pageSize: rowsPerPage,
+            accountId,
+        },
+        { pollingInterval: 300 },
+    );
 
     const [
         hideCollection,

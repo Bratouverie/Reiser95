@@ -58,12 +58,10 @@ const CreatePack = () => {
     const authInfo = useSelector(state => state.auth);
 
     const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
-    const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionsQuery(0, 1000);
-
-    const {
-        data: availablePaymentTokens,
-        refetch: refetchCurrencyTokens,
-    } = useGetCurrencyTokensQuery({}, { skip: true });
+    const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionsQuery({
+        page: 1,
+        pageSize: 1000,
+    });
 
     const [
         onCreatePackRequest,
@@ -112,6 +110,27 @@ const CreatePack = () => {
 
     const [isTokenUploadInProcessing, setIsTokenUploadInProcessing] = useState(false);
 
+    const selectedCollection = useMemo(() => {
+        if (!collectionId || !collections.results) {
+            return null;
+        }
+
+        return collections.results.find(c => c.id === collectionId);
+    }, [collections, collectionId]);
+
+    const selectedBlockchain = useMemo(() => {
+        if (!selectedCollection || !blockchains || !blockchains) {
+            return null;
+        }
+
+        return blockchains.find(b => b.id === selectedCollection.blockchain.id);
+    }, [selectedCollection, blockchains]);
+
+    const { data: availablePaymentTokens } = useGetCurrencyTokensQuery(
+        { blockchainId: selectedBlockchain ? selectedBlockchain.id : '' },
+        { skip: !selectedBlockchain || !selectedBlockchain.id, pollingInterval: 300 },
+    );
+
     const {
         values: tokenImgValues,
         onAdd: onAddTokenImg,
@@ -129,22 +148,6 @@ const CreatePack = () => {
         multiple: true,
         limit: UPLOAD_FILES_MAX_LIMIT,
     });
-
-    const selectedCollection = useMemo(() => {
-        if (!collectionId || !collections.collections) {
-            return null;
-        }
-
-        return collections.collections.results.find(c => c.id === collectionId);
-    }, [collections.collections, collectionId]);
-
-    const selectedBlockchain = useMemo(() => {
-        if (!selectedCollection || !blockchains || !blockchains) {
-            return null;
-        }
-
-        return blockchains.find(b => b.id === selectedCollection.blockchain.id);
-    }, [selectedCollection, blockchains]);
 
     const genrateTablesRow = useMemo(() => {
         if (tokenImgValues.length === 0) {
@@ -445,8 +448,8 @@ const CreatePack = () => {
                                     currency_token: tokenIdForPayment,
                                     investor_royalty: investorRoyalty,
                                     creator_royalty: creatorRoyalty,
-                                    file_2_name_ext: token.tokenImgName,
                                     file_1_name_ext: token.tokenPreviewName,
+                                    file_2_name_ext: token.tokenImgName,
                                 },
                             });
 
@@ -479,7 +482,7 @@ const CreatePack = () => {
                             );
 
                             try {
-                                await fetch(res.data.file_2_pre_signed_url_data, {
+                                await fetch(res.data.file_1_pre_signed_url_data, {
                                     method: HTTP_METHODS.PUT,
                                     body: previewBlob,
                                 }).catch(e => {
@@ -501,7 +504,7 @@ const CreatePack = () => {
                                     },
                                     data: {
                                         file_1_name_ext: res.file_1_name_ext,
-                                        file_2_name_ext: res.data.file_2_name_ext,
+                                        file_2_name_ext: res.data.file_1_name_ext,
                                     },
                                 });
                             } catch (e) {
@@ -574,12 +577,6 @@ const CreatePack = () => {
         tokenIdForPayment,
         isTokenUploadInProcessing,
     ]);
-
-    useEffect(() => {
-        if (selectedBlockchain) {
-            refetchCurrencyTokens(selectedBlockchain.id);
-        }
-    }, [selectedBlockchain]);
 
     useEffect(() => {
         if (isSuccess && createdPackData) {
@@ -812,14 +809,10 @@ const CreatePack = () => {
                                     This is the collection where your items Pack will appear.
                                 </p>
 
-                                {Boolean(
-                                    collections &&
-                                        collections.collections &&
-                                        collections.collections.results,
-                                ) && (
+                                {Boolean(collections && collections.results) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={collections.collections.results.map(c => ({
+                                            optionsList={collections.results.map(c => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -890,12 +883,13 @@ const CreatePack = () => {
                                         />
 
                                         <div className="create__item--select--inner small createPack_priceItemContainer_priceInputWrapper_select_currency">
-                                            {!availablePaymentTokens.length ? (
+                                            {!availablePaymentTokens ||
+                                            !availablePaymentTokens.length ? (
                                                 <select
                                                     className="select create__item--select"
-                                                    disabled={!availablePaymentTokens.length}
+                                                    disabled
                                                 >
-                                                    <option>Select blockchain</option>
+                                                    <option>Select collection</option>
                                                 </select>
                                             ) : (
                                                 <CustomSelect

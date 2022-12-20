@@ -14,6 +14,7 @@ import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
 
 import './index.css';
+import { pagesSelectors } from '../../redux/slices/pages';
 
 const SocialLinks = {
     OPENSEA: {
@@ -43,7 +44,7 @@ const SOCIAL_LINKS_ARR = Object.values(SocialLinks);
 const CreateAccount = props => {
     const { accountForEditId } = props;
 
-    const pages = useSelector(state => state.pages);
+    const pages = useSelector(pagesSelectors.selectAll);
 
     const [
         onCreateAccountRequest,
@@ -57,6 +58,7 @@ const CreateAccount = props => {
         refetch: getAccountForEditing,
         error: getAccountForEditError,
     } = useGetAccountQuery({}, { skip: true });
+
     const { isLoading: isPagesLoading } = useGetPagesQuery();
 
     const {
@@ -204,7 +206,7 @@ const CreateAccount = props => {
                             </p>
 
                             <div className="create__item--select--prop">
-                                {(pages.pages || []).map(page => (
+                                {(pages || []).map(page => (
                                     <button
                                         key={page.id}
                                         className={`button create__item--option ${

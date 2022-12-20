@@ -20,21 +20,6 @@ export const collectionsSlice = createSlice({
         },
     },
     extraReducers: builder => {
-        // GET ALL COLLECTIONs LIST
-        builder.addMatcher(dataApi.endpoints.getCollections.matchFulfilled, (state, action) => {
-            state.isLoading = false;
-            collectionsAdapter.upsertMany(state, action.payload);
-        });
-
-        builder.addMatcher(dataApi.endpoints.getCollections.matchPending, (state, action) => {
-            state.error = null;
-            state.isLoading = true;
-        });
-
-        builder.addMatcher(dataApi.endpoints.getCollections.matchRejected, (state, action) => {
-            state.error = action.payload;
-            state.isLoading = false;
-        });
         // CREATE COLLECTION
         builder.addMatcher(dataApi.endpoints.createCollection.matchPending, (state, action) => {
             state.error = null;

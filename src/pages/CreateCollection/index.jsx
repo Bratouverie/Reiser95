@@ -14,6 +14,7 @@ import {
     useGetCurrencyTokensQuery,
     useGetPagesQuery,
 } from '../../redux/api/dataService';
+import { pagesSelectors } from '../../redux/slices/pages';
 import { normilizeError } from '../../utils/http/normilizeError';
 
 import './index.css';
@@ -77,18 +78,24 @@ const OPENSEA_CATEGORY_ARR = Object.values(OpenSeaCategory);
 const DISPLAIED_THEMES_ARR = Object.values(DisplayThemes);
 
 const CreateCollection = () => {
-    const pages = useSelector(state => state.pages);
+    const pages = useSelector(pagesSelectors.selectAll);
 
     const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
     const { isLoading: isPagesLoading } = useGetPagesQuery();
     // TODo rewrite to another endpoint
-    const { data: accounts, isLoading: isAccountsLoading } = useGetAccountsQuery(0, 1000);
-    const {
-        data: currencyTokens,
-        isLoading: isCurrencyTokensLoading,
-        refetch: refetchCurrencyTokens,
-    } = useGetCurrencyTokensQuery({}, { skip: true });
+    const { data: accounts, isLoading: isAccountsLoading } = useGetAccountsQuery({
+        page: 1,
+        pageSize: 1000,
+    });
 
+    const [blockchainId, setBlockchainId] = useState('');
+
+    const { data: currencyTokens } = useGetCurrencyTokensQuery(
+        { blockchainId },
+        { skip: !blockchainId, pollingInterval: 300 },
+    );
+
+    console.log({ currencyTokens });
     const [
         onCreateCollectionRequest,
         {
@@ -121,18 +128,22 @@ const CreateCollection = () => {
         twitter: '',
     });
     const [percentageFee, setPercentageFee] = useState('');
-    const [blockchainId, setBlockchainId] = useState('');
     const [tokenId, setTokenId] = useState('');
     const [displayTheme, setDisplayTheme] = useState(DisplayThemes.PADDED.value);
     const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
 
     const availbleAccaunts = useMemo(() => {
-        if (!brandId || !accounts.accounts) {
-            return null;
+        console.log({ accounts });
+        if (!brandId || !accounts.results) {
+            return [];
         }
+        console.log({
+            brandId,
+            result: accounts.results,
+        });
 
-        return (accounts.accounts || []).filter(a => a.page === brandId);
-    }, [accounts.accounts, brandId]);
+        return (accounts || []).results.filter(a => a.page === brandId);
+    }, [accounts, brandId]);
 
     const changeBrandHandler = useCallback(id => {
         setBrandId(id);
@@ -253,12 +264,6 @@ const CreateCollection = () => {
     ]);
 
     useEffect(() => {
-        if (blockchainId) {
-            refetchCurrencyTokens(blockchainId);
-        }
-    }, [blockchainId]);
-
-    useEffect(() => {
         if (isCollectionCreatedSuccessfully) {
             setLogo('');
             setAdminSmart('');
@@ -305,7 +310,7 @@ const CreateCollection = () => {
         [],
     );
 
-    if (isBlockchainsLoading || isPagesLoading || isAccountsLoading || isCurrencyTokensLoading) {
+    if (isBlockchainsLoading || isPagesLoading || isAccountsLoading) {
         return (
             <CenteredContainer>
                 <Loader />
@@ -428,7 +433,7 @@ const CreateCollection = () => {
                             </p>
 
                             <div className="create__item--select--prop">
-                                {(pages.pages || []).map(page => (
+                                {(pages || []).map(page => (
                                     <button
                                         key={page.id}
                                         className={`button create__item--option ${
@@ -562,10 +567,10 @@ const CreateCollection = () => {
                             </p>
 
                             <div className="create__item--select--inner">
-                                {Boolean(blockchains && blockchains.blockchains) && (
+                                {Boolean(blockchains) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={blockchains.blockchains.map(c => ({
+                                            optionsList={blockchains.map(c => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -616,7 +621,7 @@ const CreateCollection = () => {
                             </div>
 
                             <div className="create__item--select--inner">
-                                {!currencyTokens.length ? (
+                                {!currencyTokens || !currencyTokens.length ? (
                                     <select
                                         className="select create__item--select"
                                         disabled={!availablePaymentTokens.length}
