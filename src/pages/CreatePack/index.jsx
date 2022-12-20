@@ -503,8 +503,8 @@ const CreatePack = () => {
                                         Authorization: `Bearer ${authInfo.accessToken}`,
                                     },
                                     data: {
-                                        file_1_name_ext: res.file_1_name_ext,
-                                        file_2_name_ext: res.data.file_1_name_ext,
+                                        file_1_name_ext: res.data.file_1_name_ext,
+                                        file_2_name_ext: res.data.file_2_name_ext,
                                     },
                                 });
                             } catch (e) {
