@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useContext, useRef } from 'react';
 import axios from 'axios';
-import _, { isArray, uniqueId } from 'lodash';
+import _, { isArray } from 'lodash';
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import FileDropzone from '../../common/FileDropzone';
@@ -9,7 +9,6 @@ import RoyaltyDestribution from '../../common/RoyaltyDestribution';
 import LevelsDialog from '../../components/LevelsDialog';
 import PropertiesDialog from '../../components/PropertiesDialog';
 import StatsDialog from '../../components/StatsDialog';
-import { ONLY_NUMBERS_REGEX_ONLY_G } from '../../const/regExp';
 import { NotificationContext } from '../../context/NotificationContext';
 import { useDialog } from '../../hooks/useDialog';
 import { useFileDropzone } from '../../hooks/useFileDropzone';
@@ -20,14 +19,21 @@ import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 import { CustomSelect } from '../../common/CustomSelect';
 import AsyncQueue from '../../utils/asyncQueue';
-import Loader from '../../common/Loader';
 import { TOKEN_BY_PACK, CONFIRME_UPLOAD_TOKEN } from '../../const/http/API_URLS';
-
+import { convertFileToBase64 } from '../../utils/convertFileToBase64';
+import { arrayBufferToBinary } from '../../utils/arrayBufferToBinary';
+import CenteredContainer from '../../common/CenteredContainer';
 import './index.css';
+import Loader from '../../common/Loader';
+import {
+    useGetBlockchainsQuery,
+    useGetCollectionsQuery,
+    useGetCurrencyTokensQuery,
+    useGetPacksQuery,
+} from '../../redux/api/dataService';
 
 const UPLOAD_FILES_MAX_LIMIT = 1000;
 const MAX_NUMERIC_INDICATOR_START = 1000;
-const ONE_HUNDRED = 100;
 
 // FILE TYPE
 // type FileValue = {
@@ -49,17 +55,22 @@ const FAKE_TOKEN =
 
 const CreateItem = () => {
     const authInfo = useSelector(state => state.auth);
-    const collections = useSelector(state => state.collections);
-    const blockchains = useSelector(state => state.blockchains);
-    const packs = useSelector(state => state.packs);
+
+    const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
+    const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionsQuery({
+        page: 1,
+        pageSize: 1000,
+    });
+    const { data: packs, isLoading: isPacksLoading } = useGetPacksQuery({
+        page: 1,
+        pageSize: 1000,
+    });
 
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
 
     const requestsQueueRef = useRef(new AsyncQueue({ maxParallelTasks: 2 }));
-
-    const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
 
     const [packId, setPackId] = useState('');
     const [tokenCommonName, setTokenCommonName] = useState('Common name');
@@ -96,12 +107,6 @@ const CreateItem = () => {
     const levelsDialog = useDialog();
     const statsDialog = useDialog();
 
-    const { state: getBlockchainTokensState, request: onGetBlockchainTokens } = useRequest({
-        url: 'currency_token/',
-        requestType: REQUEST_TYPE.DATA,
-        isAuth: true,
-    });
-
     const {
         values: tokenImgValues,
         onAdd: onAddTokenImg,
@@ -121,20 +126,25 @@ const CreateItem = () => {
     });
 
     const selectedCollection = useMemo(() => {
-        if (!collectionId || !collections.collections) {
+        if (!collectionId || !collections.results) {
             return null;
         }
 
-        return collections.collections.find(c => c.id === collectionId);
-    }, [collections.collections, collectionId]);
+        return collections.results.find(c => c.id === collectionId);
+    }, [collections, collectionId]);
 
     const selectedBlockchain = useMemo(() => {
-        if (!selectedCollection || !blockchains || !blockchains.blockchains) {
+        if (!selectedCollection || !blockchains) {
             return null;
         }
 
-        return blockchains.blockchains.find(b => b.id === selectedCollection.blockchain.id);
+        return blockchains.find(b => b.id === selectedCollection.blockchain.id);
     }, [selectedCollection, blockchains]);
+
+    const { data: availablePaymentTokens } = useGetCurrencyTokensQuery(
+        { blockchainId: selectedBlockchain ? selectedBlockchain.id : '' },
+        { skip: !selectedBlockchain || !selectedBlockchain.id, pollingInterval: 300 },
+    );
 
     const genrateTablesRow = useMemo(() => {
         if (tokenImgValues.length === 0) {
@@ -311,6 +321,26 @@ const CreateItem = () => {
                 };
             }),
         };
+        // const data = {
+        //     pack: 'fe5cb80b-5bd2-4efe-8a7a-94316ff7e2e2',
+        //     currency_token: 'f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea',
+        //     investor_royalty: 2.5,
+        //     creator_royalty: 2.5,
+        //     status_price: 'price',
+        //     description: 'ewqwqew',
+        //     income_distribution: [
+        //         {
+        //             wallet: 'wqeqw',
+        //             percent: 100,
+        //         },
+        //     ],
+        //     creator_royalty_distribution: [
+        //         {
+        //             wallet: 'ewqeqwe',
+        //             percent: 100,
+        //         },
+        //     ],
+        // };
 
         Object.keys(data).forEach(key => {
             if (!data[key] || (isArray(data[key]) && !data[key].length)) {
@@ -334,15 +364,14 @@ const CreateItem = () => {
                                 url: TOKEN_BY_PACK,
                                 headers: {
                                     'Content-Type': 'application/json',
-                                    Authorization:
-                                        `Bearer ${authInfo.accessToken}` || `Bearer ${FAKE_TOKEN}`,
+                                    Authorization: `Bearer ${authInfo.accessToken}`,
                                 },
                                 data: {
                                     ...data,
-                                    name: token.name,
+                                    name: `${token.name}_${new Date().getTime()}`,
                                     price: token.tokenPrice,
-                                    file_2_name_ext: token.tokenImgName,
                                     file_1_name_ext: token.tokenPreviewName,
+                                    file_2_name_ext: token.tokenImgName,
                                 },
                             });
 
@@ -350,68 +379,37 @@ const CreateItem = () => {
                                 throw 'Bad request';
                             }
 
-                            const dataImage = new FormData();
-
-                            dataImage.append('key', res.data.file_1_pre_signed_url_data.fields.key);
-                            dataImage.append(
-                                'AWSAccessKeyId',
-                                res.data.file_1_pre_signed_url_data.fields.AWSAccessKeyId,
+                            const imageBuffer = await convertFileToBase64(token.tokenImgFile);
+                            const imageBlob = arrayBufferToBinary(
+                                imageBuffer,
+                                token.tokenImgFile.type,
                             );
-                            dataImage.append(
-                                'policy',
-                                res.data.file_1_pre_signed_url_data.fields.policy,
-                            );
-                            dataImage.append(
-                                'signature',
-                                res.data.file_1_pre_signed_url_data.fields.signature,
-                            );
-                            dataImage.append('file', token.tokenImgFile);
-
                             try {
-                                await axios.request({
-                                    method: HTTP_METHODS.POST,
-                                    url: res.data.file_1_pre_signed_url_data.url,
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data',
-                                    },
-                                    data: dataImage,
+                                await fetch(res.data.file_1_pre_signed_url_data, {
+                                    method: HTTP_METHODS.PUT,
+                                    body: imageBlob,
+                                }).catch(e => {
+                                    console.log('fetcErr', { e });
                                 });
                             } catch (e) {
                                 console.log({ e });
                                 throw `Token ${token.name} image upload failed`;
                             }
 
-                            const dataPreview = new FormData();
-
-                            dataPreview.append(
-                                'key',
-                                res.data.file_2_pre_signed_url_data.fields.key,
+                            const previewBuffer = await convertFileToBase64(token.tokenPreviewFile);
+                            const previewBlob = arrayBufferToBinary(
+                                previewBuffer,
+                                token.tokenPreviewFile.type,
                             );
-                            dataPreview.append(
-                                'AWSAccessKeyId',
-                                res.data.file_2_pre_signed_url_data.fields.AWSAccessKeyId,
-                            );
-                            dataPreview.append(
-                                'policy',
-                                res.data.file_2_pre_signed_url_data.fields.policy,
-                            );
-                            dataPreview.append(
-                                'signature',
-                                res.data.file_2_pre_signed_url_data.fields.signature,
-                            );
-                            dataPreview.append('file', token.tokenPreviewFile);
-
                             try {
-                                await axios.request({
-                                    method: HTTP_METHODS.POST,
-                                    url: res.data.file_1_pre_signed_url_data.url,
-                                    headers: {
-                                        'Content-Type': 'multipart/form-data',
-                                    },
-                                    data: dataPreview,
+                                await fetch(res.data.file_1_pre_signed_url_data, {
+                                    method: HTTP_METHODS.PUT,
+                                    body: previewBlob,
+                                }).catch(e => {
+                                    console.log('fetcErr', { e });
                                 });
                             } catch (e) {
-                                console.log(e);
+                                console.log({ e });
                                 throw `Token ${token.name} preview upload failed`;
                             }
 
@@ -422,15 +420,11 @@ const CreateItem = () => {
                                     url: CONFIRME_UPLOAD_TOKEN(res.data.id),
                                     headers: {
                                         'Content-Type': 'application/json',
-                                        Authorization:
-                                            `Bearer ${authInfo.accessToken}` ||
-                                            `Bearer ${FAKE_TOKEN}`,
+                                        Authorization: `Bearer ${authInfo.accessToken}`,
                                     },
                                     data: {
-                                        file_1_name_ext:
-                                            res.data.file_1_pre_signed_url_data.fields.key,
-                                        file_2_name_ext:
-                                            res.data.file_2_pre_signed_url_data.fields.key,
+                                        file_1_name_ext: res.data.file_1_name_ext,
+                                        file_2_name_ext: res.data.file_1_name_ext,
                                     },
                                 });
                             } catch (e) {
@@ -465,6 +459,10 @@ const CreateItem = () => {
                                     setNumericIndicatorInProccess(p => {
                                         return p.filter(el => el !== token.numericIndicator);
                                     });
+
+                                    if (!e.response) {
+                                        return;
+                                    }
 
                                     const errorKeys = Object.keys(e.response.data);
 
@@ -511,28 +509,13 @@ const CreateItem = () => {
         properties,
     ]);
 
-    useEffect(() => {
-        if (selectedBlockchain) {
-            onGetBlockchainTokens({
-                query: {
-                    blockchain_id: selectedBlockchain.id,
-                },
-            });
-        }
-    }, [selectedBlockchain]);
-
-    useEffect(() => {
-        if (getBlockchainTokensState.result && getBlockchainTokensState.result.data) {
-            setAvailablePaymentTokens(getBlockchainTokensState.result.data);
-        }
-
-        if (getBlockchainTokensState.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: getBlockchainTokensState.error,
-            });
-        }
-    }, [getBlockchainTokensState]);
+    if (isBlockchainsLoading || isCollectionsLoading || isPacksLoading) {
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
+    }
 
     return (
         <>
@@ -551,10 +534,10 @@ const CreateItem = () => {
                                     This is the Pack where your item will appear.
                                 </p>
 
-                                {Boolean(packs && packs.packs) && (
+                                {Boolean(packs && packs.results) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={packs.packs.map(c => ({
+                                            optionsList={packs.results.map(c => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -737,10 +720,10 @@ const CreateItem = () => {
                                     This is the collection where your items Pack will appear.
                                 </p>
 
-                                {Boolean(collections && collections.collections) && (
+                                {Boolean(collections && collections.results) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={collections.collections.map(c => ({
+                                            optionsList={collections.results.map(c => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -814,10 +797,11 @@ const CreateItem = () => {
                                         />
 
                                         <div className="create__item--select--inner small createPack_priceItemContainer_priceInputWrapper_select_currency">
-                                            {!availablePaymentTokens.length ? (
+                                            {!availablePaymentTokens ||
+                                            !availablePaymentTokens.length ? (
                                                 <select
                                                     className="select create__item--select"
-                                                    disabled={!availablePaymentTokens.length}
+                                                    disabled
                                                 >
                                                     <option>Select collection</option>
                                                 </select>

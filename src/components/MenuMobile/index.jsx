@@ -1,30 +1,38 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { pagesSelectors } from '../../redux/slices/pages';
 
-import "./index.css";
+import './index.css';
 
 const MenuMobile = ({ active, setActive }) => {
-    const pages = useSelector(state => state.pages);
+    const pages = useSelector(pagesSelectors.selectAll);
 
     const closeMenu = () => {
         setActive(false);
-    }
+    };
 
     React.useEffect(() => {
-        window.addEventListener('resize', function(){
+        window.addEventListener('resize', function() {
             document.documentElement.scrollWidth > 751 && setActive(false);
         });
     }, [setActive]);
 
     return (
-        <div className={`mobile__menu${active ? " active" : ""}`}>
+        <div className={`mobile__menu${active ? ' active' : ''}`}>
             <div className="container">
                 <div className="mobile__menu--content">
                     <nav className="mobile__nav">
-                        {pages.pages.map((data, id) => <Link key={id} to={`/${data.url}`} className="mobile__nav--link" onClick={closeMenu}>
-                            {data.name}
-                        </Link>)}
+                        {pages.map(page => (
+                            <Link
+                                key={page.id}
+                                to={`/${page.url}`}
+                                className="mobile__nav--link"
+                                onClick={closeMenu}
+                            >
+                                {page.name}
+                            </Link>
+                        ))}
 
                         <Link to="/stats" className="mobile__nav--link" onClick={closeMenu}>
                             Stats

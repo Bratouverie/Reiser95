@@ -1,14 +1,21 @@
 import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import CenteredContainer from '../../common/CenteredContainer';
 import { CustomSelect } from '../../common/CustomSelect';
 import File from '../../common/File';
 import Input from '../../common/Input';
 import Loader from '../../common/Loader';
-import { HTTP_METHODS } from '../../const/http/HTTP_METHODS';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
-import { getAccountsList } from '../../functions/data';
-import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
+import {
+    useCreateCollectionMutation,
+    useGetAccountsQuery,
+    useGetBlockchainsQuery,
+    useGetCurrencyTokensQuery,
+    useGetPagesQuery,
+} from '../../redux/api/dataService';
+import { pagesSelectors } from '../../redux/slices/pages';
+import { normilizeError } from '../../utils/http/normilizeError';
 
 import './index.css';
 
@@ -71,26 +78,37 @@ const OPENSEA_CATEGORY_ARR = Object.values(OpenSeaCategory);
 const DISPLAIED_THEMES_ARR = Object.values(DisplayThemes);
 
 const CreateCollection = () => {
-    const pages = useSelector(state => state.pages);
-    const accounts = useSelector(state => state.accounts);
-    const blockchains = useSelector(state => state.blockchains);
+    const pages = useSelector(pagesSelectors.selectAll);
+
+    const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
+    const { isLoading: isPagesLoading } = useGetPagesQuery();
+    // TODo rewrite to another endpoint
+    const { data: accounts, isLoading: isAccountsLoading } = useGetAccountsQuery({
+        page: 1,
+        pageSize: 1000,
+    });
+
+    const [blockchainId, setBlockchainId] = useState('');
+
+    const { data: currencyTokens } = useGetCurrencyTokensQuery(
+        { blockchainId },
+        { skip: !blockchainId, pollingInterval: 300 },
+    );
+
+    console.log({ currencyTokens });
+    const [
+        onCreateCollectionRequest,
+        {
+            isLoading: isCollectionCreatingProccessing,
+            isSuccess: isCollectionCreatedSuccessfully,
+            error: collectionCreatingError,
+            reset: resetCollectionCreationState,
+        },
+    ] = useCreateCollectionMutation();
 
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
-
-    const { state, request, onClearState } = useRequest({
-        requestType: REQUEST_TYPE.DATA,
-        method: HTTP_METHODS.POST,
-        url: 'collection/',
-        isAuth: true,
-    });
-
-    const { state: getBlockchainTokensState, request: onGetBlockchainTokens } = useRequest({
-        url: 'currency_token/',
-        requestType: REQUEST_TYPE.DATA,
-        isAuth: true,
-    });
 
     const [logo, setLogo] = useState('');
     const [adminSmart, setAdminSmart] = useState('');
@@ -110,19 +128,22 @@ const CreateCollection = () => {
         twitter: '',
     });
     const [percentageFee, setPercentageFee] = useState('');
-    const [blockchainId, setBlockchainId] = useState('');
     const [tokenId, setTokenId] = useState('');
     const [displayTheme, setDisplayTheme] = useState(DisplayThemes.PADDED.value);
     const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
 
     const availbleAccaunts = useMemo(() => {
-        if (!brandId || !accounts.accounts) {
-            return null;
+        console.log({ accounts });
+        if (!brandId || !accounts.results) {
+            return [];
         }
+        console.log({
+            brandId,
+            result: accounts.results,
+        });
 
-        return (accounts.accounts || []).filter(a => a.page === brandId);
-    }, [accounts.accounts, brandId]);
+        return (accounts || []).results.filter(a => a.page === brandId);
+    }, [accounts, brandId]);
 
     const changeBrandHandler = useCallback(id => {
         setBrandId(id);
@@ -178,7 +199,6 @@ const CreateCollection = () => {
 
             return;
         }
-        setIsLoading(true);
 
         formData.append('link_opensea', social.opensea);
         formData.append('link_discord', social.discord);
@@ -223,7 +243,7 @@ const CreateCollection = () => {
         //     payment_tokens: tokenId,
         // };
 
-        request({ data: formData });
+        onCreateCollectionRequest(formData);
     }, [
         social,
         logo,
@@ -244,39 +264,7 @@ const CreateCollection = () => {
     ]);
 
     useEffect(() => {
-        if (state && state.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: 'Fill all required fields',
-            });
-        }
-    }, [state.error]);
-
-    useEffect(() => {
-        if (getBlockchainTokensState.result && getBlockchainTokensState.result.data) {
-            setAvailablePaymentTokens(getBlockchainTokensState.result.data);
-        }
-
-        if (getBlockchainTokensState.error) {
-            addNotification({
-                type: NOTIFICATION_TYPES.ERROR,
-                text: getBlockchainTokensState.error,
-            });
-        }
-    }, [getBlockchainTokensState]);
-
-    useEffect(() => {
-        if (blockchainId) {
-            onGetBlockchainTokens({
-                query: {
-                    blockchain_id: blockchainId,
-                },
-            });
-        }
-    }, [blockchainId]);
-
-    useEffect(() => {
-        if (state.result && state.result.data) {
+        if (isCollectionCreatedSuccessfully) {
             setLogo('');
             setAdminSmart('');
             setFeaturedImage('');
@@ -298,24 +286,37 @@ const CreateCollection = () => {
             setBlockchainId('');
             setTokenId('');
             setDisplayTheme('');
-            onClearState();
 
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
                 text: 'Collection successfuly created',
             });
-
-            setIsLoading(false);
         }
+    }, [isCollectionCreatedSuccessfully]);
 
-        if (state.error) {
-            setIsLoading(false);
+    useEffect(() => {
+        if (collectionCreatingError) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: state.error,
+                text: normilizeError(collectionCreatingError),
             });
         }
-    }, [state]);
+    }, [collectionCreatingError]);
+
+    useEffect(
+        () => () => {
+            resetCollectionCreationState();
+        },
+        [],
+    );
+
+    if (isBlockchainsLoading || isPagesLoading || isAccountsLoading) {
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
+    }
 
     return (
         <div className="default__padding createpage">
@@ -432,7 +433,7 @@ const CreateCollection = () => {
                             </p>
 
                             <div className="create__item--select--prop">
-                                {(pages.pages || []).map(page => (
+                                {(pages || []).map(page => (
                                     <button
                                         key={page.id}
                                         className={`button create__item--option ${
@@ -566,10 +567,10 @@ const CreateCollection = () => {
                             </p>
 
                             <div className="create__item--select--inner">
-                                {Boolean(blockchains && blockchains.blockchains) && (
+                                {Boolean(blockchains) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={blockchains.blockchains.map(c => ({
+                                            optionsList={blockchains.map(c => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -620,7 +621,7 @@ const CreateCollection = () => {
                             </div>
 
                             <div className="create__item--select--inner">
-                                {!availablePaymentTokens.length ? (
+                                {!currencyTokens || !currencyTokens.length ? (
                                     <select
                                         className="select create__item--select"
                                         disabled={!availablePaymentTokens.length}
@@ -629,7 +630,7 @@ const CreateCollection = () => {
                                     </select>
                                 ) : (
                                     <CustomSelect
-                                        optionsList={availablePaymentTokens.map(c => ({
+                                        optionsList={currencyTokens.map(c => ({
                                             value: c.id,
                                             name: c.name,
                                         }))}
@@ -684,10 +685,10 @@ const CreateCollection = () => {
 
                     <div className="create__button--content">
                         <div className="create__button--wrapper">
-                            {isLoading ? (
-                                <div className="createCollection__loaderContainer">
-                                    <Loader className="createCollection__loader" />
-                                </div>
+                            {isCollectionCreatingProccessing ? (
+                                <button className="button create__button default__hover">
+                                    Loading...
+                                </button>
                             ) : (
                                 <button
                                     className="button create__button default__hover"

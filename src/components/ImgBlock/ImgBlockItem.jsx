@@ -1,23 +1,33 @@
 import { cnb } from 'cnbuilder';
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useGetFilteredCollectionQuery } from '../../redux/api/dataService';
 
 import './index.css';
 
 const ImgBlockItem = ({ path, id, alt = 'img' }) => {
-    const collections = useSelector(state => state.collections);
+    const { data: collections, isLoading: isCollectionsLoading } = useGetFilteredCollectionQuery(
+        {
+            accountId: id,
+            page: 1,
+            pageSize: 1000,
+        },
+        { skip: !id },
+    );
+    console.log({ collections, id });
 
     // TODO: set accountId when accaunts page will be created
     const firstCollectionId = useMemo(() => {
-        const currentAccauntCollections = collections.collections.filter(c => c.account === id);
-
-        if (currentAccauntCollections.length === 0) {
+        if (!collections || !collections.results || collections.results.length === 0) {
             return null;
         }
 
-        return currentAccauntCollections[0].id;
-    }, [collections.collections, id]);
+        return collections.results[0].id;
+    }, [collections, id]);
+
+    if (!firstCollectionId || isCollectionsLoading) {
+        return null;
+    }
 
     return (
         <Link

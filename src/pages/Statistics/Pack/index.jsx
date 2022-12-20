@@ -1,110 +1,357 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, {
+    useMemo,
+    useRef,
+    useState,
+    useLayoutEffect,
+    useCallback,
+    useEffect,
+    useContext,
+} from 'react';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { cnb } from 'cnbuilder';
+import DeleteEntityDialog from '../../../components/DeleteEntityDialog/DeleteEntityDialog';
+import { onOpen, onClose } from '../../../redux/dialogs/deleteEntityDialog';
+import WithImageCell from '../../../common/Table/cells/WithImageCell';
+import { useDebounce } from '../../../hooks/useDebounce';
+import { useGetFilteredPacksQuery, useHidePackMutation } from '../../../redux/api/dataService';
+import ActionsComponent from '../ActionsComponent';
+import { CommonCell, ActionsCell, WithOverflowWrapperCell } from '../../../common/Table/cells';
+import { Table } from '../../../common/Table';
+import { normilizeError } from '../../../utils/http/normilizeError';
+import CenteredContainer from '../../../common/CenteredContainer';
+import Loader from '../../../common/Loader';
+import { STATISTICS_PACK_TOKENS_LIST } from '../../../const/http/CLIENT_URLS';
+import { NotificationContext } from '../../../context/NotificationContext';
+import NOTIFICATION_TYPES from '../../../const/notifications/NOTIFICATION_TYPES';
 
-const Pack = () => {
-    return (
-        <div className="statistics__inner">
-            <h2 className="statistics__title">Packs</h2>
+import css from '../Statistics.module.css';
 
-            <div className="statistics__content">
-                <div className="statistics__pack--item titles">
-                    <p className="statistics__subtitle">Pack</p>
+const HEDER_CELLS = {
+    STATUS: 'Status',
+    NAME: 'Name',
+    ITEMS: 'Items',
+    PROFIT: 'Profit',
+    PROPERTIES: 'Properties',
+    BLOCKCHAIN: 'Blockchain',
+    ACTION: 'Action',
+};
 
-                    <p className="statistics__subtitle">Items</p>
+const BODY_CELLS = {
+    STATUS: 'status',
+    NAME: 'name',
+    ITEMS: 'items_count',
+    PROFIT: 'profit',
+    PROPERTIES: 'properties',
+    BLOCKCHAIN: 'blockchain',
+    ACTION: 'action',
+};
 
-                    <p className="statistics__subtitle">Price</p>
+const HEADER_CELLS_ARR = [
+    { label: HEDER_CELLS.STATUS, xs: 2 },
+    { label: HEDER_CELLS.NAME, xs: 3 },
+    { label: HEDER_CELLS.ITEMS, xs: 2 },
+    { label: HEDER_CELLS.PROFIT, xs: 2 },
+    { label: HEDER_CELLS.PROPERTIES, xs: 2 },
+    { label: HEDER_CELLS.BLOCKCHAIN, xs: 2 },
+    { label: '', xs: 2, isAction: true },
+];
 
-                    <p className="statistics__subtitle">Profit</p>
+const TABLE_BOTTOM_MARGIN = 20;
 
-                    <p className="statistics__subtitle">Description</p>
+const PacksList = () => {
+    const { accountId, collectionId } = useParams();
 
-                    <p className="statistics__subtitle">Properties</p>
+    const { isOpen, id: deletedPackId } = useSelector(state => state.deleteEntityDialog);
 
-                    <p className="statistics__subtitle">Levels</p>
+    const dispatch = useDispatch();
 
-                    <p className="statistics__subtitle">Stats</p>
+    const {
+        actions: { addNotification },
+    } = useContext(NotificationContext);
 
-                    <p className="statistics__subtitle">Unlockable Content</p>
+    const beforeTableDiv = useRef(null);
 
-                    <p className="statistics__subtitle">Hidden</p>
+    const [packs, setPacks] = useState([]);
+    const [count, setCount] = useState(0);
+    const [page, setPage] = useState(1);
+    const [rowsPerPage, setRowsPerPage] = useState(25);
+    const [tableHeight, setTableHeight] = useState(0);
 
-                    <p className="statistics__subtitle">Fee % Inv./Cre.</p>
+    const { data, error, isLoading, isFetching, refetch } = useGetFilteredPacksQuery(
+        {
+            page,
+            pageSize: rowsPerPage,
+            collectionId,
+        },
+        { pollingInterval: 300 },
+    );
 
-                    <p className="statistics__subtitle">Blockchain</p>
+    const [
+        hidePack,
+        {
+            isSuccess,
+            isLoading: isDeletationProccessing,
+            error: hidePackError,
+            reset: resetDeletationState,
+        },
+    ] = useHidePackMutation();
 
-                    <p className="statistics__subtitle">Freeze Metadata</p>
+    const onEditHandler = useCallback(id => {
+        console.log({ id });
+    }, []);
 
-                    <p className="statistics__subtitle">Status</p>
+    const onDeleteHandler = useCallback(id => {
+        console.log({ id });
+        hidePack({ id, isHide: true });
+    }, []);
 
-                    <p className="statistics__subtitle">Action</p>
+    const onDeletePack = useCallback(id => {
+        console.log({ id });
+        dispatch(onOpen(id));
+    }, []);
+
+    const closeDialogHandler = useCallback(() => {
+        dispatch(onClose());
+    }, []);
+
+    const headerCellsArray = useMemo(() => {
+        return HEADER_CELLS_ARR.map(cell => ({
+            label: cell.label,
+            labelComponent: (
+                <div className={css.headingCellBox}>
+                    <span className={css.headerText}>{cell.label}</span>
                 </div>
+            ),
+            xs: cell.xs,
+        }));
+    }, []);
 
-                <Link to="../token" className="statistics__pack--item">
-                    <span className="statistics__collection">
-                        <p className="stats__item--value">1</p>
+    const bodyRowsArray = useMemo(() => {
+        if (!packs || !packs.length) {
+            return [];
+        }
+        const columns = Object.values(BODY_CELLS);
 
-                        <span className="stats__item--avatar--inner">
-                            <img
-                                src="/assets/img/avatar.png"
-                                alt="avatar"
-                                className="stats__item--avatar"
-                            />
-                        </span>
+        const bodyRows = packs.map(p => {
+            const cellsArray = [];
 
-                        <span className="stats__item--wrapper">
-                            <p className="stats__item--value">Pack name</p>
-                        </span>
-                    </span>
+            columns.forEach(name => {
+                switch (name) {
+                    case BODY_CELLS.NAME:
+                        cellsArray.push({
+                            label: name,
+                            xs: 3,
+                            component: (
+                                <WithImageCell
+                                    classes={{
+                                        cellRoot: cnb(css[`${name}Cell`], css.cellRoot),
+                                        imageRoot: css.imageRoot,
+                                    }}
+                                    imageUrl={p.logo}
+                                    value={p.name}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.ACTION:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            disableRowClickEvent: true,
+                            horizontalPosition: 'flex-end',
+                            component: (
+                                <ActionsCell
+                                    classes={{ cellRoot: css.buttonsCell }}
+                                    actionsComponent={
+                                        <ActionsComponent
+                                            id={p.id}
+                                            onEdit={onEditHandler}
+                                            onDelete={onDeletePack}
+                                        />
+                                    }
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.PROPERTIES:
+                        const propertiesStr = p.properties
+                            .map(prop => (prop.type ? `${prop.type}/${prop.name}` : prop))
+                            .join(', ');
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <WithOverflowWrapperCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={propertiesStr}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.BLOCKCHAIN:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={String(p.blockchain && p.blockchain.name)}
+                                />
+                            ),
+                        });
+                        return;
+                    case BODY_CELLS.PROFIT:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={`${Number(p.profit)} ${
+                                        p.payment_tokens && p.payment_tokens.length
+                                            ? p.payment_tokens[0].name
+                                            : '---'
+                                    }`}
+                                />
+                            ),
+                        });
+                        return;
+                    default:
+                        cellsArray.push({
+                            label: name,
+                            xs: 2,
+                            component: (
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
+                                    value={p[name]}
+                                />
+                            ),
+                        });
+                }
+            });
 
-                    <p className="statistics__creator">1000</p>
+            return {
+                id: p.id,
+                linkUrl: STATISTICS_PACK_TOKENS_LIST({
+                    accountId,
+                    collectionId,
+                    packId: p.id,
+                }),
+                items: cellsArray,
+            };
+        });
 
-                    <span className="statistics__profit">
-                        <img
-                            src="/assets/img/eth.svg"
-                            alt="eth"
-                            className="eth"
-                        />
+        return bodyRows;
+    }, [packs, accountId, collectionId]);
 
-                        <p className="statistics__profit--val">0,01</p>
-                    </span>
+    const handleChangePage = useCallback((_, newPage) => {
+        setPage(newPage);
+    }, []);
 
-                    <span className="statistics__profit">
-                        <img
-                            src="/assets/img/eth.svg"
-                            alt="eth"
-                            className="eth"
-                        />
+    const handleChangeRowsPerPage = event => {
+        setRowsPerPage(Number(event.target.value));
+        setPage(1);
+    };
 
-                        <p className="statistics__profit--val">18,531.52</p>
-                    </span>
+    useDebounce(
+        () => {
+            refetch({
+                page,
+                pageSize: rowsPerPage,
+            });
+        },
+        [page, rowsPerPage],
+        500,
+    );
 
-                    <p className="statistics__text">Describe of token123...</p>
+    useLayoutEffect(() => {
+        if (beforeTableDiv.current) {
+            const offset = beforeTableDiv.current.getBoundingClientRect();
+            setTableHeight(
+                Number(window.innerHeight || 0) -
+                    (Number(offset.bottom || 0) + TABLE_BOTTOM_MARGIN),
+            );
+        }
+    }, [packs]);
 
-                    <p className="statistics__text">Type/ Name</p>
+    useEffect(() => {
+        if (hidePackError) {
+            console.log({ hidePackError });
+            closeDialogHandler();
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(hidePackError),
+            });
+        }
+    }, [hidePackError]);
 
-                    <p className="statistics__text">Name/ Value</p>
+    useEffect(() => {
+        if (isSuccess && deletedPackId) {
+            setPacks(p => p.filter(pack => pack.id !== deletedPackId));
 
-                    <p className="statistics__text">Name/ Value</p>
+            closeDialogHandler();
+            resetDeletationState();
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Pack deleted successfuly',
+            });
+        }
+    }, [isSuccess, deletedPackId]);
 
-                    <p className="statistics__text">Text text text</p>
+    useEffect(() => {
+        if (data && data.results) {
+            setPacks(data.results);
+            setCount(data.count);
+        }
+    }, [data]);
 
-                    <p className="statistics__account">No</p>
+    if (isLoading) {
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
+    }
 
-                    <p className="statistics__page center">4.5/0.5</p>
-
-                    <p className="statistics__text">Ethereum</p>
-
-                    <p className="statistics__creator">Yes</p>
-
-                    <p className="statistics__creator">Book</p>
-
-                    <button className="button statistics__button blue">
-                        Mint
-                    </button>
-                </Link>
+    if (error || isLoading) {
+        return (
+            <div>
+                <span style={{ color: 'white' }}>{normilizeError(error)}</span>
             </div>
-        </div>
+        );
+    }
+
+    return (
+        <>
+            <div className="statistics__inner">
+                <h2 className="statistics__title">Packs</h2>
+                <div ref={beforeTableDiv} className={css.beforeTableElement} />
+                <Table
+                    tableHeight={tableHeight}
+                    tableInfo={bodyRowsArray}
+                    headerInfo={headerCellsArray}
+                    count={count}
+                    page={page - 1}
+                    isLoading={isFetching}
+                    isNoResultFound={!packs.length}
+                    notFoundPlug={<div className={css.notFoundContainer}>No results found</div>}
+                    rowsPerPage={rowsPerPage}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </div>
+            {isOpen && (
+                <DeleteEntityDialog
+                    open={isOpen}
+                    isDeletationProccessing={isDeletationProccessing}
+                    onClose={closeDialogHandler}
+                    onDelete={onDeleteHandler}
+                    title={'Are you sure you want to delete pack?'}
+                />
+            )}
+        </>
     );
 };
 
-export default Pack;
+export default React.memo(PacksList);

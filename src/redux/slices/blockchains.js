@@ -1,30 +1,27 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
-    isLoading: false,
-    blockchains: [],
-};
+const blockchainsAdapter = createEntityAdapter({
+    selectId: blockchain => blockchain.id,
+    sortComparer: (a, b) => a.name.localeCompare(b.name),
+});
 
 export const blockchainsSlice = createSlice({
     name: 'blockchains',
-    initialState,
+    initialState: blockchainsAdapter.getInitialState({
+        isLoading: false,
+        error: null,
+    }),
     reducers: {
-        setIsAuth: (state, action) => {
-            state.isLoading = action.payload;
-        },
-        setBlockchains: (state, action) => {
-            state.blockchains = action.payload;
-        },
-        deleteBlockchain: (state, action) => {
-            let newBlockchainsList = state.blockchains.filter(val => {
-                return val.id !== action.payload;
-            });
-
-            state.blockchains = newBlockchainsList;
+        addPage: blockchainsAdapter.addOne,
+        deletePage: blockchainsAdapter.removeOne,
+        clearError: state => {
+            state.error = null;
         },
     },
 });
 
-export const { setIsAuth, setBlockchains, deleteBlockchain } = blockchainsSlice.actions;
+export const blockchainsSelectors = blockchainsAdapter.getSelectors(state => state.blockchains);
+
+export const { addPage, deletePage, clearError } = blockchainsSlice.actions;
 
 export default blockchainsSlice.reducer;

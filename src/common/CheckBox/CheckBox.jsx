@@ -14,7 +14,7 @@ const CheckBox = props => {
         required,
         disabled,
         ariaLabel,
-        classes,
+        classes = {},
     } = props;
 
     return (

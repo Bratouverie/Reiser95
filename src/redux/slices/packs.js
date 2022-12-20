@@ -1,30 +1,43 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { dataApi } from '../api/dataService';
 
-const initialState = {
-    isLoading: false,
-    packs: [],
-};
+const packsAdapter = createEntityAdapter({
+    selectId: pack => pack.id,
+    sortComparer: (a, b) => a.name.localeCompare(b.name),
+});
 
 export const packsSlice = createSlice({
     name: 'packs',
-    initialState,
+    initialState: packsAdapter.getInitialState({
+        isLoading: false,
+        error: null,
+    }),
     reducers: {
-        setIsAuth: (state, action) => {
-            state.isLoading = action.payload;
+        addPack: packsAdapter.addOne,
+        deletePack: packsAdapter.removeOne,
+        clearError: state => {
+            state.error = null;
         },
-        setPacks: (state, action) => {
-            state.packs = action.payload;
-        },
-        deletePack: (state, action) => {
-            let newPacksList = state.packs.filter(val => {
-                return val.id !== action.payload;
-            });
+    },
+    extraReducers: builder => {
+        // CREATE PACK
+        builder.addMatcher(dataApi.endpoints.createPack.matchPending, (state, action) => {
+            state.error = null;
+            state.isPageCreationProccessing = true;
+        });
 
-            state.packs = newPacksList;
-        },
+        builder.addMatcher(dataApi.endpoints.createPack.matchFulfilled, (state, action) => {
+            packsAdapter.addOne(state, action.payload);
+            state.isPageCreationProccessing = false;
+        });
+
+        builder.addMatcher(dataApi.endpoints.createPack.matchRejected, (state, action) => {
+            state.error = action.payload;
+            state.isPageCreationProccessing = false;
+        });
     },
 });
 
-export const { setIsAuth, setPacks, deletePack } = packsSlice.actions;
+export const { addPack, deletePack, clearError } = packsSlice.actions;
 
 export default packsSlice.reducer;

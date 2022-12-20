@@ -1,14 +1,13 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useContext, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
 
-import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
+import { useGetCollectionQuery, useGetFilteredTokensQuery } from '../../redux/api/dataService';
+import { normilizeError } from '../../utils/http/normilizeError';
 import { roundInt } from '../../utils/roundInt';
 
 import './index.css';
@@ -61,48 +60,57 @@ import TokenItem from './TokenItem';
 // }
 
 const Collection = () => {
-    const tokens = useSelector(state => state.tokens);
-
     const { id } = useParams();
+
+    const { data: collection, error: getCollectionError, isLoading } = useGetCollectionQuery(
+        {
+            id,
+        },
+        {
+            skip: !id,
+        },
+    );
+
+    const {
+        data: collectionTokens,
+        error: getTokensError,
+        isLoading: isTokensLoading,
+    } = useGetFilteredTokensQuery(
+        {
+            page: 1,
+            pageSize: 1000,
+            collectionId: collection ? collection.id : '',
+        },
+        {
+            skip: !collection || !collection.id,
+        },
+    );
 
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
 
-    const [collection, setCollection] = useState();
-
-    const { state: getCollectionRS, request: onGetCollection } = useRequest({
-        requestType: REQUEST_TYPE.DATA,
-    });
-
-    const collectionTokens = useMemo(() => {
-        if (!tokens.tokens || !collection) {
-            return [];
-        }
-
-        return tokens.tokens.filter(t => t.collection.id === collection.id);
-    }, [tokens, collection]);
-
     useEffect(() => {
-        onGetCollection({
-            url: `collection/${id}/`,
-        });
-    }, [id]);
-
-    useEffect(() => {
-        if (getCollectionRS.result && getCollectionRS.result.data) {
-            setCollection(getCollectionRS.result.data);
-        }
-
-        if (getCollectionRS.error) {
+        if (getCollectionError) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: getCollectionRS.error,
+                text: normilizeError(getCollectionError),
             });
         }
-    }, [getCollectionRS]);
+    }, [getCollectionError]);
 
-    if (getCollectionRS.isProcessing || !collection) {
+    useEffect(() => {
+        if (getTokensError) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(getTokensError),
+            });
+        }
+    }, [getTokensError]);
+
+    console.log({ isLoading, collection, isTokensLoading, collectionTokens });
+
+    if (!collection || !collectionTokens) {
         return (
             <CenteredContainer>
                 <Loader />
@@ -304,14 +312,16 @@ const Collection = () => {
             <div className="collection__items">
                 <div className="container">
                     <div className="collection__items--inner">
-                        <p className="collection__items--value">{collectionTokens.length} items</p>
+                        <p className="collection__items--value">
+                            {collectionTokens.results ? collectionTokens.results.length : 0} items
+                        </p>
 
                         <div className="collection__items--content">
-                            {!collectionTokens || !collectionTokens.length ? (
+                            {!collectionTokens.results || !collectionTokens.results.length ? (
                                 <div className="collection__items--none">No items to display</div>
                             ) : (
                                 <>
-                                    {collectionTokens.map(t => (
+                                    {collectionTokens.results.map(t => (
                                         <TokenItem key={t.id} token={t} />
                                     ))}
                                 </>

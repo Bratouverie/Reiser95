@@ -1,30 +1,43 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import { dataApi } from '../api/dataService';
 
-const initialState = {
-    isLoading: false,
-    collections: [],
-};
+const collectionsAdapter = createEntityAdapter({
+    selectId: collection => collection.id,
+    sortComparer: (a, b) => a.name.localeCompare(b.name),
+});
 
 export const collectionsSlice = createSlice({
     name: 'collections',
-    initialState,
+    initialState: collectionsAdapter.getInitialState({
+        isLoading: false,
+        error: null,
+    }),
     reducers: {
-        setIsAuth: (state, action) => {
-            state.isLoading = action.payload;
+        addCollection: collectionsAdapter.addOne,
+        deleteCollection: collectionsAdapter.removeOne,
+        clearError: state => {
+            state.error = null;
         },
-        setCollections: (state, action) => {
-            state.collections = action.payload;
-        },
-        deleteCollection: (state, action) => {
-            let newCollectionsList = state.collections.filter(val => {
-                return val.id !== action.payload;
-            });
+    },
+    extraReducers: builder => {
+        // CREATE COLLECTION
+        builder.addMatcher(dataApi.endpoints.createCollection.matchPending, (state, action) => {
+            state.error = null;
+            state.isPageCreationProccessing = true;
+        });
 
-            state.collections = newCollectionsList;
-        },
+        builder.addMatcher(dataApi.endpoints.createCollection.matchFulfilled, (state, action) => {
+            collectionsAdapter.addOne(state, action.payload);
+            state.isPageCreationProccessing = false;
+        });
+
+        builder.addMatcher(dataApi.endpoints.createCollection.matchRejected, (state, action) => {
+            state.error = action.payload;
+            state.isPageCreationProccessing = false;
+        });
     },
 });
 
-export const { setIsAuth, setCollections, deleteCollection } = collectionsSlice.actions;
+export const { addCollection, deleteCollection, clearError } = collectionsSlice.actions;
 
 export default collectionsSlice.reducer;
