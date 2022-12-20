@@ -84,11 +84,14 @@ const TokensList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [tableHeight, setTableHeight] = useState(0);
 
-    const { data, error, isLoading, isFetching, refetch } = useGetFilteredTokensQuery({
-        page,
-        pageSize: rowsPerPage,
-        packId,
-    });
+    const { data, error, isLoading, isFetching, refetch } = useGetFilteredTokensQuery(
+        {
+            page,
+            pageSize: rowsPerPage,
+            packId,
+        },
+        { pollingInterval: 300 },
+    );
 
     const [
         hideToken,
@@ -105,12 +108,10 @@ const TokensList = () => {
     }, []);
 
     const onDeleteHandler = useCallback(id => {
-        console.log({ id });
         hideToken({ id, isHide: true });
     }, []);
 
     const onDeleteToken = useCallback(id => {
-        console.log({ id });
         dispatch(onOpen(id));
     }, []);
 
@@ -151,7 +152,7 @@ const TokensList = () => {
                                         cellRoot: cnb(css[`${name}Cell`], css.cellRoot),
                                         imageRoot: css.imageRoot,
                                     }}
-                                    imageUrl={t.file_2}
+                                    imageUrl={t.file_1}
                                     value={t.name}
                                 />
                             ),
@@ -170,7 +171,7 @@ const TokensList = () => {
                                         <ActionsComponent
                                             id={t.id}
                                             onEdit={onEditHandler}
-                                            onDelete={onDeleteHandler}
+                                            onDelete={onDeleteToken}
                                         />
                                     }
                                 />

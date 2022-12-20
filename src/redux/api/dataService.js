@@ -29,7 +29,7 @@ export const dataApi = createApi({
         }),
         getPageByUrl: builder.query({
             query: url => ({
-                url: `page/${url}`,
+                url: `page/${url}/`,
             }),
         }),
         // ACCOUNT
@@ -43,7 +43,7 @@ export const dataApi = createApi({
         getAccount: builder.query({
             query: ({ id }) => {
                 return {
-                    url: `account/${id}`,
+                    url: `account/${id}/`,
                 };
             },
         }),
@@ -55,7 +55,7 @@ export const dataApi = createApi({
         }),
         getCollection: builder.query({
             query: ({ id }) => ({
-                url: `collection/${id}`,
+                url: `collection/${id}/`,
             }),
         }),
         // PACK
@@ -66,7 +66,7 @@ export const dataApi = createApi({
         }),
         getPack: builder.query({
             query: ({ id }) => ({
-                url: `pack/${id}`,
+                url: `pack/${id}/`,
             }),
         }),
         // TOKEN
@@ -77,14 +77,17 @@ export const dataApi = createApi({
         }),
         getToken: builder.query({
             query: ({ id }) => ({
-                url: `token/${id}`,
+                url: `token/${id}/`,
             }),
         }),
 
         getCurrencyTokens: builder.query({
-            query: blockchainId => ({
-                url: `currency_token/${generateQuery({ blockchain_id: blockchainId })}`,
-            }),
+            query: ({ blockchainId }) => {
+                console.log({ blockchainId });
+                return {
+                    url: `currency_token/${generateQuery({ blockchain_id: blockchainId })}`,
+                };
+            },
         }),
         getBlockchains: builder.query({
             query: () => ({
@@ -112,13 +115,24 @@ export const dataApi = createApi({
             }),
         }),
         getFilteredTokens: builder.query({
-            query: ({ page, pageSize, packId }) => ({
-                url: `token_filter/${generateQuery({
+            query: ({ page, pageSize, packId, collectionId }) => {
+                const queryObj = {
                     page,
                     page_size: pageSize,
-                    pack_id: packId,
-                })}`,
-            }),
+                };
+
+                if (packId) {
+                    queryObj.pack_id = packId;
+                }
+
+                if (collectionId) {
+                    queryObj.collection_id = collectionId;
+                }
+
+                return {
+                    url: `token_filter/${generateQuery(queryObj)}`,
+                };
+            },
         }),
 
         // POST

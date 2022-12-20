@@ -78,10 +78,15 @@ const AccountsList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [tableHeight, setTableHeight] = useState(0);
 
-    const { data, error, isLoading, isFetching, refetch } = useGetAccountsQuery({
-        page,
-        pageSize: rowsPerPage,
-    });
+    const { data, error, isLoading, isFetching, refetch } = useGetAccountsQuery(
+        {
+            page,
+            pageSize: rowsPerPage,
+        },
+        {
+            pollingInterval: 300,
+        },
+    );
 
     const [
         hideAccount,

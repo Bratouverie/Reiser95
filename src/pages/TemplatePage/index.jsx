@@ -10,11 +10,9 @@ import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { NotificationContext } from '../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { useSelector } from 'react-redux';
-import { useGetPageByUrlQuery } from '../../redux/api/dataService';
+import { useGetAccountsQuery, useGetPageByUrlQuery } from '../../redux/api/dataService';
 
 const TemplatePage = () => {
-    const accounts = useSelector(state => state.accounts);
-
     const { url } = useParams();
 
     const {
@@ -25,17 +23,18 @@ const TemplatePage = () => {
         reset: resetGettingPage,
     } = useGetPageByUrlQuery(url);
 
-    const {
-        actions: { addNotification },
-    } = useContext(NotificationContext);
+    const { data: accounts, isLoading: isAccountsLoading } = useGetAccountsQuery({
+        page: 1,
+        pageSize: 1000,
+    });
 
     const pageAccaunts = useMemo(() => {
-        if (!pageInfo || !accounts.accounts) {
+        if (!pageInfo || !accounts || !accounts.results) {
             return [];
         }
 
-        return accounts.accounts.results.filter(a => a.page === pageInfo.id);
-    }, [accounts.accounts, pageInfo]);
+        return accounts.results.filter(a => a.page === pageInfo.id);
+    }, [accounts, pageInfo]);
 
     useEffect(() => {
         if (isPageLoadedSuccessfully) {
@@ -44,11 +43,12 @@ const TemplatePage = () => {
 
     useEffect(() => {
         if (gettingPageError) {
-            window.location = '/';
+            console.log({ gettingPageError });
+            // window.location = '/';
         }
     }, [gettingPageError]);
 
-    if (isPageLoading) {
+    if (isPageLoading || !pageInfo || isAccountsLoading) {
         return <Preloader />;
     }
 

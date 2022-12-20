@@ -78,11 +78,14 @@ const PacksList = () => {
     const [rowsPerPage, setRowsPerPage] = useState(25);
     const [tableHeight, setTableHeight] = useState(0);
 
-    const { data, error, isLoading, isFetching, refetch } = useGetFilteredPacksQuery({
-        page,
-        pageSize: rowsPerPage,
-        collectionId,
-    });
+    const { data, error, isLoading, isFetching, refetch } = useGetFilteredPacksQuery(
+        {
+            page,
+            pageSize: rowsPerPage,
+            collectionId,
+        },
+        { pollingInterval: 300 },
+    );
 
     const [
         hidePack,

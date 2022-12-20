@@ -57,13 +57,14 @@ const CreateItem = () => {
     const authInfo = useSelector(state => state.auth);
 
     const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
-    const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionsQuery(0, 1000);
-    const { data: packs, isLoading: isPacksLoading } = useGetPacksQuery(0, 1000);
-
-    const {
-        data: availablePaymentTokens,
-        refetch: refetchCurrencyTokens,
-    } = useGetCurrencyTokensQuery({}, { skip: true });
+    const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionsQuery({
+        page: 1,
+        pageSize: 1000,
+    });
+    const { data: packs, isLoading: isPacksLoading } = useGetPacksQuery({
+        page: 1,
+        pageSize: 1000,
+    });
 
     const {
         actions: { addNotification },
@@ -125,12 +126,12 @@ const CreateItem = () => {
     });
 
     const selectedCollection = useMemo(() => {
-        if (!collectionId || !collections.collections) {
+        if (!collectionId || !collections.results) {
             return null;
         }
 
-        return collections.collections.find(c => c.id === collectionId);
-    }, [collections.collections, collectionId]);
+        return collections.results.find(c => c.id === collectionId);
+    }, [collections, collectionId]);
 
     const selectedBlockchain = useMemo(() => {
         if (!selectedCollection || !blockchains) {
@@ -139,6 +140,11 @@ const CreateItem = () => {
 
         return blockchains.find(b => b.id === selectedCollection.blockchain.id);
     }, [selectedCollection, blockchains]);
+
+    const { data: availablePaymentTokens } = useGetCurrencyTokensQuery(
+        { blockchainId: selectedBlockchain ? selectedBlockchain.id : '' },
+        { skip: !selectedBlockchain || !selectedBlockchain.id, pollingInterval: 300 },
+    );
 
     const genrateTablesRow = useMemo(() => {
         if (tokenImgValues.length === 0) {
@@ -364,8 +370,8 @@ const CreateItem = () => {
                                     ...data,
                                     name: `${token.name}_${new Date().getTime()}`,
                                     price: token.tokenPrice,
-                                    file_2_name_ext: token.tokenImgName,
                                     file_1_name_ext: token.tokenPreviewName,
+                                    file_2_name_ext: token.tokenImgName,
                                 },
                             });
 
@@ -396,7 +402,7 @@ const CreateItem = () => {
                                 token.tokenPreviewFile.type,
                             );
                             try {
-                                await fetch(res.data.file_2_pre_signed_url_data, {
+                                await fetch(res.data.file_1_pre_signed_url_data, {
                                     method: HTTP_METHODS.PUT,
                                     body: previewBlob,
                                 }).catch(e => {
@@ -417,8 +423,8 @@ const CreateItem = () => {
                                         Authorization: `Bearer ${authInfo.accessToken}`,
                                     },
                                     data: {
-                                        file_1_name_ext: res.file_1_name_ext,
-                                        file_2_name_ext: res.data.file_2_name_ext,
+                                        file_1_name_ext: res.data.file_1_name_ext,
+                                        file_2_name_ext: res.data.file_1_name_ext,
                                     },
                                 });
                             } catch (e) {
@@ -503,12 +509,6 @@ const CreateItem = () => {
         properties,
     ]);
 
-    useEffect(() => {
-        if (selectedBlockchain) {
-            refetchCurrencyTokens(selectedBlockchain.id);
-        }
-    }, [selectedBlockchain]);
-
     if (isBlockchainsLoading || isCollectionsLoading || isPacksLoading) {
         return (
             <CenteredContainer>
@@ -534,10 +534,10 @@ const CreateItem = () => {
                                     This is the Pack where your item will appear.
                                 </p>
 
-                                {Boolean(packs && packs.packs && packs.packs.results) && (
+                                {Boolean(packs && packs.results) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={packs.packs.results.map(c => ({
+                                            optionsList={packs.results.map(c => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -720,14 +720,10 @@ const CreateItem = () => {
                                     This is the collection where your items Pack will appear.
                                 </p>
 
-                                {Boolean(
-                                    collections &&
-                                        collections.collections &&
-                                        collections.collections.result,
-                                ) && (
+                                {Boolean(collections && collections.results) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={collections.collections.results.map(c => ({
+                                            optionsList={collections.results.map(c => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -801,10 +797,11 @@ const CreateItem = () => {
                                         />
 
                                         <div className="create__item--select--inner small createPack_priceItemContainer_priceInputWrapper_select_currency">
-                                            {!availablePaymentTokens.length ? (
+                                            {!availablePaymentTokens ||
+                                            !availablePaymentTokens.length ? (
                                                 <select
                                                     className="select create__item--select"
-                                                    disabled={!availablePaymentTokens.length}
+                                                    disabled
                                                 >
                                                     <option>Select collection</option>
                                                 </select>
