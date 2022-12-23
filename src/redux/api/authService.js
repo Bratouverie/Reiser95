@@ -23,11 +23,13 @@ export const authApi = createApi({
         },
     }),
     endpoints: builder => ({
+        // GET
         getProfile: builder.query({
             query: () => ({
                 url: 'profile/my',
             }),
         }),
+        // POST
         refreshToken: builder.mutation({
             query: () => ({
                 url: 'refresh',

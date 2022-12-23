@@ -59,6 +59,19 @@ const App = () => {
                                     <Route path="createcollection" element={<CreateCollection />} />
                                     <Route path="createpack" element={<CreatePack />} />
                                     <Route path="createitem" element={<CreateItem />} />
+                                    <Route path="edit/">
+                                        <Route path="page/:url" element={<CreatePage isEdit />} />
+                                        <Route
+                                            path="account/:id"
+                                            element={<CreateAccount isEdit />}
+                                        />
+                                        <Route
+                                            path="collection/:id"
+                                            element={<CreateCollection isEdit />}
+                                        />
+                                        <Route path="pack/:id" element={<CreatePack isEdit />} />
+                                        <Route path="token/:id" element={<CreateItem isEdit />} />
+                                    </Route>
                                     <Route path="*" element={<Navigate to="/" />} />
                                 </Route>
                             </Routes>

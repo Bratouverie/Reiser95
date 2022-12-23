@@ -7,9 +7,9 @@ import React, {
     useEffect,
     useContext,
 } from 'react';
-import { useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
 import { cnb } from 'cnbuilder';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import DeleteEntityDialog from '../../../components/DeleteEntityDialog/DeleteEntityDialog';
 import { onOpen, onClose } from '../../../redux/dialogs/deleteEntityDialog';
 import WithImageCell from '../../../common/Table/cells/WithImageCell';
@@ -21,7 +21,7 @@ import { Table } from '../../../common/Table';
 import { normilizeError } from '../../../utils/http/normilizeError';
 import CenteredContainer from '../../../common/CenteredContainer';
 import Loader from '../../../common/Loader';
-import { STATISTICS_PACK_TOKENS_LIST } from '../../../const/http/CLIENT_URLS';
+import { EDIT_PACK_PAGE, STATISTICS_PACK_TOKENS_LIST } from '../../../const/http/CLIENT_URLS';
 import { NotificationContext } from '../../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../../const/notifications/NOTIFICATION_TYPES';
 
@@ -65,6 +65,7 @@ const PacksList = () => {
     const { isOpen, id: deletedPackId } = useSelector(state => state.deleteEntityDialog);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const {
         actions: { addNotification },
@@ -98,16 +99,14 @@ const PacksList = () => {
     ] = useHidePackMutation();
 
     const onEditHandler = useCallback(id => {
-        console.log({ id });
+        navigate(EDIT_PACK_PAGE({ id }));
     }, []);
 
     const onDeleteHandler = useCallback(id => {
-        console.log({ id });
         hidePack({ id, isHide: true });
     }, []);
 
     const onDeletePack = useCallback(id => {
-        console.log({ id });
         dispatch(onOpen(id));
     }, []);
 
@@ -277,7 +276,6 @@ const PacksList = () => {
 
     useEffect(() => {
         if (hidePackError) {
-            console.log({ hidePackError });
             closeDialogHandler();
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,

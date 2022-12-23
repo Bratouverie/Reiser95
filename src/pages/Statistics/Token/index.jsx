@@ -7,11 +7,11 @@ import React, {
     useEffect,
     useContext,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { cnb } from 'cnbuilder';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams, useNavigate } from 'react-router-dom';
 import DeleteEntityDialog from '../../../components/DeleteEntityDialog/DeleteEntityDialog';
 import { onOpen, onClose } from '../../../redux/dialogs/deleteEntityDialog';
-import { useParams } from 'react-router-dom';
 import {
     WithImageCell,
     WithOverflowWrapperCell,
@@ -29,6 +29,7 @@ import { NotificationContext } from '../../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../../const/notifications/NOTIFICATION_TYPES';
 
 import css from '../Statistics.module.css';
+import { EDIT_TOKEN_PAGE } from '../../../const/http/CLIENT_URLS';
 
 const HEDER_CELLS = {
     STATUS: 'Status',
@@ -71,6 +72,7 @@ const TokensList = () => {
     const { isOpen, id: deletedTokenId } = useSelector(state => state.deleteEntityDialog);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const {
         actions: { addNotification },
@@ -104,7 +106,7 @@ const TokensList = () => {
     ] = useHideTokenMutation();
 
     const onEditHandler = useCallback(id => {
-        console.log({ id });
+        navigate(EDIT_TOKEN_PAGE({ id }));
     }, []);
 
     const onDeleteHandler = useCallback(id => {

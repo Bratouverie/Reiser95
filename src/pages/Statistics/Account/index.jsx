@@ -9,6 +9,7 @@ import React, {
 } from 'react';
 import { cnb } from 'cnbuilder';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import DeleteEntityDialog from '../../../components/DeleteEntityDialog/DeleteEntityDialog';
 import { pagesSelectors } from '../../../redux/slices/pages';
 import { onOpen, onClose } from '../../../redux/dialogs/deleteEntityDialog';
@@ -21,7 +22,10 @@ import { Table } from '../../../common/Table';
 import { normilizeError } from '../../../utils/http/normilizeError';
 import CenteredContainer from '../../../common/CenteredContainer';
 import Loader from '../../../common/Loader';
-import { STATISTICS_ACCOUNT_COLLECTIONS_LIST } from '../../../const/http/CLIENT_URLS';
+import {
+    EDIT_ACCOUNT_PAGE,
+    STATISTICS_ACCOUNT_COLLECTIONS_LIST,
+} from '../../../const/http/CLIENT_URLS';
 import { NotificationContext } from '../../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../../const/notifications/NOTIFICATION_TYPES';
 
@@ -60,9 +64,10 @@ const HEADER_CELLS_ARR = [
 const TABLE_BOTTOM_MARGIN = 20;
 
 const AccountsList = () => {
-    const { isOpen, id: deletedPackId } = useSelector(state => state.deleteEntityDialog);
+    const { isOpen, id: deletedAccountId } = useSelector(state => state.deleteEntityDialog);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const {
         actions: { addNotification },
@@ -99,16 +104,14 @@ const AccountsList = () => {
     ] = useHideAccountMutation();
 
     const onEditHandler = useCallback(id => {
-        console.log({ id });
+        navigate(EDIT_ACCOUNT_PAGE({ id }));
     }, []);
 
     const onDeleteHandler = useCallback(id => {
-        console.log({ id });
         hideAccount({ id, isHide: true });
     }, []);
 
     const onDeleteAccount = useCallback(id => {
-        console.log({ id });
         dispatch(onOpen(id));
     }, []);
 
@@ -258,7 +261,6 @@ const AccountsList = () => {
 
     useEffect(() => {
         if (hideAccountError) {
-            console.log({ hideAccountError });
             closeDialogHandler();
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
@@ -268,8 +270,8 @@ const AccountsList = () => {
     }, [hideAccountError]);
 
     useEffect(() => {
-        if (isSuccess && deletedPackId) {
-            setAccounts(p => p.filter(a => a.id !== deletedPackId));
+        if (isSuccess && deletedAccountId) {
+            setAccounts(p => p.filter(a => a.id !== deletedAccountId));
 
             closeDialogHandler();
             resetDeletationState();
@@ -278,7 +280,7 @@ const AccountsList = () => {
                 text: 'Account deleted successfuly',
             });
         }
-    }, [isSuccess, deletedPackId]);
+    }, [isSuccess, deletedAccountId]);
 
     useEffect(() => {
         if (data && data.results) {

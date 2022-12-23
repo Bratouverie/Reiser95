@@ -14,7 +14,6 @@ const ImgBlockItem = ({ path, id, alt = 'img' }) => {
         },
         { skip: !id },
     );
-    console.log({ collections, id });
 
     // TODO: set accountId when accaunts page will be created
     const firstCollectionId = useMemo(() => {

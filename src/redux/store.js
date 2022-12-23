@@ -10,6 +10,9 @@ import packsSlice from './slices/packs';
 import deleteEntityDialogSlice from './dialogs/deleteEntityDialog';
 import { authApi } from './api/authService';
 import { dataApi } from './api/dataService';
+import { userApi } from './api/userService';
+
+const REFRESH_AUTH_INTERVAL_IN_MS = 5 * 60 * 1000;
 
 const listenerMiddleware = createListenerMiddleware();
 
@@ -21,7 +24,7 @@ listenerMiddleware.startListening({
         if (action.payload) {
             interval = setInterval(() => {
                 dispatch(refreshTokenRequest());
-            }, 300000);
+            }, REFRESH_AUTH_INTERVAL_IN_MS);
         } else {
             clearInterval(interval);
         }
@@ -40,6 +43,7 @@ export const store = configureStore({
         deleteEntityDialog: deleteEntityDialogSlice,
         [authApi.reducerPath]: authApi.reducer,
         [dataApi.reducerPath]: dataApi.reducer,
+        [userApi.reducerPath]: userApi.reducer,
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware().prepend(listenerMiddleware.middleware),
