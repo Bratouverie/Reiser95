@@ -108,8 +108,6 @@ const Collection = () => {
         }
     }, [getTokensError]);
 
-    console.log({ isLoading, collection, isTokensLoading, collectionTokens });
-
     if (!collection || !collectionTokens) {
         return (
             <CenteredContainer>

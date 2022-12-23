@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useContext, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import CenteredContainer from '../../common/CenteredContainer';
 import { CustomSelect } from '../../common/CustomSelect';
 import File from '../../common/File';
@@ -9,10 +10,14 @@ import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
 import {
     useCreateCollectionMutation,
+    useGetAccountQuery,
     useGetAccountsQuery,
     useGetBlockchainsQuery,
+    useGetCollectionQuery,
     useGetCurrencyTokensQuery,
     useGetPagesQuery,
+    useUpdateAccountMutation,
+    useUpdateCollectionMutation,
 } from '../../redux/api/dataService';
 import { pagesSelectors } from '../../redux/slices/pages';
 import { normilizeError } from '../../utils/http/normilizeError';
@@ -73,11 +78,66 @@ const DisplayThemes = {
     },
 };
 
+// {
+//     "id": "9adeffe4-fb19-4531-a96e-e4a02a8fe26b",
+//     "payment_tokens": [
+//         {
+//             "id": "f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea",
+//             "name": "ETH1",
+//             "smart_contract_address": "1111111111111111111",
+//             "blockchain": "11643bd9-183e-48bc-bad8-07e54c810bc1"
+//         },
+//         {
+//             "id": "53a932bf-8e83-4b56-9d4d-9ccb34ad47c0",
+//             "name": "ETH2",
+//             "smart_contract_address": "1111111111111111111",
+//             "blockchain": "11643bd9-183e-48bc-bad8-07e54c810bc1"
+//         }
+//     ],
+//     "blockchain": {
+//         "id": "11643bd9-183e-48bc-bad8-07e54c810bc1",
+//         "name": "Ethereum"
+//     },
+//     "hide": false,
+//     "created_at": "2022-12-11T17:29:11.203092Z",
+//     "link_opensea": null,
+//     "link_discord": null,
+//     "link_instagram": null,
+//     "link_medium": null,
+//     "link_twitter": null,
+//     "type": "standard",
+//     "logo": "https://gateway.storjshare.io/demo-bucket/file123_6sMNrPt.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221222%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221222T180403Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=f780746efe6a6a3098e72342935f6cc40c431231f02f57cd0ed113987d421220",
+//     "featured": "https://gateway.storjshare.io/demo-bucket/file123_4RQpXf3.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221222%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221222T180403Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=8079a9a593f3453d2d5676cd0ac57ee1ba67608948ebbed263bb41686f5e7214",
+//     "banner": "https://gateway.storjshare.io/demo-bucket/file123_niysD7C.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221222%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221222T180403Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=8ed07bd20baf09cd154e9278bdbc97d138e22b6b2e23f2c6e551039454853b15",
+//     "name": "ddwew12345d1",
+//     "url": "ddwew12345d1",
+//     "url_opensea": null,
+//     "category_opensea": "11111",
+//     "percentage_fee": "1.00000000",
+//     "display_theme": "1111111",
+//     "description": "1111111111",
+//     "upload_blockchain": false,
+//     "smart_contract_address": null,
+//     "items_count": 16,
+//     "owners_count": 0,
+//     "floor_price_count": "1.00000000",
+//     "volume_troded_count": "0.00000000",
+//     "profit": "16.00000000",
+//     "creator_profit": "0.00000000",
+//     "creator_fee": "0.00000000",
+//     "page": "de4aea1b-4562-472f-b943-6c74fa525cca",
+//     "account": "afbcbf99-1fc1-4e50-bf5b-5fb682d3e179"
+// }
+
 const SOCIAL_LINKS_ARR = Object.values(SocialLinks);
 const OPENSEA_CATEGORY_ARR = Object.values(OpenSeaCategory);
 const DISPLAIED_THEMES_ARR = Object.values(DisplayThemes);
 
-const CreateCollection = () => {
+const CreateCollection = (props) => {
+    const { isEdit } = props;
+
+    const { id } = useParams();
+
     const pages = useSelector(pagesSelectors.selectAll);
 
     const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
@@ -88,6 +148,23 @@ const CreateCollection = () => {
         pageSize: 1000,
     });
 
+    const { data: collection, isLoading: isCollectionLoading } = useGetCollectionQuery(
+        { id },
+        {
+            skip: !id || !isEdit,
+        },
+    );
+
+    const [
+        onUpdateCollectionRequest,
+        {
+            isLoading: isCollectionUpdatingProccessing,
+            error: updateCollectionError,
+            isSuccess: isCollectionUpdatingSuccessfully,
+            reset: resetCollectionUpdate,
+        },
+    ] = useUpdateCollectionMutation();
+
     const [blockchainId, setBlockchainId] = useState('');
 
     const { data: currencyTokens } = useGetCurrencyTokensQuery(
@@ -95,7 +172,6 @@ const CreateCollection = () => {
         { skip: !blockchainId, pollingInterval: 300 },
     );
 
-    console.log({ currencyTokens });
     const [
         onCreateCollectionRequest,
         {
@@ -133,42 +209,37 @@ const CreateCollection = () => {
     const [availablePaymentTokens, setAvailablePaymentTokens] = useState([]);
 
     const availbleAccaunts = useMemo(() => {
-        console.log({ accounts });
-        if (!brandId || !accounts.results) {
+        if (!brandId || !accounts || !accounts.results) {
             return [];
         }
-        console.log({
-            brandId,
-            result: accounts.results,
-        });
 
-        return (accounts || []).results.filter(a => a.page === brandId);
+        return (accounts || []).results.filter((a) => a.page === brandId);
     }, [accounts, brandId]);
 
-    const changeBrandHandler = useCallback(id => {
+    const changeBrandHandler = useCallback((id) => {
         setBrandId(id);
     }, []);
 
-    const changeAccountHandler = useCallback(id => {
+    const changeAccountHandler = useCallback((id) => {
         setAccountId(id);
     }, []);
 
     const onChangeSocialLinksHandler = useCallback((key, value) => {
-        setSocial(p => ({
+        setSocial((p) => ({
             ...p,
             [key]: value,
         }));
     }, []);
 
-    const blockchainChangeHandler = useCallback(value => {
+    const blockchainChangeHandler = useCallback((value) => {
         setBlockchainId(value);
     }, []);
 
-    const tokenChangeHandler = useCallback(value => {
+    const tokenChangeHandler = useCallback((value) => {
         setTokenId(value);
     }, []);
 
-    const changeThemeHandler = useCallback(theme => {
+    const changeThemeHandler = useCallback((theme) => {
         setDisplayTheme(theme);
     }, []);
 
@@ -176,9 +247,9 @@ const CreateCollection = () => {
         let formData = new FormData();
 
         if (
-            !logo ||
-            !featuredImage ||
-            !banner ||
+            (!logo && !isEdit) ||
+            (!banner && !isEdit) ||
+            (!featuredImage && !isEdit) ||
             !name ||
             !checkbrandcom ||
             !opensea ||
@@ -204,9 +275,19 @@ const CreateCollection = () => {
         formData.append('link_discord', social.discord);
         formData.append('link_instagram', social.instagram);
         formData.append('link_twitter', social.twitter);
-        formData.append('logo', logo);
-        formData.append('featured', featuredImage);
-        formData.append('banner', banner);
+
+        if (logo) {
+            formData.append('logo', logo);
+        }
+
+        if (featuredImage) {
+            formData.append('featured', featuredImage);
+        }
+
+        if (banner) {
+            formData.append('banner', banner);
+        }
+
         formData.append('name', name);
         formData.append('url', checkbrandcom);
         formData.append('url_opensea', opensea);
@@ -243,8 +324,14 @@ const CreateCollection = () => {
         //     payment_tokens: tokenId,
         // };
 
-        onCreateCollectionRequest(formData);
+        if (isEdit) {
+            onUpdateCollectionRequest({ id, data: formData });
+        } else {
+            onCreateCollectionRequest(formData);
+        }
     }, [
+        isEdit,
+        id,
         social,
         logo,
         featuredImage,
@@ -262,6 +349,8 @@ const CreateCollection = () => {
         blockchainId,
         tokenId,
     ]);
+
+    console.log({ collection });
 
     useEffect(() => {
         if (isCollectionCreatedSuccessfully) {
@@ -303,14 +392,61 @@ const CreateCollection = () => {
         }
     }, [collectionCreatingError]);
 
+    useEffect(() => {
+        if (updateCollectionError) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(updateCollectionError),
+            });
+        }
+    }, [updateCollectionError]);
+
+    useEffect(() => {
+        if (isCollectionUpdatingSuccessfully) {
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Collection successfuly updated',
+            });
+        }
+    }, [isCollectionUpdatingSuccessfully]);
+
+    useEffect(() => {
+        if (collection && isEdit) {
+            setAdminSmart(collection.smart_contract_address);
+            setName(collection.name);
+            setOpensea(collection.url_opensea);
+            setDescriprion(collection.description);
+            setCheckbrandcom(collection.url);
+            setOpenSeaCategory(collection.category_opensea);
+            setBrandId(collection.page);
+            setAccountId(collection.account);
+            setSocial({
+                opensea: collection.link_opensea !== 'null' ? collection.link_opensea : '',
+                discord: collection.link_discord !== 'null' ? collection.link_discord : '',
+                instagram: collection.link_instagram !== 'null' ? collection.link_instagram : '',
+                twitter: collection.link_twitter !== 'null' ? collection.link_twitter : '',
+            });
+            setPercentageFee(String(Number(collection.percentage_fee)));
+            setBlockchainId(collection.blockchain.id);
+            setDisplayTheme(collection.display_theme);
+        }
+    }, [collection, isEdit]);
+
     useEffect(
         () => () => {
             resetCollectionCreationState();
+            resetCollectionUpdate();
         },
         [],
     );
 
-    if (isBlockchainsLoading || isPagesLoading || isAccountsLoading) {
+    if (
+        isBlockchainsLoading ||
+        isPagesLoading ||
+        isAccountsLoading ||
+        isCollectionLoading ||
+        (!collection && isEdit)
+    ) {
         return (
             <CenteredContainer>
                 <Loader />
@@ -336,6 +472,7 @@ const CreateCollection = () => {
                             half
                             type="logo"
                             id="createaccountLogo"
+                            defaultValue={collection && collection.logo}
                             value={logo}
                             setValue={setLogo}
                         />
@@ -351,6 +488,7 @@ const CreateCollection = () => {
                             title="Featured image"
                             text="This image will be used for featuning your collection on the Account page. 600 x 400
               recommended."
+                            defaultValue={collection && collection.featured}
                             required
                             id="featuredImage"
                             value={featuredImage}
@@ -361,6 +499,7 @@ const CreateCollection = () => {
                             text="This image will appear at the top of account page. 1400 x 400 recommended."
                             required
                             id="createcollectionBanner"
+                            defaultValue={collection && collection.banner}
                             value={banner}
                             setValue={setBanner}
                         />
@@ -403,7 +542,7 @@ const CreateCollection = () => {
                             </p>
 
                             <div className="create__item--select--prop">
-                                {OPENSEA_CATEGORY_ARR.map(c => (
+                                {OPENSEA_CATEGORY_ARR.map((c) => (
                                     <button
                                         keu={c}
                                         className={`button create__item--option ${
@@ -433,7 +572,7 @@ const CreateCollection = () => {
                             </p>
 
                             <div className="create__item--select--prop">
-                                {(pages || []).map(page => (
+                                {(pages || []).map((page) => (
                                     <button
                                         key={page.id}
                                         className={`button create__item--option ${
@@ -467,41 +606,45 @@ const CreateCollection = () => {
                                         <>
                                             {availbleAccaunts.length ? (
                                                 <>
-                                                    {availbleAccaunts.map((acc, i) => (
-                                                        <div
-                                                            className="create__item--account--item"
-                                                            key={acc.id}
-                                                        >
-                                                            <input
-                                                                type="radio"
-                                                                name="accounts"
-                                                                className="create__item--account--checkbox"
-                                                                id={acc.id}
-                                                                onChange={() =>
-                                                                    changeAccountHandler(acc.id)
-                                                                }
-                                                            />
-
-                                                            <label
-                                                                htmlFor={acc.id}
-                                                                className="create__item--account--item--label"
+                                                    {availbleAccaunts.map((acc, i) => {
+                                                        console.log({ accountId, acc });
+                                                        return (
+                                                            <div
+                                                                className="create__item--account--item"
+                                                                key={acc.id}
                                                             >
-                                                                <span className="create__item--account--item--label--wrap">
-                                                                    <p className="create__item--account--item--num">
-                                                                        {i + 1}
-                                                                    </p>
+                                                                <input
+                                                                    type="radio"
+                                                                    name="accounts"
+                                                                    className="create__item--account--checkbox"
+                                                                    checked={acc.id === accountId}
+                                                                    id={acc.id}
+                                                                    onChange={() =>
+                                                                        changeAccountHandler(acc.id)
+                                                                    }
+                                                                />
 
-                                                                    <span className="create__item--account--item--img"></span>
+                                                                <label
+                                                                    htmlFor={acc.id}
+                                                                    className="create__item--account--item--label"
+                                                                >
+                                                                    <span className="create__item--account--item--label--wrap">
+                                                                        <p className="create__item--account--item--num">
+                                                                            {i + 1}
+                                                                        </p>
 
-                                                                    <p className="create__item--account--item--name">
-                                                                        {acc.name}
-                                                                    </p>
-                                                                </span>
+                                                                        <span className="create__item--account--item--img"></span>
 
-                                                                <span className="create__item--account--item--circle"></span>
-                                                            </label>
-                                                        </div>
-                                                    ))}
+                                                                        <p className="create__item--account--item--name">
+                                                                            {acc.name}
+                                                                        </p>
+                                                                    </span>
+
+                                                                    <span className="create__item--account--item--circle"></span>
+                                                                </label>
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </>
                                             ) : (
                                                 <span className="selectPageWarning">
@@ -532,7 +675,7 @@ const CreateCollection = () => {
                                             placeholder={placeholder}
                                             isLink
                                             value={social[name]}
-                                            setValue={value =>
+                                            setValue={(value) =>
                                                 onChangeSocialLinksHandler(name, value)
                                             }
                                         />
@@ -570,7 +713,7 @@ const CreateCollection = () => {
                                 {Boolean(blockchains) && (
                                     <div className="create__item--select--inner">
                                         <CustomSelect
-                                            optionsList={blockchains.map(c => ({
+                                            optionsList={blockchains.map((c) => ({
                                                 value: c.id,
                                                 name: c.name,
                                             }))}
@@ -630,7 +773,7 @@ const CreateCollection = () => {
                                     </select>
                                 ) : (
                                     <CustomSelect
-                                        optionsList={currencyTokens.map(c => ({
+                                        optionsList={currencyTokens.map((c) => ({
                                             value: c.id,
                                             name: c.name,
                                         }))}
@@ -648,7 +791,7 @@ const CreateCollection = () => {
                             <p className="create__item--text">Change how your items are shown.</p>
 
                             <div className="create__item--theme--inner">
-                                {DISPLAIED_THEMES_ARR.map(dt => (
+                                {DISPLAIED_THEMES_ARR.map((dt) => (
                                     <button
                                         key={dt.value}
                                         className={`button create__item--theme--item ${
@@ -685,7 +828,7 @@ const CreateCollection = () => {
 
                     <div className="create__button--content">
                         <div className="create__button--wrapper">
-                            {isCollectionCreatingProccessing ? (
+                            {isCollectionCreatingProccessing || isCollectionUpdatingProccessing ? (
                                 <button className="button create__button default__hover">
                                     Loading...
                                 </button>
@@ -694,7 +837,7 @@ const CreateCollection = () => {
                                     className="button create__button default__hover"
                                     onClick={onSubmitHandler}
                                 >
-                                    Create
+                                    {isEdit ? 'Save changes' : 'Create'}
                                 </button>
                             )}
 
@@ -719,4 +862,4 @@ const CreateCollection = () => {
     );
 };
 
-export default CreateCollection;
+export default React.memo(CreateCollection);

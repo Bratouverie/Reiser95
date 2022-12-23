@@ -43,7 +43,6 @@ const TemplatePage = () => {
 
     useEffect(() => {
         if (gettingPageError) {
-            console.log({ gettingPageError });
             // window.location = '/';
         }
     }, [gettingPageError]);

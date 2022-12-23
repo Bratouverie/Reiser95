@@ -19,7 +19,7 @@ export const dataApi = createApi({
             return headers;
         },
     }),
-    endpoints: builder => ({
+    endpoints: (builder) => ({
         // GET
         // PAGE
         getPages: builder.query({
@@ -28,7 +28,7 @@ export const dataApi = createApi({
             }),
         }),
         getPageByUrl: builder.query({
-            query: url => ({
+            query: (url) => ({
                 url: `page/${url}/`,
             }),
         }),
@@ -83,7 +83,6 @@ export const dataApi = createApi({
 
         getCurrencyTokens: builder.query({
             query: ({ blockchainId }) => {
-                console.log({ blockchainId });
                 return {
                     url: `currency_token/${generateQuery({ blockchain_id: blockchainId })}`,
                 };
@@ -137,59 +136,59 @@ export const dataApi = createApi({
 
         // POST
         createPage: builder.mutation({
-            query: data => ({
+            query: (data) => ({
                 url: 'page/',
                 method: HTTP_METHODS.POST,
                 body: data,
             }),
         }),
         createAccount: builder.mutation({
-            query: data => ({
+            query: (data) => ({
                 url: 'account/',
                 method: HTTP_METHODS.POST,
                 body: data,
             }),
         }),
         createCollection: builder.mutation({
-            query: data => ({
+            query: (data) => ({
                 url: 'collection/',
                 method: HTTP_METHODS.POST,
                 body: data,
             }),
         }),
         createPack: builder.mutation({
-            query: data => ({
+            query: (data) => ({
                 url: 'pack/',
                 method: HTTP_METHODS.POST,
                 body: data,
             }),
         }),
 
-        // PUT
+        // PATCH
         updatePage: builder.mutation({
             query: ({ url, data }) => ({
-                url: `page/${url}`,
-                method: HTTP_METHODS.PUT,
+                url: `page/${url}/`,
+                method: HTTP_METHODS.PATCH,
                 body: data,
             }),
         }),
         updateAccount: builder.mutation({
             query: ({ id, data }) => ({
-                url: `account/${id}`,
-                method: HTTP_METHODS.PUT,
+                url: `account/${id}/`,
+                method: HTTP_METHODS.PATCH,
                 body: data,
             }),
         }),
         updateCollection: builder.mutation({
             query: ({ id, data }) => ({
-                url: `collection/${id}`,
-                method: HTTP_METHODS.PUT,
+                url: `collection/${id}/`,
+                method: HTTP_METHODS.PATCH,
                 body: data,
             }),
         }),
         updatePack: builder.mutation({
             query: ({ id, data }) => ({
-                url: `pack/${id}`,
+                url: `pack/${id}/`,
                 method: HTTP_METHODS.PUT,
                 body: data,
             }),
