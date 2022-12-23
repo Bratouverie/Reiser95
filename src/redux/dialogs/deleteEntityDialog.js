@@ -9,7 +9,6 @@ export const deleteEntityDialogSlice = createSlice({
     initialState: INITAL_STATE,
     reducers: {
         onOpen: (state, action) => {
-            console.log({ action });
             state.isOpen = true;
             state.id = action.payload;
         },

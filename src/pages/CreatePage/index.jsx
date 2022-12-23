@@ -1,19 +1,60 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { NotificationContext } from '../../context/NotificationContext';
 import Input from '../../common/Input';
 import File from '../../common/File';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
+import {
+    useCreatePageMutation,
+    useGetPageByUrlQuery,
+    useUpdatePageMutation,
+} from '../../redux/api/dataService';
+import { normilizeError } from '../../utils/http/normilizeError';
+import CenteredContainer from '../../common/CenteredContainer';
+import Loader from '../../common/Loader';
 
 import './index.css';
-import { useCreatePageMutation } from '../../redux/api/dataService';
-import { normilizeError } from '../../utils/http/normilizeError';
 
-const CreatePage = () => {
+// type Page
+// {
+//     "id": "b0a17740-2c89-4973-8b7d-32b23f41c8c4",
+//     "hide": false,
+//     "name": "Persons",
+//     "number": 1,
+//     "url": "persons",
+//     "banner": "https://gateway.storjshare.io/demo-bucket/IMG_0609.JPG?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221222%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221222T090657Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=e55ebe0d76dc9be541100da37f833f54738c71d64057b06870315f2b75de0ccc",
+//     "title_1": "Person NFT Certificates",
+//     "description": "Best friendsBest friendsBest friendsBest friendsBest friendsBest friendsBest friendsB est friendsBest friendsBest friendsBest friendsBest friendsBest friendsBest friendsBest friendsBest friend sBest friendsBest friendsB est friendsBest friendsBest friendsBe st friendsBest friendsBest friendsBest friendsBest friendsBest frie ndsBest friendsB est friendsBest fri endsBest friendsBest fr iendsBest friends",
+//     "title_2": "Choose Person"
+// }
+
+const CreatePage = (props) => {
+    const { isEdit } = props;
+
+    const { url: urlP } = useParams();
+
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
 
-    const [onCreatePageRequest, { isLoading, error, isSuccess, reset }] = useCreatePageMutation();
+    const [
+        onCreatePageRequest,
+        { isLoading, error, isSuccess, reset: resetPageCreation },
+    ] = useCreatePageMutation();
+
+    const [
+        onUpdatePageRequest,
+        {
+            isLoading: isPageUpdatingProccessing,
+            error: updatePageError,
+            isSuccess: isPageUpdatingSuccessfully,
+            reset: resetPageUpdate,
+        },
+    ] = useUpdatePageMutation();
+
+    const { data: page, isLoading: isPageLoading } = useGetPageByUrlQuery(urlP, {
+        skip: !urlP || !isEdit,
+    });
 
     const [name, setName] = useState('');
     const [number, setNumber] = useState('');
@@ -28,7 +69,15 @@ const CreatePage = () => {
             return;
         }
 
-        if (!name || !url || !number || !banner || !title1 || !description || !title2) {
+        if (
+            !name ||
+            !url ||
+            !number ||
+            (!banner && !isEdit) ||
+            !title1 ||
+            !description ||
+            !title2
+        ) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
                 text: 'Fill all required fields',
@@ -41,13 +90,22 @@ const CreatePage = () => {
         formData.append('name', name);
         formData.append('number', parseInt(number));
         formData.append('url', url);
-        formData.append('banner', banner);
+        if (banner) {
+            formData.append('banner', banner);
+        }
         formData.append('title_1', title1);
         formData.append('description', description);
         formData.append('title_2', title2);
 
-        onCreatePageRequest(formData);
-    }, [name, number, url, banner, title1, description, title2, isLoading]);
+        if (isEdit) {
+            onUpdatePageRequest({
+                url: urlP,
+                data: formData,
+            });
+        } else {
+            onCreatePageRequest(formData);
+        }
+    }, [isEdit, name, number, urlP, banner, title1, description, title2, isLoading]);
 
     useEffect(() => {
         if (error) {
@@ -57,6 +115,15 @@ const CreatePage = () => {
             });
         }
     }, [error]);
+
+    useEffect(() => {
+        if (updatePageError) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(updatePageError),
+            });
+        }
+    }, [updatePageError]);
 
     useEffect(() => {
         if (isSuccess) {
@@ -74,6 +141,42 @@ const CreatePage = () => {
             });
         }
     }, [isSuccess]);
+
+    useEffect(() => {
+        if (isPageUpdatingSuccessfully) {
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Page successfuly updated',
+            });
+        }
+    }, [isPageUpdatingSuccessfully]);
+
+    useEffect(() => {
+        if (page && isEdit) {
+            setName(page.name);
+            setNumber(String(page.number));
+            setUrl(page.url);
+            setTitle1(page.title_1);
+            setDescription(page.description);
+            setTitle2(page.title_2);
+        }
+    }, [page, isEdit]);
+
+    useEffect(
+        () => () => {
+            resetPageCreation();
+            resetPageUpdate();
+        },
+        [],
+    );
+
+    if (isPageLoading) {
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
+    }
 
     return (
         <div className="default__padding createpage">
@@ -119,6 +222,7 @@ const CreatePage = () => {
                             required
                             id="createpageBanner"
                             value={banner}
+                            defaultValue={page && page.banner}
                             setValue={setBanner}
                         />
 
@@ -150,14 +254,14 @@ const CreatePage = () => {
                     </div>
 
                     <div className="create__button--content">
-                        {isLoading ? (
+                        {isLoading || isPageUpdatingProccessing ? (
                             <button className="button create__button disabled">Loading..</button>
                         ) : (
                             <button
                                 className="button create__button default__hover"
                                 onClick={createPageFunc}
                             >
-                                Create
+                                {isEdit ? 'Save changes' : 'Create'}
                             </button>
                         )}
                     </div>

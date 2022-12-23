@@ -122,7 +122,7 @@ const TokenCard = () => {
             skip: !token || !token.collection.id,
         },
     );
-    console.log({ token });
+
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);

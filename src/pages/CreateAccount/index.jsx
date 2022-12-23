@@ -1,20 +1,49 @@
 import React, { useState, useCallback, useContext, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { NotificationContext } from '../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { normilizeError } from '../../utils/http/normilizeError';
 import {
     useCreateAccountMutation,
     useGetAccountQuery,
+    useGetPageByUrlQuery,
     useGetPagesQuery,
+    useUpdateAccountMutation,
 } from '../../redux/api/dataService';
 import Input from '../../common/Input';
 import File from '../../common/File';
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
+import { pagesSelectors } from '../../redux/slices/pages';
 
 import './index.css';
-import { pagesSelectors } from '../../redux/slices/pages';
+
+// type Account = {
+//     {
+//         "id": "bdb6027e-f74f-448d-b5fc-e072f612bea0",
+//         "hide": false,
+//         "link_opensea": "",
+//         "link_discord": "",
+//         "link_instagram": "",
+//         "link_medium": null,
+//         "link_twitter": "",
+//         "type": "standard",
+//         "logo": "https://gateway.storjshare.io/demo-bucket/accounts/005.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221222%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221222T173046Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=fdd4592b8128af97fb5e3b0b905efaaae62af99599d262207b6a03df21af2128",
+//         "cover": "https://gateway.storjshare.io/demo-bucket/accounts/005_mdcD3IR.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221222%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221222T173046Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=67098796eba424560d0a8b7431a7bf2a1d7b96506db41bfa9c854258a4955c6e",
+//         "banner": "https://gateway.storjshare.io/demo-bucket/accounts/005_2R62XPP.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=jvem5dwcethiin2za2fnv7j7ofaq%2F20221222%2Feu1%2Fs3%2Faws4_request&X-Amz-Date=20221222T173046Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=701e9d3378f2de3891a99d5c200120f9c53595ca563ca48bfe60d0a5feac4658",
+//         "name": "Lorem",
+//         "url": "Lorem",
+//         "description": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+//         "items_count": 16,
+//         "owners_count": 0,
+//         "collections_count": 1,
+//         "floor_price_count": "0.10000000",
+//         "volume_troded_count": "0.00000000",
+//         "profit": "1.60000000",
+//         "page": "216c2c74-f307-43e3-94f1-ab2e1172aff1"
+//     }
+// }
 
 const SocialLinks = {
     OPENSEA: {
@@ -41,8 +70,10 @@ const SocialLinks = {
 
 const SOCIAL_LINKS_ARR = Object.values(SocialLinks);
 
-const CreateAccount = props => {
-    const { accountForEditId } = props;
+const CreateAccount = (props) => {
+    const { isEdit } = props;
+
+    const { id } = useParams();
 
     const pages = useSelector(pagesSelectors.selectAll);
 
@@ -51,13 +82,22 @@ const CreateAccount = props => {
         { isLoading, error, isSuccess, reset },
     ] = useCreateAccountMutation();
 
-    const {
-        data: accountForEditing,
-        isSuccess: isAccountForEditSuccess,
-        isLoading: isAccountForEditLoading,
-        refetch: getAccountForEditing,
-        error: getAccountForEditError,
-    } = useGetAccountQuery({}, { skip: true });
+    const { data: account, isLoading: isAccountLoading } = useGetAccountQuery(
+        { id },
+        {
+            skip: !id || !isEdit,
+        },
+    );
+
+    const [
+        onUpdateAccountRequest,
+        {
+            isLoading: isAccountUpdatingProccessing,
+            error: updateAccountError,
+            isSuccess: isAccountUpdatingSuccessfully,
+            reset: resetAccountUpdate,
+        },
+    ] = useUpdateAccountMutation();
 
     const { isLoading: isPagesLoading } = useGetPagesQuery();
 
@@ -82,7 +122,15 @@ const CreateAccount = props => {
     const createAccountFunc = useCallback(() => {
         let formData = new FormData();
 
-        if (!logo || !cover || !banner || !brandId || !accountName || !url || !descriprion) {
+        if (
+            (!logo && !isEdit) ||
+            (!cover && !isEdit) ||
+            (!banner && !isEdit) ||
+            !brandId ||
+            !accountName ||
+            !url ||
+            !descriprion
+        ) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
                 text: 'Fill all required fields',
@@ -95,23 +143,37 @@ const CreateAccount = props => {
         formData.append('link_discord', social.discord);
         formData.append('link_instagram', social.instagram);
         formData.append('link_twitter', social.twitter);
-        formData.append('logo', logo);
-        formData.append('cover', cover);
-        formData.append('banner', banner);
+
+        if (logo) {
+            formData.append('logo', logo);
+        }
+
+        if (cover) {
+            formData.append('cover', cover);
+        }
+
+        if (banner) {
+            formData.append('banner', banner);
+        }
+
         formData.append('page', brandId);
         formData.append('name', accountName);
         formData.append('url', url);
         formData.append('description', descriprion);
 
-        onCreateAccountRequest(formData);
-    }, [brandId, logo, accountName, cover, banner, url, descriprion, social]);
+        if (isEdit) {
+            onUpdateAccountRequest({ id, data: formData });
+        } else {
+            onCreateAccountRequest(formData);
+        }
+    }, [isEdit, id, brandId, logo, accountName, cover, banner, url, descriprion, social]);
 
-    const changeBrandHandler = useCallback(id => {
+    const changeBrandHandler = useCallback((id) => {
         setBrandId(id);
     }, []);
 
     const onChangeSocialLinksHandler = useCallback((key, value) => {
-        setSocial(p => ({
+        setSocial((p) => ({
             ...p,
             [key]: value,
         }));
@@ -151,37 +213,47 @@ const CreateAccount = props => {
     }, [isSuccess]);
 
     useEffect(() => {
-        if (accountForEditing && isAccountForEditSuccess) {
-            setBrandId(accountForEditing.page);
-            // setLogo(accountForEditing.);
-            // setAccountName(accountForEditing.);
-            // setCover(accountForEditing.);
-            // setBanner(accountForEditing.);
-            // setUrl(accountForEditing.);
-            // setDescriprion(accountForEditing.);
+        if (updateAccountError) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(updateAccountError),
+            });
         }
-    }, [accountForEditing, isAccountForEditSuccess]);
+    }, [updateAccountError]);
 
     useEffect(() => {
-        if (accountForEditId) {
-            getAccountForEditing({ id: accountForEditId });
+        if (isAccountUpdatingSuccessfully) {
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Account successfuly updated',
+            });
         }
-    }, [accountForEditId]);
+    }, [isAccountUpdatingSuccessfully]);
 
     useEffect(() => {
-        if (getAccountForEditError) {
-            console.log({ getAccountForEditError });
+        if (account && isEdit) {
+            setBrandId(account.page);
+            setAccountName(account.name);
+            setUrl(account.url);
+            setDescriprion(account.description);
+            setSocial({
+                opensea: account.link_opensea,
+                discord: account.link_discord,
+                instagram: account.link_instagram,
+                twitter: account.link_twitter,
+            });
         }
-    }, [getAccountForEditError]);
+    }, [account, isEdit]);
 
     useEffect(
         () => () => {
             reset();
+            resetAccountUpdate();
         },
         [],
     );
 
-    if (isPagesLoading || isAccountForEditLoading || getAccountForEditError) {
+    if (isPagesLoading || isAccountLoading || (!account && isEdit)) {
         return (
             <CenteredContainer>
                 <Loader />
@@ -206,7 +278,7 @@ const CreateAccount = props => {
                             </p>
 
                             <div className="create__item--select--prop">
-                                {(pages || []).map(page => (
+                                {(pages || []).map((page) => (
                                     <button
                                         key={page.id}
                                         className={`button create__item--option ${
@@ -232,6 +304,7 @@ const CreateAccount = props => {
                             required
                             type="logo"
                             id="createaccountLogo"
+                            defaultValue={account && account.logo}
                             value={logo}
                             setValue={setLogo}
                         />
@@ -241,6 +314,7 @@ const CreateAccount = props => {
                             required
                             type="cover"
                             id="createaccountCover"
+                            defaultValue={account && account.cover}
                             value={cover}
                             setValue={setCover}
                         />
@@ -249,6 +323,7 @@ const CreateAccount = props => {
                             text="This image will appear at the top of account page. 1400 x 400 recommended."
                             required
                             id="createaccountBanner"
+                            defaultValue={account && account.banner}
                             value={banner}
                             setValue={setBanner}
                         />
@@ -293,7 +368,9 @@ const CreateAccount = props => {
                                         placeholder={placeholder}
                                         isLink
                                         value={social[name]}
-                                        setValue={value => onChangeSocialLinksHandler(name, value)}
+                                        setValue={(value) =>
+                                            onChangeSocialLinksHandler(name, value)
+                                        }
                                     />
                                 </div>
                             ))}
@@ -302,7 +379,7 @@ const CreateAccount = props => {
 
                     <div className="create__button--content">
                         <div className="create__button--content">
-                            {isLoading ? (
+                            {isLoading || isAccountUpdatingProccessing ? (
                                 <button className="button create__button disabled">
                                     Loading...
                                 </button>
@@ -311,7 +388,7 @@ const CreateAccount = props => {
                                     className="button create__button default__hover"
                                     onClick={createAccountFunc}
                                 >
-                                    Create
+                                    {isEdit ? 'Save changes' : 'Create'}
                                 </button>
                             )}
                         </div>
@@ -322,4 +399,4 @@ const CreateAccount = props => {
     );
 };
 
-export default CreateAccount;
+export default React.memo(CreateAccount);

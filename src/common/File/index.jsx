@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useCallback } from 'react';
 
 const File = ({
     title,
@@ -9,11 +9,12 @@ const File = ({
     required = false,
     multiple = false,
     half = false,
+    defaultValue,
     type = 'banner',
 }) => {
-    const [img, setImg] = React.useState('');
+    const [img, setImg] = React.useState(defaultValue);
 
-    const onInputChange = e => {
+    const onInputChange = useCallback((e) => {
         setValue(e.target.files[0]);
         let fileReader = new FileReader();
         fileReader.readAsDataURL(e.target.files[0]);
@@ -21,7 +22,7 @@ const File = ({
         fileReader.onloadend = () => {
             setImg(fileReader.result);
         };
-    };
+    }, []);
 
     return (
         <div className={`create__item${half ? ' half' : ''}`}>
@@ -39,7 +40,7 @@ const File = ({
             />
 
             <label htmlFor={id} className={`create__item--label ${type}`}>
-                {value ? (
+                {value || defaultValue ? (
                     <img src={img} alt="preview" className="create__item--label--preview" />
                 ) : (
                     <img src="/assets/img/img.png" alt="img" className="create__item--label--img" />

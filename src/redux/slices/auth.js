@@ -20,7 +20,7 @@ const initialState = {
 
 export const refreshTokenRequest = createAsyncThunk('refreshToken', async (_, { getState }) => {
     const { auth } = getState();
-    console.log({ auth });
+
     if (!auth.refreshToken) {
         return;
     }
@@ -89,7 +89,6 @@ export const authSlice = createSlice({
     },
     extraReducers: builder => {
         builder.addCase(refreshTokenRequest.fulfilled, (state, action) => {
-            console.log({ payload: action });
             if (action.payload && action.payload.access_token && action.payload.refresh_token) {
                 window.sessionStorage.setItem('access_token', action.payload.access_token);
                 window.sessionStorage.setItem('refresh_token', action.payload.refresh_token);

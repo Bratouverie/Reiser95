@@ -10,6 +10,7 @@ import React, {
 import { format } from 'date-fns';
 import { cnb } from 'cnbuilder';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams, useNavigate } from 'react-router-dom';
 import DeleteEntityDialog from '../../../components/DeleteEntityDialog/DeleteEntityDialog';
 import { onOpen, onClose } from '../../../redux/dialogs/deleteEntityDialog';
 import WithImageCell from '../../../common/Table/cells/WithImageCell';
@@ -24,8 +25,10 @@ import { Table } from '../../../common/Table';
 import { normilizeError } from '../../../utils/http/normilizeError';
 import CenteredContainer from '../../../common/CenteredContainer';
 import Loader from '../../../common/Loader';
-import { useParams } from 'react-router-dom';
-import { STATISTICS_COLLECTION_PACKS_LIST } from '../../../const/http/CLIENT_URLS';
+import {
+    EDIT_COLLECTION_PAGE,
+    STATISTICS_COLLECTION_PACKS_LIST,
+} from '../../../const/http/CLIENT_URLS';
 import { NotificationContext } from '../../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../../const/notifications/NOTIFICATION_TYPES';
 
@@ -72,6 +75,7 @@ const CollectionsList = () => {
     const { isOpen, id: deletedCollectionId } = useSelector(state => state.deleteEntityDialog);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const {
         actions: { addNotification },
@@ -105,16 +109,14 @@ const CollectionsList = () => {
     ] = useHideCollectionMutation();
 
     const onEditHandler = useCallback(id => {
-        console.log({ id });
+        navigate(EDIT_COLLECTION_PAGE({ id }));
     }, []);
 
     const onDeleteHandler = useCallback(id => {
-        console.log({ id });
         hideCollection({ id, isHide: true });
     }, []);
 
     const onDeleteCollection = useCallback(id => {
-        console.log({ id });
         dispatch(onOpen(id));
     }, []);
 
@@ -276,7 +278,6 @@ const CollectionsList = () => {
 
     useEffect(() => {
         if (hideCollectionError) {
-            console.log({ hideCollectionError });
             closeDialogHandler();
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
