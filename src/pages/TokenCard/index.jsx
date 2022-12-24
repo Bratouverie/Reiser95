@@ -308,7 +308,7 @@ const TokenCard = () => {
                                     {prop && (
                                         <div className="token__card--item--bottom">
                                             <div className="token__card--item--prop">
-                                                {(token.properties || []).map(p => (
+                                                {(token.properties || []).map((p) => (
                                                     <div
                                                         key={p.id}
                                                         className="token__card--item--prop--item"
@@ -1833,7 +1833,7 @@ const TokenCard = () => {
                                             </div>
                                         ) : (
                                             <>
-                                                {collectionTokens.results.map(t => (
+                                                {collectionTokens.results.map((t) => (
                                                     <TokenItem key={t.id} token={t} />
                                                 ))}
                                             </>

@@ -27,7 +27,7 @@ import CreateItem from './pages/CreateItem';
 import InitialDataWrapper from './containers/InitialDataContainer';
 import { NotificationsContainer } from './containers/NotificationsContainer';
 import { NotificationProvider } from './context/NotificationContext';
-import { useGetProfileQuery } from './redux/api/authService';
+import { EditOneToken } from './pages/EditOneToken';
 
 const App = () => {
     return (
@@ -70,7 +70,7 @@ const App = () => {
                                             element={<CreateCollection isEdit />}
                                         />
                                         <Route path="pack/:id" element={<CreatePack isEdit />} />
-                                        <Route path="token/:id" element={<CreateItem isEdit />} />
+                                        <Route path="token/:id" element={<EditOneToken />} />
                                     </Route>
                                     <Route path="*" element={<Navigate to="/" />} />
                                 </Route>

@@ -4,7 +4,13 @@ import { useEffect } from 'react';
 import Input from '../../common/Input';
 import { NotificationContext } from '../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
-import { useCreatePackMutation, useGetCollectionsQuery } from '../../redux/api/dataService';
+import {
+    useCreatePackMutation,
+    useGetCollectionsQuery,
+    useGetFilteredTokensQuery,
+    useGetPackQuery,
+    useUpdatePackMutation,
+} from '../../redux/api/dataService';
 import { normilizeError } from '../../utils/http/normilizeError';
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
@@ -12,6 +18,7 @@ import Loader from '../../common/Loader';
 import './index.css';
 import UploadManyTokensForm from '../../common/UploadManyTokensForm/UploadManyTokensForm';
 import { TokenCommonFieldsForm } from '../../common/TokenCommonFieldsForm';
+import { useParams } from 'react-router-dom';
 
 // FILE TYPE
 // type FileValue = {
@@ -28,22 +35,96 @@ import { TokenCommonFieldsForm } from '../../common/TokenCommonFieldsForm';
 //     preview: "blob:http://localhost:3000/8e020a77-9e32-4fbe-a1fe-6015bca163ea",
 // }
 
-const CreatePack = () => {
+// PACK type
+// {
+//     "id": "bb00c77e-9164-4009-af22-b22e33728445",
+//     "creator_royalty_distribution": [
+//         {
+//             "id": "17962ede-a89f-4bea-9ce0-b6cd253d7fda",
+//             "percent": "100.00000000",
+//             "wallet": "3456456"
+//         }
+//     ],
+//     "income_distribution": [
+//         {
+//             "id": "b4339214-fbed-474a-ac69-e3804aefa800",
+//             "percent": "100.00000000",
+//             "wallet": "34536"
+//         }
+//     ],
+//     "levels_stats": [],
+//     "properties": [],
+//     "wallet_owner": "0xea09d6d8cff17b11e45763d1025831de3e2ddaaf",
+//     "close_image": null,
+//     "hide": false,
+//     "upload_blockchain": false,
+//     "freeze": false,
+//     "items_count": "6.00000000",
+//     "profit": "0.87000000",
+//     "type": "standard",
+//     "name": "8656453456",
+//     "price": "0.14500000",
+//     "status_price": "price",
+//     "investor_royalty": "0.50000000",
+//     "creator_royalty": "4.50000000",
+//     "description": "435пкекуе",
+//     "close": false,
+//     "unlockable": false,
+//     "unlockable_content": "",
+//     "status": "stop",
+//     "status_duration_date": "2022-12-21",
+//     "collection": "7483fcea-de80-48e3-8411-f23dd7414fdc",
+//     "currency_token": "f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea"
+// }
+
+const CreatePack = (props) => {
+    const { isEdit } = props;
+
+    const { id } = useParams();
+
     const { data: collections, isLoading: isCollectionsLoading } = useGetCollectionsQuery({
         page: 1,
         pageSize: 1000,
     });
+
+    const { data: pack, isLoading: isPackLoading } = useGetPackQuery(
+        { id },
+        {
+            skip: !id || !isEdit,
+        },
+    );
+
+    const { data: packTokens, isLoading: isPackTokensLoading } = useGetFilteredTokensQuery(
+        {
+            page: 1,
+            pageSize: 1000,
+            packId: pack ? pack.id : '',
+        },
+        {
+            skip: !pack || !pack.id || !isEdit,
+        },
+    );
 
     const [
         onCreatePackRequest,
         { data: createdPackData, isLoading, error, isSuccess, reset },
     ] = useCreatePackMutation();
 
+    const [
+        onUpdatePackRequest,
+        {
+            isLoading: isPackUpdatingProccessing,
+            error: updatePackError,
+            isSuccess: isPackUpdatingSuccessfully,
+            reset: resetPackUpdate,
+        },
+    ] = useUpdatePackMutation();
+
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
 
-    const [createdPack, setCreatedPack] = useState({});
+    const [packId, setPackId] = useState(null);
 
     const [name, setName] = useState('');
     const [tokenCommonName, setTokenCommonName] = useState('Common name');
@@ -72,7 +153,7 @@ const CreatePack = () => {
     const [isTokenUploadStarted, setIsTokenUploadStarted] = useState(false);
 
     const selectedCollection = useMemo(() => {
-        if (!collectionId || !collections.results) {
+        if (!collectionId || !collections || !collections.results) {
             return null;
         }
 
@@ -203,8 +284,17 @@ const CreatePack = () => {
         //     close: false,
         // };
 
-        onCreatePackRequest(data);
+        if (isEdit) {
+            onUpdatePackRequest({
+                id,
+                data,
+            });
+        } else {
+            onCreatePackRequest(data);
+        }
     }, [
+        isEdit,
+        id,
         collectionId,
         name,
         tokenPrice,
@@ -224,33 +314,18 @@ const CreatePack = () => {
         selectedCollection,
     ]);
 
-    const isAbleToUpload = useMemo(() => createdPack && !isTokenUploadStarted, [
-        createdPack,
-        isTokenUploadStarted,
-    ]);
-
     const tokensDataToUpload = useMemo(() => {
-        let status_price = 'price';
-
-        if (isAuction) {
-            status_price = 'auction';
-        }
-
-        if (isNoPrice) {
-            status_price = 'no_price';
-        }
-
         return {
-            pack: createdPack.id,
+            pack: packId,
             currency_token: tokenIdForPayment,
             investor_royalty: investorRoyalty,
             creator_royalty: creatorRoyalty,
         };
-    }, [isAuction, isNoPrice, createdPack, tokenIdForPayment, investorRoyalty, creatorRoyalty]);
+    }, [packId, tokenIdForPayment, investorRoyalty, creatorRoyalty]);
 
     useEffect(() => {
         if (isSuccess && createdPackData) {
-            setCreatedPack(createdPackData);
+            setPackId(createdPackData.id);
 
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
@@ -258,6 +333,43 @@ const CreatePack = () => {
             });
         }
     }, [isSuccess, createdPackData]);
+
+    useEffect(() => {
+        if (pack && isEdit) {
+            setPackId(pack.id);
+
+            setName(pack.name);
+            setTokenPrice(String(Number(pack.price)));
+            setTokenIdForPayment(pack.currency_token);
+            setInvestorRoyalty(String(Number(pack.investor_royalty)));
+            setCreatorRoyalty(String(Number(pack.creator_royalty)));
+            setIsAuction(pack.status_price === 'auction');
+            setIsNoPrice(pack.status_price === 'no_price');
+            setDescriprion(pack.description);
+            setProperties(pack.properties || []);
+            setLevels(pack.levels_stats || []);
+            setStats(pack.levels_stats || []);
+            setCreatorRoyaltyDestribution(
+                pack.creator_royalty_distribution.map((rd) => ({
+                    id: rd.id,
+                    percentage: Number(rd.percent),
+                    wallet: rd.wallet,
+                })),
+            );
+            setIncomeRoyaltyDestribution(
+                pack.income_distribution.map((ind) => ({
+                    id: ind.id,
+                    percentage: Number(ind.percent),
+                    wallet: ind.wallet,
+                })),
+            );
+
+            setCollectionId(pack.collection);
+
+            setUnlockable(pack.unlockable);
+            setUnlockableContent(pack.unlockable_content);
+        }
+    }, [pack, isEdit]);
 
     useEffect(() => {
         if (error) {
@@ -268,14 +380,33 @@ const CreatePack = () => {
         }
     }, [error]);
 
+    useEffect(() => {
+        if (updatePackError) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: normilizeError(updatePackError),
+            });
+        }
+    }, [updatePackError]);
+
+    useEffect(() => {
+        if (isPackUpdatingSuccessfully) {
+            addNotification({
+                type: NOTIFICATION_TYPES.SUCCESS,
+                text: 'Pack successfuly updated',
+            });
+        }
+    }, [isPackUpdatingSuccessfully]);
+
     useEffect(
         () => () => {
             reset();
+            resetPackUpdate();
         },
         [],
     );
 
-    if (isCollectionsLoading) {
+    if (isCollectionsLoading || isPackLoading || isPackTokensLoading) {
         return (
             <CenteredContainer>
                 <Loader />
@@ -287,7 +418,7 @@ const CreatePack = () => {
         <div className="default__padding createpage">
             <div className="container">
                 <div className="createpage__inner">
-                    <h2 className="title left">Create Pack</h2>
+                    <h2 className="title left">{isEdit ? 'Update Pack' : 'Create Pack'}</h2>
                     <p className="text left">Bulk token upload interface</p>
                     <div className="create__content">
                         <Input
@@ -306,9 +437,13 @@ const CreatePack = () => {
                             creatorRoyalty={creatorRoyalty}
                             isTokenNameEqualFileName={isTokenNameEqualFileName}
                             setIsTokenUploadStarted={setIsTokenUploadStarted}
-                            isAbleToUpload={isAbleToUpload}
+                            isAbleToUpload={Boolean(packId)}
+                            requiredError={
+                                Boolean(packId) ? 'Upload at least one token' : 'Create pack first'
+                            }
                             tokensDataToUpload={tokensDataToUpload}
                             isTokenUploadStarted={isTokenUploadStarted}
+                            preloadedTokens={packTokens ? packTokens.results : []}
                         />
                     </div>
                     <TokenCommonFieldsForm
@@ -356,14 +491,14 @@ const CreatePack = () => {
                     />{' '}
                     <div className="create__button--content">
                         <div className="create__button--wrapper">
-                            {isLoading ? (
+                            {isLoading || isPackUpdatingProccessing ? (
                                 <button className="button create__button">Loading...</button>
                             ) : (
                                 <button
                                     className="button create__button default__hover"
                                     onClick={onSavePackHandler}
                                 >
-                                    Upload on site
+                                    {isEdit ? 'Save changes' : 'Upload on site'}
                                 </button>
                             )}
 

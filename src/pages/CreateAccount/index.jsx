@@ -265,7 +265,7 @@ const CreateAccount = (props) => {
         <div className="default__padding createpage">
             <div className="container">
                 <div className="createpage__inner">
-                    <h2 className="title left">Create Account</h2>
+                    <h2 className="title left">{isEdit ? 'Update Account' : 'Create Account'}</h2>
 
                     <p className="text left">Account will be create on the choosed Page.</p>
 
