@@ -61,6 +61,7 @@ const TokenCommonFieldsForm = (props) => {
         unlockableContent,
         setUnlockableContent,
         isTokenUploadStarted,
+        withoutNumbering = false,
     } = props;
 
     const { data: blockchains, isLoading: isBlockchainsLoading } = useGetBlockchainsQuery();
@@ -74,7 +75,7 @@ const TokenCommonFieldsForm = (props) => {
     const statsDialog = useDialog();
 
     const selectedCollection = useMemo(() => {
-        if (!collectionId || !collections.results) {
+        if (!collectionId || !collections || !collections.results) {
             return null;
         }
 
@@ -160,9 +161,11 @@ const TokenCommonFieldsForm = (props) => {
 
     if (isBlockchainsLoading || isCollectionsLoading) {
         return (
-            <CenteredContainer>
-                <Loader />
-            </CenteredContainer>
+            <div className={css.loadingContainer}>
+                <CenteredContainer>
+                    <Loader />
+                </CenteredContainer>
+            </div>
         );
     }
 
@@ -190,7 +193,7 @@ const TokenCommonFieldsForm = (props) => {
                     </div>
                 )}
             </div>
-            <div className="create__item half">
+            <div className={`create__item ${withoutNumbering ? '' : 'half'}`}>
                 <Input
                     title="Token name"
                     text="Choose a “common name” so that all tokens have the same name."
@@ -220,19 +223,21 @@ const TokenCommonFieldsForm = (props) => {
                 </button>
             </div>
 
-            <div className="create__item half">
-                <Input
-                    title="Numbering"
-                    text=" When choosing a common name, enter from which number the numbering will start."
-                    placeholder="1"
-                    type={INPUT_TYPE.NUMERIC}
-                    maxValue={MAX_NUMERIC_INDICATOR_START}
-                    required
-                    disabled={isTokenUploadStarted}
-                    value={numbering}
-                    setValue={setNumbering}
-                />
-            </div>
+            {!withoutNumbering && (
+                <div className="create__item half">
+                    <Input
+                        title="Numbering"
+                        text=" When choosing a common name, enter from which number the numbering will start."
+                        placeholder="1"
+                        type={INPUT_TYPE.NUMERIC}
+                        maxValue={MAX_NUMERIC_INDICATOR_START}
+                        required
+                        disabled={isTokenUploadStarted}
+                        value={numbering}
+                        setValue={setNumbering}
+                    />
+                </div>
+            )}
 
             <div className="create__item">
                 <p className="create__item--title">Tokens price</p>

@@ -60,11 +60,6 @@ const CreateItem = () => {
 
     const [isTokenUploadStarted, setIsTokenUploadStarted] = useState(false);
 
-    const isAbleToUpload = useMemo(() => packId && !isTokenUploadStarted, [
-        packId,
-        isTokenUploadStarted,
-    ]);
-
     const tokensDataToUpload = useMemo(() => {
         let status_price = 'price';
 
@@ -173,7 +168,8 @@ const CreateItem = () => {
                                 creatorRoyalty={creatorRoyalty}
                                 isTokenNameEqualFileName={isTokenNameEqualFileName}
                                 setIsTokenUploadStarted={setIsTokenUploadStarted}
-                                isAbleToUpload={isAbleToUpload}
+                                isAbleToUpload={Boolean(packId)}
+                                requiredError="No pack selected or no files upload"
                                 tokensDataToUpload={tokensDataToUpload}
                                 isTokenUploadStarted={isTokenUploadStarted}
                             />

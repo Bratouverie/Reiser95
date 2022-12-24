@@ -182,7 +182,7 @@ const CreatePage = (props) => {
         <div className="default__padding createpage">
             <div className="container">
                 <div className="createpage__inner">
-                    <h2 className="title left">Create Page</h2>
+                    <h2 className="title left">{isEdit ? 'Update Page' : 'Create Page'}</h2>
 
                     <p className="text left">
                         The created Page will be available for management in the Control Panel.

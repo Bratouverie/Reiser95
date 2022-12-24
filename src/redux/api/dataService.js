@@ -189,7 +189,14 @@ export const dataApi = createApi({
         updatePack: builder.mutation({
             query: ({ id, data }) => ({
                 url: `pack/${id}/`,
-                method: HTTP_METHODS.PUT,
+                method: HTTP_METHODS.PATCH,
+                body: data,
+            }),
+        }),
+        updateToken: builder.mutation({
+            query: ({ id, data }) => ({
+                url: `token/${id}/`,
+                method: HTTP_METHODS.PATCH,
                 body: data,
             }),
         }),
@@ -275,6 +282,7 @@ export const {
     useUpdateAccountMutation,
     useUpdateCollectionMutation,
     useUpdatePackMutation,
+    useUpdateTokenMutation,
 
     useHidePageMutation,
     useHideAccountMutation,

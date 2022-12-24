@@ -14,7 +14,7 @@ export const useFileDropzone = ({
 
     const addFileTimerRef = useRef(0);
 
-    const prepareFile = useCallback(file => {
+    const prepareFile = useCallback((file) => {
         const preview = URL.createObjectURL(file);
 
         return {
@@ -27,11 +27,11 @@ export const useFileDropzone = ({
 
     const onAdd = useCallback(
         ({ files }) => {
-            setValues(prev => {
+            setValues((prev) => {
                 const preparedFiles = files.map(prepareFile);
 
                 if (!multiple) {
-                    prev.map(p => {
+                    prev.map((p) => {
                         if (p && p.preview) {
                             URL.revokeObjectURL(p.preview);
                         }
@@ -71,9 +71,10 @@ export const useFileDropzone = ({
         [multiple],
     );
 
-    const onDelete = useCallback(file => {
-        setValues(prev => {
-            const index = prev.findIndex(f => f.id === file.fileId);
+    const onDelete = useCallback((file) => {
+        setValues((prev) => {
+            const index = prev.findIndex((f) => f.id === file.id);
+
             if (index === -1) {
                 return prev;
             }

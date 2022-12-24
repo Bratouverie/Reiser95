@@ -4,7 +4,7 @@ import './index.css';
 
 import ImgBlockItem from './ImgBlockItem';
 
-const ImgBlock = props => {
+const ImgBlock = (props) => {
     const { title, data } = props;
 
     return (
@@ -15,7 +15,7 @@ const ImgBlock = props => {
 
                     {data.length > 0 ? (
                         <div className="imgblock__content">
-                            {data.map(data => (
+                            {data.map((data) => (
                                 <ImgBlockItem key={data.id} path={data.logo} id={data.id} />
                             ))}
                         </div>
