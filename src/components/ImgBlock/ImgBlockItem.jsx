@@ -40,4 +40,4 @@ const ImgBlockItem = ({ path, id, alt = 'img' }) => {
     );
 };
 
-export default ImgBlockItem;
+export default React.memo(ImgBlockItem);

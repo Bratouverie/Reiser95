@@ -350,8 +350,6 @@ const CreateCollection = (props) => {
         tokenId,
     ]);
 
-    console.log({ collection });
-
     useEffect(() => {
         if (isCollectionCreatedSuccessfully) {
             setLogo('');
@@ -458,7 +456,9 @@ const CreateCollection = (props) => {
         <div className="default__padding createpage">
             <div className="container">
                 <div className="createpage__inner">
-                    <h2 className="title left">Create a collection</h2>
+                    <h2 className="title left">
+                        {isEdit ? 'Update Collection' : 'Create a collection'}
+                    </h2>
 
                     <p className="text left">
                         Collection is creating on the OpenSea and is visible on CheckBrandcom
@@ -607,7 +607,6 @@ const CreateCollection = (props) => {
                                             {availbleAccaunts.length ? (
                                                 <>
                                                     {availbleAccaunts.map((acc, i) => {
-                                                        console.log({ accountId, acc });
                                                         return (
                                                             <div
                                                                 className="create__item--account--item"

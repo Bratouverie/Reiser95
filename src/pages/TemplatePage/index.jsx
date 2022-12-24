@@ -33,7 +33,7 @@ const TemplatePage = () => {
             return [];
         }
 
-        return accounts.results.filter(a => a.page === pageInfo.id);
+        return accounts.results.filter((a) => a.page === pageInfo.id);
     }, [accounts, pageInfo]);
 
     useEffect(() => {
