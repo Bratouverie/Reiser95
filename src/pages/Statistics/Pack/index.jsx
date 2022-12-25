@@ -62,7 +62,7 @@ const TABLE_BOTTOM_MARGIN = 20;
 const PacksList = () => {
     const { accountId, collectionId } = useParams();
 
-    const { isOpen, id: deletedPackId } = useSelector(state => state.deleteEntityDialog);
+    const { isOpen, id: deletedPackId } = useSelector((state) => state.deleteEntityDialog);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -98,15 +98,15 @@ const PacksList = () => {
         },
     ] = useHidePackMutation();
 
-    const onEditHandler = useCallback(id => {
+    const onEditHandler = useCallback((id) => {
         navigate(EDIT_PACK_PAGE({ id }));
     }, []);
 
-    const onDeleteHandler = useCallback(id => {
+    const onDeleteHandler = useCallback((id) => {
         hidePack({ id, isHide: true });
     }, []);
 
-    const onDeletePack = useCallback(id => {
+    const onDeletePack = useCallback((id) => {
         dispatch(onOpen(id));
     }, []);
 
@@ -115,7 +115,7 @@ const PacksList = () => {
     }, []);
 
     const headerCellsArray = useMemo(() => {
-        return HEADER_CELLS_ARR.map(cell => ({
+        return HEADER_CELLS_ARR.map((cell) => ({
             label: cell.label,
             labelComponent: (
                 <div className={css.headingCellBox}>
@@ -132,22 +132,18 @@ const PacksList = () => {
         }
         const columns = Object.values(BODY_CELLS);
 
-        const bodyRows = packs.map(p => {
+        const bodyRows = packs.map((p) => {
             const cellsArray = [];
 
-            columns.forEach(name => {
+            columns.forEach((name) => {
                 switch (name) {
                     case BODY_CELLS.NAME:
                         cellsArray.push({
                             label: name,
                             xs: 3,
                             component: (
-                                <WithImageCell
-                                    classes={{
-                                        cellRoot: cnb(css[`${name}Cell`], css.cellRoot),
-                                        imageRoot: css.imageRoot,
-                                    }}
-                                    imageUrl={p.logo}
+                                <CommonCell
+                                    classes={{ cellRoot: cnb(css[`${name}Cell`], css.cellRoot) }}
                                     value={p.name}
                                 />
                             ),
@@ -175,7 +171,7 @@ const PacksList = () => {
                         return;
                     case BODY_CELLS.PROPERTIES:
                         const propertiesStr = p.properties
-                            .map(prop => (prop.type ? `${prop.type}/${prop.name}` : prop))
+                            .map((prop) => (prop.type ? `${prop.type}/${prop.name}` : prop))
                             .join(', ');
                         cellsArray.push({
                             label: name,
@@ -248,7 +244,7 @@ const PacksList = () => {
         setPage(newPage);
     }, []);
 
-    const handleChangeRowsPerPage = event => {
+    const handleChangeRowsPerPage = (event) => {
         setRowsPerPage(Number(event.target.value));
         setPage(1);
     };
@@ -286,7 +282,7 @@ const PacksList = () => {
 
     useEffect(() => {
         if (isSuccess && deletedPackId) {
-            setPacks(p => p.filter(pack => pack.id !== deletedPackId));
+            setPacks((p) => p.filter((pack) => pack.id !== deletedPackId));
 
             closeDialogHandler();
             resetDeletationState();

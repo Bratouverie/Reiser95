@@ -127,7 +127,6 @@ const CreateItem = () => {
             </CenteredContainer>
         );
     }
-
     return (
         <>
             <div className="default__padding createpage">

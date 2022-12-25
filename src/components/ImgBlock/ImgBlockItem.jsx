@@ -24,7 +24,7 @@ const ImgBlockItem = ({ path, id, alt = 'img' }) => {
         return collections.results[0].id;
     }, [collections, id]);
 
-    if (!firstCollectionId || isCollectionsLoading) {
+    if (isCollectionsLoading) {
         return null;
     }
 

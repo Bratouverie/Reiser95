@@ -111,3 +111,14 @@
     color: white;
     word-break: break-all;
 }
+
+.nameOverflowWrapper {
+    max-width: 120px;
+}
+.withImgCell {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}
