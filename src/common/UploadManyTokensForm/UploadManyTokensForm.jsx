@@ -125,7 +125,26 @@ const UploadManyTokensForm = (props) => {
     const [numericIndicatorInProccess, setNumericIndicatorInProccess] = useState([]);
     const [numericIndicatorDone, setNumericIndicatorDone] = useState([]);
     const [numericIndicatorFailed, setNumericIndicatorFailed] = useState([]);
-    const [preloadedTokensList, setPreloadedTokensList] = useState([]);
+
+    const [preloadedTokensList, setPreloadedTokensList] = useState(
+        preloadedTokens.map((pt, i) => {
+            const numericIndicator = generateNumericIndicator(Number(numbering) + i);
+            return {
+                isPreloaded: true,
+                id: pt.id,
+                nameComponent: <>{pt.name}</>,
+                name: pt.name,
+                numericIndicator,
+                tokenImgName: null,
+                tokenImgFile: null,
+                tokenPreviewName: null,
+                tokenPreviewFile: null,
+                tokenPrice: Number(pt.price),
+                investorRoyalty: Number(pt.investor_royalty),
+                creatorRoyalty: Number(pt.creator_royalty),
+            };
+        }) || [],
+    );
 
     const {
         values: tokenImgValues,
@@ -145,28 +164,6 @@ const UploadManyTokensForm = (props) => {
         limit: UPLOAD_FILES_MAX_LIMIT,
     });
 
-    const preloadedTokenToDisplay = useMemo(() => {
-        return (
-            preloadedTokensList.map((pt, i) => {
-                const numericIndicator = generateNumericIndicator(Number(numbering) + i);
-                return {
-                    isPreloaded: true,
-                    id: pt.id,
-                    nameComponent: <>{pt.name}</>,
-                    name: pt.name,
-                    numericIndicator,
-                    tokenImgName: null,
-                    tokenImgFile: null,
-                    tokenPreviewName: null,
-                    tokenPreviewFile: null,
-                    tokenPrice: Number(pt.price),
-                    investorRoyalty: Number(pt.investor_royalty),
-                    creatorRoyalty: Number(pt.creator_royalty),
-                };
-            }) || []
-        );
-    }, [preloadedTokensList]);
-
     const genrateTablesRow = useMemo(() => {
         if (tokenImgValues.length === 0) {
             return [];
@@ -183,7 +180,6 @@ const UploadManyTokensForm = (props) => {
             const tokenPreviewImg = tokenPreviewValues.find((tpv) =>
                 getFileNameAndExt(tpv.file.name).fileName.includes(fileNameAndExt.fileName),
             );
-
             const numericIndicator = generateNumericIndicator(Number(numbering) + i);
 
             res.push({
@@ -215,7 +211,6 @@ const UploadManyTokensForm = (props) => {
 
         return res;
     }, [
-        preloadedTokens,
         tokenImgValues,
         tokenPreviewValues,
         numbering,
@@ -230,19 +225,28 @@ const UploadManyTokensForm = (props) => {
         hideToken({ id, isHide: true });
     }, []);
 
-    const removeTokenHandler = useCallback(({ isPreloaded, id, fileImg, filePreview }) => {
-        if (isPreloaded && id) {
-            dispatch(onOpen(id));
-        }
+    const removeTokenHandler = useCallback(
+        ({ isPreloaded, id, fileImg, filePreview, numericIndicator }) => {
+            if (numericIndicator) {
+                setNumericIndicatorInProccess((p) => p.filter((n) => n !== numericIndicator));
+                setNumericIndicatorDone((p) => p.filter((n) => n !== numericIndicator));
+                setNumericIndicatorFailed((p) => p.filter((n) => n !== numericIndicator));
+            }
 
-        if (fileImg) {
-            onDeleteTokenImg(fileImg);
-        }
+            if (isPreloaded && id) {
+                dispatch(onOpen(id));
+            }
 
-        if (filePreview) {
-            onDeleteTokenPreview(filePreview);
-        }
-    }, []);
+            if (fileImg) {
+                onDeleteTokenImg(fileImg);
+            }
+
+            if (filePreview) {
+                onDeleteTokenPreview(filePreview);
+            }
+        },
+        [],
+    );
 
     const closeDialogHandler = useCallback(() => {
         dispatch(onClose());
@@ -403,7 +407,6 @@ const UploadManyTokensForm = (props) => {
                                     });
                                 })
                                 .catch((e) => {
-                                    console.log({ e });
                                     setNumericIndicatorFailed((p) => [
                                         ...p,
                                         token.numericIndicator,
@@ -411,6 +414,8 @@ const UploadManyTokensForm = (props) => {
                                     setNumericIndicatorInProccess((p) => {
                                         return p.filter((el) => el !== token.numericIndicator);
                                     });
+
+                                    setIsTokenUploadStarted(false);
 
                                     if (!e.response) {
                                         return;
@@ -441,10 +446,6 @@ const UploadManyTokensForm = (props) => {
 
         setIsTokenUploadStarted(false);
     }, [genrateTablesRow, tokensDataToUpload, isAbleToUpload]);
-
-    useEffect(() => {
-        setPreloadedTokensList(preloadedTokens);
-    }, [preloadedTokens]);
 
     useEffect(() => {
         if (hideTokenError) {
@@ -558,7 +559,7 @@ const UploadManyTokensForm = (props) => {
                             <p className="create__loading--title"> Actions</p>
                         </div>
 
-                        {[...genrateTablesRow, ...preloadedTokenToDisplay].map((row, i) => (
+                        {[...genrateTablesRow, ...preloadedTokensList].map((row, i) => (
                             <div className="create__loading--item" key={row.numericIndicator + i}>
                                 <p className="create__loading--text">{i + 1}</p>
 
@@ -604,6 +605,7 @@ const UploadManyTokensForm = (props) => {
                                             removeTokenHandler({
                                                 isPreloaded: row.isPreloaded,
                                                 id: row.id,
+                                                numericIndicator: row.numericIndicator,
                                                 fileImg: row.tokenImgFile,
                                                 filePreview: row.tokenPreviewFile,
                                             })

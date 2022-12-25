@@ -32,11 +32,12 @@ const File = ({
     const preview = useMemo(() => {
         if (value && isVideoCheck(value.name)) {
             setIsVideo(true);
+
             let blobURL = URL.createObjectURL(value);
             return <VideoPlayer src={blobURL} />;
         }
 
-        if (defaultFileName && isVideoCheck(defaultFileName) && defaultValue) {
+        if (defaultFileName && defaultValue && isVideoCheck(defaultFileName) && !value) {
             setIsVideo(true);
             return <VideoPlayer src={defaultValue} />;
         }
@@ -87,4 +88,4 @@ const File = ({
     );
 };
 
-export default File;
+export default React.memo(File);

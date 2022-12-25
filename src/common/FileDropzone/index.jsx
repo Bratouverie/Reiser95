@@ -16,7 +16,7 @@ const FileDropzone = ({
     const [isFilesLimitReached, setIsFileLimitReached] = useState(false);
     const dropTimer = useRef();
 
-    const onDrop = useCallback(files => {
+    const onDrop = useCallback((files) => {
         if (files.length) {
             onAdd({ files });
         }
@@ -24,7 +24,7 @@ const FileDropzone = ({
 
     const onDropRejected = useCallback(
         ([{ file, errors }]) => {
-            setFilesError(prev => {
+            setFilesError((prev) => {
                 return [
                     ...(prev || []),
                     { file: { name: file.name, id: _.uniqueId('Error_file_') }, errors },
