@@ -61,9 +61,9 @@ import { roundInt } from '../../utils/roundInt';
 //     "currency_token": "f56d23c1-5e64-4bf6-9a24-43bbf4c2b6ea"
 // }
 
-const TokenItem = props => {
+const TokenItem = (props) => {
     const { token } = props;
-
+    console.log({ token });
     return (
         <div className="collection__item">
             <Link
