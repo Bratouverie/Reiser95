@@ -20,6 +20,7 @@ import { roundInt } from '../../utils/roundInt';
 import TokenItem from './TokenItem';
 
 import './index.css';
+import { pagesSelectors } from '../../redux/slices/pages';
 
 // collection type example
 // {
@@ -67,11 +68,16 @@ import './index.css';
 //     "account": "7f640500-3a4d-4105-9d10-3dc9936ad0b4"
 // }
 
+const DIALOG_TYPES_ARR = Object.values(DIALOG_TYPES);
+
 const Collection = () => {
     const { id } = useParams();
 
     const authInfo = useSelector((state) => state.auth);
     const createWLDialog = useSelector((state) => state.aplyToWhitelistDialog);
+    const pages = useSelector(pagesSelectors.selectAll);
+
+    console.log({ pages });
 
     const dispatch = useDispatch();
 
@@ -115,6 +121,13 @@ const Collection = () => {
     } = useContext(NotificationContext);
 
     const [whiteListApplication, setWhiteListApplication] = useState(null);
+
+    const collectionPage = useMemo(() => {
+        if (collection && collection.page && pages && pages.length > 0) {
+            return pages.find((p) => p.id === collection.page) || null;
+        }
+        return null;
+    }, [pages, collection]);
 
     const onGetToWhitelistHandler = useCallback(() => {
         if (!authInfo.isAuth) {
@@ -389,12 +402,18 @@ const Collection = () => {
                 </div>
             </div>
 
-            <WLCreationDialog
-                open={createWLDialog.isOpen}
-                dialogType={DIALOG_TYPES.WATCHES}
-                onClose={closeCreationDialogHandler}
-                onCreate={() => console.log('create')}
-            />
+            {collectionPage && (
+                <WLCreationDialog
+                    open={createWLDialog.isOpen}
+                    dialogType={
+                        DIALOG_TYPES_ARR.includes(collectionPage.application_form)
+                            ? collectionPage.application_form
+                            : DIALOG_TYPES.PERSONS
+                    }
+                    onClose={closeCreationDialogHandler}
+                    onCreate={() => console.log('create')}
+                />
+            )}
         </>
     );
 };

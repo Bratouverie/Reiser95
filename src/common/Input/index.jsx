@@ -44,8 +44,6 @@ const Input = forwardRef((props, _ref) => {
         [type],
     );
 
-    console.log({ inputProps });
-
     return (
         <div className={className || `create__item${half ? ' half' : ''}`}>
             {title && (
