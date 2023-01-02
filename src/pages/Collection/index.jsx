@@ -695,7 +695,7 @@ const Collection = () => {
 
             <WLCreationDialog
                 open={createWLDialog.isOpen}
-                dialogType={DIALOG_TYPES.PERSONS}
+                dialogType={DIALOG_TYPES.WATCHES}
                 onClose={closeCreationDialogHandler}
                 onCreate={() => console.log('create')}
             />

@@ -1,6 +1,7 @@
 import React, { forwardRef, useMemo } from 'react';
-import TextFieldMui from '@mui/material/TextField';
 import { cnb } from 'cnbuilder';
+import TextFieldMui from '@mui/material/TextField';
+import { MenuItem } from '@mui/material';
 
 import css from './TextField.module.css';
 
@@ -19,13 +20,18 @@ const TextField = forwardRef((props, _ref) => {
         classes = {},
         inputClassesProps = {},
         inputLabelClassesProps = {},
+        disableOptionKey,
         fullWidth = true,
         onChange,
         onClick,
         onBlur,
         onFocus,
+        rowsMax,
+        multiline,
+        select,
+        selectOptions,
     } = props;
-    console.log({ error });
+
     const cls = useMemo(
         () => ({
             ...classes,
@@ -72,26 +78,82 @@ const TextField = forwardRef((props, _ref) => {
     );
 
     return (
-        <TextFieldMui
-            name={name}
-            type={type}
-            placeholder={placeholder}
-            variant={variant}
-            fullWidth={fullWidth}
-            value={value}
-            classes={cls}
-            disabled={disabled}
-            InputProps={InputProps}
-            inputProps={{ ...inputProps, maxLength }}
-            InputLabelProps={{
-                classes: inputLabelClasses,
-            }}
-            error={error ? Boolean(error.type) : undefined}
-            onChange={onChange}
-            onClick={onClick}
-            onBlur={onBlur}
-            onFocus={onFocus}
-        />
+        <div className={`create__item${fullWidth ? '' : ' half'}`}>
+            {label && (
+                <p className={`create__item--title ${cnb({ [css.errorLabel]: Boolean(error) })}`}>
+                    {label}
+                </p>
+            )}
+            <TextFieldMui
+                name={name}
+                type={type}
+                placeholder={placeholder}
+                variant={variant}
+                fullWidth={fullWidth}
+                classes={cls}
+                disabled={disabled}
+                InputProps={InputProps}
+                inputProps={{ ...inputProps, maxLength }}
+                rowsMax={multiline ? 6 : rowsMax}
+                multiline={multiline}
+                InputLabelProps={{
+                    classes: inputLabelClasses,
+                }}
+                value={select ? value || 'placeholder' : value}
+                error={error ? Boolean(error.type) : undefined}
+                onChange={onChange}
+                onClick={onClick}
+                onBlur={onBlur}
+                onFocus={onFocus}
+                select={select}
+                SelectProps={{
+                    MenuProps: {
+                        classes: {
+                            paper: 'CustomSelect_paper',
+                            list: 'CustomSelect_list',
+                        },
+                        anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                        },
+                        transformOrigin: {
+                            vertical: 'top',
+                            horizontal: 'left',
+                        },
+                        getContentAnchorEl: null,
+                    },
+                    classes: {
+                        root: `CustomSelect_root_label ${cnb({
+                            [css.placeholder]: select && value === 'placeholder',
+                        })}`,
+                        focused: 'CustomSelect_root_label_focused',
+                        shrink: 'CustomSelect_root_label_shrink',
+                        select: css.CustomSelectRoot,
+                        icon: 'CustomSelect_root_icon',
+                    },
+                }}
+            >
+                {select &&
+                    selectOptions &&
+                    selectOptions.map((o) => (
+                        <MenuItem
+                            classes={{
+                                root: cnb({
+                                    [css.disable]:
+                                        o.value === 'placeholder' ||
+                                        (disableOptionKey && o[disableOptionKey] === value) ||
+                                        o.disabled,
+                                }),
+                                selected: css.menuItemRootSelected,
+                            }}
+                            key={o.value}
+                            value={o.value}
+                        >
+                            {o.name}
+                        </MenuItem>
+                    ))}
+            </TextFieldMui>
+        </div>
     );
 });
 
