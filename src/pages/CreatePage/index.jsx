@@ -12,6 +12,7 @@ import {
 import { normilizeError } from '../../utils/http/normilizeError';
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
+import { DIALOG_TYPES } from '../../components/WlModals/const';
 
 import './index.css';
 
@@ -27,6 +28,8 @@ import './index.css';
 //     "description": "Best friendsBest friendsBest friendsBest friendsBest friendsBest friendsBest friendsB est friendsBest friendsBest friendsBest friendsBest friendsBest friendsBest friendsBest friendsBest friend sBest friendsBest friendsB est friendsBest friendsBest friendsBe st friendsBest friendsBest friendsBest friendsBest friendsBest frie ndsBest friendsB est friendsBest fri endsBest friendsBest fr iendsBest friends",
 //     "title_2": "Choose Person"
 // }
+
+const APPLICATION_FORMS_ARR = Object.values(DIALOG_TYPES);
 
 const CreatePage = (props) => {
     const { isEdit } = props;
@@ -63,6 +66,7 @@ const CreatePage = (props) => {
     const [title1, setTitle1] = useState('');
     const [description, setDescription] = useState('');
     const [title2, setTitle2] = useState('');
+    const [applicationForm, setApplicationForm] = useState(DIALOG_TYPES.PERSONS);
 
     const createPageFunc = useCallback(() => {
         if (isLoading) {
@@ -76,7 +80,8 @@ const CreatePage = (props) => {
             (!banner && !isEdit) ||
             !title1 ||
             !description ||
-            !title2
+            !title2 ||
+            !applicationForm
         ) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
@@ -96,6 +101,7 @@ const CreatePage = (props) => {
         formData.append('title_1', title1);
         formData.append('description', description);
         formData.append('title_2', title2);
+        formData.append('application_form', applicationForm);
 
         if (isEdit) {
             onUpdatePageRequest({
@@ -105,7 +111,18 @@ const CreatePage = (props) => {
         } else {
             onCreatePageRequest(formData);
         }
-    }, [isEdit, name, number, urlP, banner, title1, description, title2, isLoading]);
+    }, [
+        isEdit,
+        name,
+        number,
+        urlP,
+        banner,
+        title1,
+        description,
+        title2,
+        isLoading,
+        applicationForm,
+    ]);
 
     useEffect(() => {
         if (error) {
@@ -134,6 +151,7 @@ const CreatePage = (props) => {
             setTitle1('');
             setDescription('');
             setTitle2('');
+            setApplicationForm('');
 
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
@@ -159,6 +177,11 @@ const CreatePage = (props) => {
             setTitle1(page.title_1);
             setDescription(page.description);
             setTitle2(page.title_2);
+            setApplicationForm(
+                APPLICATION_FORMS_ARR.includes(page.application_form)
+                    ? page.application_form
+                    : DIALOG_TYPES.PERSONS,
+            );
         }
     }, [page, isEdit]);
 
@@ -251,6 +274,35 @@ const CreatePage = (props) => {
                             value={title2}
                             setValue={setTitle2}
                         />
+
+                        <div className="create__item">
+                            <p className="create__item--title">Category OpenSea</p>
+
+                            <p className="create__item--text">
+                                Adding a category will help make your item discoverable on OpenSea.
+                            </p>
+
+                            <div className="create__item--select--prop">
+                                {APPLICATION_FORMS_ARR.map((c) => (
+                                    <button
+                                        keu={c}
+                                        className={`button create__item--option ${
+                                            c === applicationForm ? 'active' : ''
+                                        }`}
+                                        onClick={() => setApplicationForm(c)}
+                                    >
+                                        {c.charAt(0).toUpperCase() + c.slice(1)}
+                                        {c === applicationForm && (
+                                            <img
+                                                src="/assets/img/check.svg"
+                                                alt="icon"
+                                                className="create__item--icon"
+                                            />
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
 
                     <div className="create__button--content">
@@ -271,4 +323,4 @@ const CreatePage = (props) => {
     );
 };
 
-export default CreatePage;
+export default React.memo(CreatePage);
