@@ -8,8 +8,8 @@ import { useValidationResolver } from '../../hooks/useValidationResolver';
 import './index.css';
 
 const schema = Joi.object({
-    email: Joi.string().required(),
-    discord: Joi.string().required(),
+    filed_1: Joi.string().required(),
+    filed_2: Joi.string().required(),
 });
 
 const PersonModal = (props) => {
@@ -17,8 +17,13 @@ const PersonModal = (props) => {
 
     const { validationResolver } = useValidationResolver(schema);
 
-    const { register, handleSubmit: onSubmitForm, errors: FormError } = useForm({
+    const {
+        register,
+        handleSubmit: onSubmitForm,
+        formState: { errors: formErrors },
+    } = useForm({
         validationResolver,
+        mode: 'onSubmit',
     });
 
     const handleSubmit = onSubmitForm((data) => {
@@ -45,20 +50,21 @@ const PersonModal = (props) => {
                     <p className="create__item--text">
                         To get on Whitelist specify data for feedback
                     </p>
-                    <Form onSubmit={handleSubmit} className="whitelist_forn">
+                    <Form onSubmit={handleSubmit} className="whitelist_form">
                         <TextField
+                            label="Specify data for feedback"
                             placeholder="Email"
-                            name="email"
-                            inputProps={{ ...register('email', { required: true }) }}
-                            required
-                            error={{ type: 'error' }}
+                            name="filed_1"
+                            inputProps={{ ...register('filed_1', { required: true }) }}
+                            error={formErrors && formErrors['filed_1']}
                         />
 
                         <TextField
+                            label="Discord name"
                             placeholder="Discord name"
-                            name="discord"
-                            inputProps={{ ...register('discord', { required: true }) }}
-                            required
+                            name="filed_2"
+                            inputProps={{ ...register('filed_2', { required: true }) }}
+                            error={formErrors && formErrors['filed_2']}
                         />
 
                         <div className="modal__buttons">

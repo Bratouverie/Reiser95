@@ -1,8 +1,8 @@
 .root {
-    margin-top: 24px !important;
+    margin-top: 10px !important;
 }
 .root .inputRoot {
-    border: 1px solid #313232;
+    border: 2px solid #5a5a5a;
     border-radius: 8px;
     transition: all 200ms ease;
 }
@@ -44,8 +44,16 @@
     border-color: #fff;
 }
 .inputRoot.multiline {
+    padding: 0;
     align-items: flex-start;
-    height: 120px;
+    height: 115px;
+    color: #fff;
+    font-size: 1.7rem;
+    background: #313232;
+    line-height: 1.7rem;
+    font-family: 'Gilroy', sans-serif;
+    border: 2px solid #5a5a5a;
+    overflow-y: auto;
 }
 .inputRoot .inputBase {
     -moz-appearance: textfield;
@@ -57,6 +65,7 @@
     border-radius: 8px;
     overflow-x: hidden;
     overflow-y: auto;
+    /* border: 2px solid #5a5a5a; */
     transition: all 200ms ease;
 }
 .inputRoot .inputBase::-webkit-scrollbar {
@@ -80,7 +89,7 @@
 }
 
 .disable {
-    display: none;
+    display: none !important;
 }
 
 .root .inputLabelRoot {
@@ -88,4 +97,28 @@
     font-size: 1.7rem;
     line-height: 1.7rem;
     font-family: 'Gilroy', sans-serif;
+}
+
+.errorLabel {
+    color: red !important;
+}
+
+.CustomSelectRoot {
+    color: #fff !important;
+    font-size: 16px !important;
+    color: #fff !important;
+    font-weight: 400 !important;
+    background: #313232 !important;
+    border-radius: 6px !important;
+    padding: 1.6rem 1.5rem !important;
+    min-height: 0 !important;
+    border-color: #5a5a5a;
+}
+
+.placeholder {
+    color: #ffffff9b;
+}
+
+.menuItemRootSelected {
+    background: #313232;
 }
