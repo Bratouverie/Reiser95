@@ -121,20 +121,6 @@
     align-items: center;
 }
 
-.collection__items--none{
-    width: 100%;
-    background: #1c1e1e;
-    border-radius: 10px;
-    border: 1px solid #3f4242;
-    margin-top: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 2.5rem;
-    padding: 4rem 0;
-}
-
 @media(max-width: 998px){
     .profile__ava--inner{
         width: 140px;

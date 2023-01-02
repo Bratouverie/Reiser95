@@ -2,7 +2,7 @@
 	font-size: 10px;
 }
 
-@font-face{
+/* @font-face{
     font-family: 'Gilroy';
     font-weight: 100;
     src: url('./assets/fonts/gilroyThin.ttf');
@@ -48,6 +48,31 @@
     font-family: 'Gilroy';
     font-weight: 900;
     src: url('./assets/fonts/gilroyBlack.ttf');
+} */
+
+/* Новые шрифты */
+@font-face{
+    font-family: 'Checkbrand';
+    font-weight: 400;
+    src: url('./assets/fonts/gilroyRegular.ttf');
+}
+
+@font-face{
+    font-family: 'Checkbrand';
+    font-weight: 500;
+    src: url('./assets/fonts/gilroyMedium.ttf');
+}
+
+@font-face{
+    font-family: 'Checkbrand';
+    font-weight: 600;
+    src: url('./assets/fonts/gilroySemibold.ttf');
+}
+
+@font-face{
+    font-family: 'Checkbrand';
+    font-weight: 700;
+    src: url('./assets/fonts/gilroyBold.ttf');
 }
 
 body{
@@ -55,9 +80,9 @@ body{
 	padding: 0;
 	overflow-x: hidden;
 	font-size: 1.6rem;
-	font-family: 'Gilroy', sans-serif;
-	background: #101010;
-	margin-top: 7rem;
+	font-family: 'Checkbrand', sans-serif;
+	background: #161717;
+	margin-top: 5.1rem;
 
 }
 ::-webkit-scrollbar {
@@ -81,7 +106,7 @@ body{
 a, button, input, textarea, select{
 	transition: .2s linear;
 	font-size: 1.6rem;
-	font-family: 'Gilroy', sans-serif;
+	font-family: 'Checkbrand', sans-serif;
 	padding: 0;
 }
 
@@ -131,12 +156,12 @@ input::-webkit-inner-spin-button{
 }
 
 .input::placeholder{
-	color: #000;
+	color: #fff;
 }
 
 .container{
 	width: 100%;
-	max-width: 1240px;
+	max-width: 1780px;
 	margin: 0 auto;
 }
 
@@ -146,10 +171,10 @@ input::-webkit-inner-spin-button{
 
 .title{
 	width: 100%;
-    color: #e5e8eb;
+    color: #fff;
     text-align: center;
     font-weight: 600;
-    font-size: 4rem;
+    font-size: 3rem;
 }
 
 .bold{

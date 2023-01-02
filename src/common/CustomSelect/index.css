@@ -1,30 +1,26 @@
 .CustomSelect_root {
-    border-radius: 7px !important;
+    border-radius: 5px !important;
     color: #fff !important;
-    font-size: 16px !important;
-    color: #fff !important;
-    font-weight: 400 !important;
-    background: #313232 !important;
-    border: 2px solid #5a5a5a !important;
-    border-radius: 10px !important;
-    padding: 1.6rem 1.5rem !important;
+    font-size: 15px !important;
+    font-weight: 500 !important;
+    background: #292c2c !important;
+    padding: 1.05rem 1.5rem !important;
     min-height: 0 !important;
-    border-color: #5a5a5a;
+    transition: .2s linear;
+    font-family: "Checkbrand", sans-serif;
 }
 .CustomSelect_root:hover {
-    background: #313232 !important;
-    border: 2px solid #5a5a5a !important;
+    background: #1d1f1f !important;
 }
 .CustomSelect_root:focus {
-    background: #313232 !important;
-    border: 2px solid #5a5a5a !important;
+    background: #292c2c !important;
 }
 
 .MuiOutlinedInput-notchedOutline {
     border: none !important;
 }
 .CustomSelect_paper {
-    border-radius: 10px !important;
+    border-radius: 5px !important;
     background: #313232 !important;
     margin-top: 8px;
 }
@@ -32,10 +28,10 @@
 .CustomSelect_list {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
-    border-radius: 10px !important;
+    border-radius: 5px !important;
     max-height: 300px;
     overflow-y: auto;
-    background: #313232;
+    background: #292c2c;
 }
 .CustomSelect_list li {
     font-weight: 200;
@@ -44,13 +40,14 @@
     font-size: 14px;
     font-weight: 500;
     color: #fff;
+    font-family: "Checkbrand", sans-serif;
 }
 
 .CustomSelect_list li:hover {
-    background: #5a5a5a;
+    background: rgba(0, 0, 0, .2);
 }
-.CustomSelect_list li .Mui-selected {
-    background: #5a5a5a;
+.CustomSelect_list li.Mui-selected {
+    background: rgba(0, 0, 0, .2)!important;
 }
 
 .CustomSelect_root_label {

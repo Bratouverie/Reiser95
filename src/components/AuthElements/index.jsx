@@ -9,14 +9,14 @@ const AuthElements = ({setActive, menu, setMenu}) => {
         <>
             {auth.isAuth
             ? <Link to="/profile" className="header__wallet--button">
-                <img src="/assets/img/profile-icon.png" alt="Profile" className="header__wallet--icon" />
+                <img src="/assets/img/account.svg" alt="Profile" className="header__wallet--icon" />
             </Link>
             : <button onClick={() => setActive(true)} className="button header__wallet--button">
-                <img src="/assets/img/profile-icon.png" alt="Profile" className="header__wallet--icon" />
+                <img src="/assets/img/account.svg" alt="Profile" className="header__wallet--icon" />
             </button>}
 
             <button className="button header__wallet--button" onClick={() => setActive(true)}>
-                <img src="/assets/img/wallet.png" alt="Wallet" className="header__wallet--icon"/>
+                <img src="/assets/img/wallet.svg" alt="Wallet" className="header__wallet--icon"/>
             </button>
             
             <div className="menu__inner">

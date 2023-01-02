@@ -13,6 +13,9 @@ import { roundInt } from '../../utils/roundInt';
 import './index.css';
 import TokenItem from './TokenItem';
 
+import {CustomSelect} from '../../common/CustomSelect';
+import FilterItem from '../../components/FilterItem';
+
 // collection type example
 // {
 //     "id": "0bb70e6c-4d51-4904-8d7b-209d0cb31055",
@@ -59,8 +62,27 @@ import TokenItem from './TokenItem';
 //     "account": "7f640500-3a4d-4105-9d10-3dc9936ad0b4"
 // }
 
+const filterData = [
+    {
+        text: "Booked"
+    },
+    {
+        text: "Minted"
+    },
+    {
+        text: "Status 3"
+    }
+]
+
 const Collection = () => {
     const { id } = useParams();
+    const [fullDesc, setFullDesc] = React.useState(false);
+    const [filter, setFilter] = React.useState("price");
+    const [filterActive, setFilterActive] = React.useState(true);
+
+    const filterChenge = value => {
+        setFilter(value);
+    };
 
     const { data: collection, error: getCollectionError, isLoading } = useGetCollectionQuery(
         {
@@ -126,128 +148,86 @@ const Collection = () => {
                     objectFit: 'cover',
                     backgroundPosition: 'center',
                 }}
-            >
-                <div className="container collection__container posr">
-                    <div className="collection__avatar--inner">
-                        <img src={collection.logo} alt="avatar" className="collection__avatar" />
-                    </div>
-                </div>
-            </div>
+            ></div>
 
             <div className="collection">
                 <div className="container">
                     <div className="collection__inner">
+                        <div className="collection__avatar--inner">
+                            <img
+                                src={collection.logo}
+                                alt="avatar"
+                                className="collection__avatar"
+                            />
+                        </div>
+
                         <div className="collection__link--inner">
                             <h2 className="title collection__title">{collection.name}</h2>
 
-                            <div className="collections__links--wrap">
+                            <div className="collection__social--inner">
                                 <a
-                                    href={collection.link_discord || ''}
-                                    className="collection__discord--link default__hover"
+                                    href={collection.link_twitter || ''}
+                                    className="collection__social--link default__hover"
+                                >
+                                    <img
+                                        src="/assets/img/twitter.svg"
+                                        alt="twitter"
+                                        className="collection__social--icon"
+                                    />
+                                </a>
+
+                                <a
+                                    href={collection.link_opensea || ''}
+                                    className="collection__social--link default__hover"
+                                >
+                                    <img
+                                        src="/assets/img/opensea.svg"
+                                        alt="opensea"
+                                        className="collection__social--icon"
+                                    />
+                                </a>
+
+                                <a
+                                    href={collection.link_instagram || ''}
+                                    className="collection__social--link default__hover"
+                                >
+                                    <img
+                                        src="/assets/img/insta.svg"
+                                        alt="instagram"
+                                        className="collection__social--icon"
+                                    />
+                                </a>
+
+                                <a
+                                    href={collection.link_medium || ''}
+                                    className="collection__social--link default__hover"
                                 >
                                     <img
                                         src="/assets/img/discord.svg"
                                         alt="discord"
-                                        className="collection__discord--icon"
+                                        className="collection__social--icon"
                                     />
-                                    Discord support
                                 </a>
-
-                                <div className="collection__social--inner">
-                                    <a
-                                        href={collection.link_twitter || ''}
-                                        className="collection__social--link default__hover"
-                                    >
-                                        <img
-                                            src="/assets/img/twitter.svg"
-                                            alt="twitter"
-                                            className="collection__social--icon"
-                                        />
-                                    </a>
-
-                                    <a
-                                        href={collection.link_opensea || ''}
-                                        className="collection__social--link default__hover"
-                                    >
-                                        <img
-                                            src="/assets/img/opensea.svg"
-                                            alt="opensea"
-                                            className="collection__social--icon"
-                                        />
-                                    </a>
-
-                                    <a
-                                        href={collection.link_instagram || ''}
-                                        className="collection__social--link default__hover"
-                                    >
-                                        <img
-                                            src="/assets/img/insta.svg"
-                                            alt="instagram"
-                                            className="collection__social--icon"
-                                        />
-                                    </a>
-
-                                    <a
-                                        href={collection.link_medium || ''}
-                                        className="collection__social--link default__hover"
-                                    >
-                                        <img
-                                            src="/assets/img/dots.svg"
-                                            alt="more"
-                                            className="collection__social--icon"
-                                        />
-                                    </a>
-                                </div>
                             </div>
                         </div>
 
-                        <div className="collection__social--mobile">
-                            <a
-                                href={collection.link_instagram || ''}
-                                className="collection__social--link--mobile"
-                            >
-                                <img
-                                    src="/assets/img/insta.svg"
-                                    alt="instagram"
-                                    className="collection__social--img"
-                                />
-                            </a>
-
-                            <a
-                                href={collection.link_opensea || ''}
-                                className="collection__social--link--mobile"
-                            >
-                                <img
-                                    src="/assets/img/opensea.svg"
-                                    alt="opensea"
-                                    className="collection__social--img"
-                                />
-                            </a>
-
-                            <a
-                                href={collection.link_discord || ''}
-                                className="collection__social--link--mobile"
-                            >
-                                <img
-                                    src="/assets/img/discord-white.svg"
-                                    alt="discord"
-                                    className="collection__social--img"
-                                />
-                            </a>
-
-                            <a
-                                href={collection.link_twitter || ''}
-                                className="collection__social--link--mobile line"
-                            >
-                                <img
-                                    src="/assets/img/twitter.svg"
-                                    alt="twitter"
-                                    className="collection__social--img"
-                                />
-                            </a>
-                        </div>
-
                         <div className="collection__data">
+                            <div className="collection__data--item">
+                                <h3 className="collection__data--title">
+                                    {roundInt({ num: Number(collection.volume_troded_count) })} ETH
+                                </h3>
+
+                                <p className="collection__data--text">volume traded</p>
+                            </div>
+
+                            <div className="collection__data--item">
+                                <h3 className="collection__data--title">
+                                    {roundInt({ num: Number(collection.floor_price_count) })} ETH
+                                </h3>
+
+                                <p className="collection__data--text">floor price</p>
+                            </div>
+
                             <div className="collection__data--item">
                                 <h3 className="collection__data--title">
                                     {collection.items_count}
@@ -263,67 +243,97 @@ const Collection = () => {
 
                                 <p className="collection__data--text">owners</p>
                             </div>
-
-                            <div className="collection__data--item">
-                                <h3 className="collection__data--title">
-                                    <img
-                                        src="/assets/img/eth.svg"
-                                        alt="eth"
-                                        className="collection__data--eth"
-                                    />
-                                    {roundInt({ num: Number(collection.floor_price_count) })}
-                                </h3>
-
-                                <p className="collection__data--text">floor price</p>
-                            </div>
-
-                            <div className="collection__data--item">
-                                <h3 className="collection__data--title">
-                                    <img
-                                        src="/assets/img/eth.svg"
-                                        alt="eth"
-                                        className="collection__data--eth"
-                                    />
-                                    {roundInt({ num: Number(collection.volume_troded_count) })}
-                                </h3>
-
-                                <p className="collection__data--text">volume traded</p>
-                            </div>
                         </div>
 
                         <div className="collection__desc--inner">
-                            <p className="collection__desc">{collection.description}</p>
+                            <p className={`collection__desc${fullDesc ? " full" : ""}`}>{collection.description}</p>
 
-                            <button className="button collection__get--whitelist default__hover">
-                                <img
-                                    src="/assets/img/star.svg"
-                                    alt="star"
-                                    className="collection__button--icon"
-                                />
-                                Get on WhiteList
+                            <button className="button collection__desc--full" onClick={() => setFullDesc(prev => !prev)}>
+                                See {fullDesc ? "less" : "more"}
+
+                                <img src="/assets/img/arrow-top.svg" alt="arrow" className={`collection__desc--full--icon${fullDesc ? " full" : ""}`} />
                             </button>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <div className="collection__items">
-                <div className="container">
-                    <div className="collection__items--inner">
-                        <p className="collection__items--value">
-                            {collectionTokens.results ? collectionTokens.results.length : 0} items
-                        </p>
+                        <div className="collection__filter--content">
+                            <button className="button collection__filter--button" onClick={() => setFilterActive(prev => !prev)}>
+                                <img src="/assets/img/filter.svg" alt="filter" className="collection__filter--icon" />
+                            </button>
 
-                        <div className="collection__items--content">
-                            {!collectionTokens.results || !collectionTokens.results.length ? (
-                                <div className="collection__items--none">No items to display</div>
-                            ) : (
-                                <>
-                                    {collectionTokens.results.map(t => (
-                                        <TokenItem key={t.id} token={t} />
-                                    ))}
-                                </>
-                            )}
+                            <div className="header__search--inner">
+                                <input type="text" className="input header__search" placeholder="Search" />
+
+                                <img
+                                    src="/assets/img/search.svg"
+                                    alt="search"
+                                    className="header__search--icon"
+                                />
+                            </div>
+
+                            <div className="collection__filter--order">
+                                <CustomSelect
+                                    optionsList={[
+                                        {value: "price", name: "Price low to high"},
+                                        {value: "recently", name: "Recently listed"},
+                                        {value: "recentlyBook", name: "Recently booked"},
+                                        {value: "recentlyMint", name: "Recently minted"},
+                                        {value: "rare", name: "Most rare"},
+                                        {value: "soon", name: "Ending soon"}
+                                    ]}
+                                    value={filter}
+                                    placeholder="Select filter"
+                                    onChange={filterChenge}
+                                />
+                            </div>
+
+                            <div className="collection__filter--view">
+                                <button className="button collection__filter--view--item active">
+                                    <img src="/assets/img/view1.svg" alt="view" className="collection__filter--view--icon" />
+                                </button>
+
+                                <button className="button collection__filter--view--item">
+                                    <img src="/assets/img/view2.svg" alt="view" className="collection__filter--view--icon" />
+                                </button>
+                            </div>
+
+                            <button className="button collection__get">
+                                Get on whitelist
+                            </button>
+                        </div>
+
+                        <div className="collection__content">
+                            {filterActive && <div className="collection__filter--box">
+                                <FilterItem title="Status" value="10" elements={filterData} />
+                                <FilterItem title="Position" value="8" elements={filterData} />
+                            </div>}
+
+                            <div className="collection__content--preitems">
+                                <div className="collection__content--info">
+                                    <div className="collection__content--update">
+                                        <button className="button collection__content--update--button">
+                                            <img src="/assets/img/reload.svg" alt="reload" className="collection__content--update--icon" />
+                                        </button>
+
+                                        <p className="collection__content--update--text">Updated 2m ago</p>
+                                    </div>
+
+                                    <p className="collection__items--value">
+                                        {collectionTokens.results ? collectionTokens.results.length : 0} items
+                                    </p>
+                                </div>
+
+                                <div className={`collection__content--items${filterActive ? " active" : ""}`}>
+                                    {!collectionTokens.results || !collectionTokens.results.length ? (
+                                        <div className="collection__items--none">No items to display</div>
+                                    ) : (
+                                        <>
+                                            {collectionTokens.results.map((t) => (
+                                                <TokenItem key={t.id} token={t} />
+                                            ))}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

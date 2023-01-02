@@ -78,28 +78,19 @@ const TokenItem = (props) => {
             ></Link>
 
             <div className="collection__item--data--inner">
-                <div className="collection__item--data--card">
-                    <p className="collection__item--title">{token.name}</p>
+                <p className="collection__item--title">{token.name}</p>
 
-                    <p className="collection__item--text">{token.collection.name}</p>
-                </div>
-
-                <div className="collection__item--data--price">
-                    <p className="collection__item--text right">Price</p>
-
-                    <p className="collection__item--text right bold">
-                        <img src="/assets/img/eth.svg" alt="eth" className="eth" />
-                        {roundInt({ num: Number(token.price) })}
-                    </p>
-                </div>
-            </div>
-
-            <div className="collection__item--button--inner">
-                <button className="button collection__item--button blue__button">Mint</button>
+                <p className="collection__item--text">
+                    {roundInt({ num: Number(token.price) })} ETH
+                </p>
 
                 <p className="collection__item--button--text">
                     Investor&rsquo;s royalty {roundInt({ num: Number(token.investor_royalty) })}%
                 </p>
+
+                <div className="collection__button--hidden">
+                    <button className="button collection__item--button blue__button">Mint</button>
+                </div>
             </div>
         </div>
     );
