@@ -1,17 +1,25 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
+import { DIALOG_TYPES } from '../../components/WlModals/const';
+import WLCreationDialog from '../../components/WlModals/WLCreationDialog';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
 
 import { useGetCollectionQuery, useGetFilteredTokensQuery } from '../../redux/api/dataService';
+import {
+    useGetCollectionWhiteListQuery,
+    usePostCollectionToWhitelistMutation,
+} from '../../redux/api/ugcService';
+import { onClose, onOpen } from '../../redux/dialogs/aplyToWhitelistDialog';
 import { normilizeError } from '../../utils/http/normilizeError';
 import { roundInt } from '../../utils/roundInt';
+import TokenItem from './TokenItem';
 
 import './index.css';
-import TokenItem from './TokenItem';
 
 // collection type example
 // {
@@ -62,6 +70,11 @@ import TokenItem from './TokenItem';
 const Collection = () => {
     const { id } = useParams();
 
+    const authInfo = useSelector((state) => state.auth);
+    const createWLDialog = useSelector((state) => state.aplyToWhitelistDialog);
+
+    const dispatch = useDispatch();
+
     const { data: collection, error: getCollectionError, isLoading } = useGetCollectionQuery(
         {
             id,
@@ -70,6 +83,17 @@ const Collection = () => {
             skip: !id,
         },
     );
+
+    const {
+        data: whiteListApplicationData,
+        isLoading: isWhitelistApplicationLoading,
+        isSuccess: isWhitelistApplicationSuccess,
+    } = useGetCollectionWhiteListQuery({ id }, { skip: !id });
+
+    const [
+        postWhiteList,
+        { isSuccess: isWhitelistSuccessfullyPosted, error: postWhitelistError },
+    ] = usePostCollectionToWhitelistMutation();
 
     const {
         data: collectionTokens,
@@ -90,6 +114,43 @@ const Collection = () => {
         actions: { addNotification },
     } = useContext(NotificationContext);
 
+    const [whiteListApplication, setWhiteListApplication] = useState(null);
+
+    const onGetToWhitelistHandler = useCallback(() => {
+        if (!authInfo.isAuth) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Authorize through your wallet to get items to whitelist',
+            });
+
+            return;
+        }
+
+        dispatch(onOpen(id));
+    }, [authInfo.isAuth, id]);
+
+    const closeCreationDialogHandler = useCallback(() => {
+        dispatch(onClose());
+    }, []);
+
+    const actionBtn = useMemo(() => {
+        if (!whiteListApplication) {
+            return (
+                <button
+                    className="button collection__get--whitelist default__hover"
+                    onClick={onGetToWhitelistHandler}
+                >
+                    <img
+                        src="/assets/img/star.svg"
+                        alt="star"
+                        className="collection__button--icon"
+                    />
+                    Get on WhiteList
+                </button>
+            );
+        }
+    }, [whiteListApplication]);
+
     useEffect(() => {
         if (getCollectionError) {
             addNotification({
@@ -108,7 +169,13 @@ const Collection = () => {
         }
     }, [getTokensError]);
 
-    if (!collection || !collectionTokens) {
+    useEffect(() => {
+        if (isWhitelistApplicationSuccess && whiteListApplicationData) {
+            setWhiteListApplication(whiteListApplicationData);
+        }
+    }, [whiteListApplicationData, isWhitelistApplicationSuccess]);
+
+    if (!collection || !collectionTokens || isWhitelistApplicationLoading || isTokensLoading) {
         return (
             <CenteredContainer>
                 <Loader />
@@ -294,14 +361,7 @@ const Collection = () => {
                         <div className="collection__desc--inner">
                             <p className="collection__desc">{collection.description}</p>
 
-                            <button className="button collection__get--whitelist default__hover">
-                                <img
-                                    src="/assets/img/star.svg"
-                                    alt="star"
-                                    className="collection__button--icon"
-                                />
-                                Get on WhiteList
-                            </button>
+                            {actionBtn}
                         </div>
                     </div>
                 </div>
@@ -319,7 +379,7 @@ const Collection = () => {
                                 <div className="collection__items--none">No items to display</div>
                             ) : (
                                 <>
-                                    {collectionTokens.results.map(t => (
+                                    {collectionTokens.results.map((t) => (
                                         <TokenItem key={t.id} token={t} />
                                     ))}
                                 </>
@@ -328,6 +388,13 @@ const Collection = () => {
                     </div>
                 </div>
             </div>
+
+            <WLCreationDialog
+                open={createWLDialog.isOpen}
+                dialogType={DIALOG_TYPES.PERSONS}
+                onClose={closeCreationDialogHandler}
+                onCreate={() => console.log('create')}
+            />
         </>
     );
 };

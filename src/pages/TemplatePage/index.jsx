@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 import About from '../../components/About';
 import BrandBg from '../../components/BrandBg';
 import ImgBlock from '../../components/ImgBlock';
-import Preloader from '../../common/Preloader';
+import Loader from '../../common/Loader';
+import CenteredContainer from '../../common/CenteredContainer';
 
 import { REQUEST_TYPE, useRequest } from '../../hooks/useRequest';
 import { NotificationContext } from '../../context/NotificationContext';
@@ -48,7 +49,11 @@ const TemplatePage = () => {
     }, [gettingPageError]);
 
     if (isPageLoading || !pageInfo || isAccountsLoading) {
-        return <Preloader />;
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
     }
 
     return (

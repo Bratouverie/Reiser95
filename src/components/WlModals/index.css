@@ -1,69 +1,40 @@
-.modal{
-    width: 100%;
-    height: 100vh;
-    position: fixed;
-    display: block;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    background: rgba(0, 0, 0, .5);
-    z-index: 104;
-    overflow-x: hidden;
+.modal__inner_paper {
+    width: 100% !important;
+    max-width: 650px !important;
+    margin: 0 !important;
+    min-height: calc(100% - 3.5rem) !important;
+    background-color: none !important;
+    border: none !important;
+    padding: 1rem !important;
+    min-height: 0 !important;
+    height: unset;
     overflow-y: auto;
-    opacity: 0;
-    pointer-events: none;
-    transition: .2s linear;
+    background: #26272a !important;
 }
 
-.modal.active{
-    opacity: 1;
-    pointer-events: all;
-}
-
-.modal__inner{
-    width: 100%;
-    max-width: 650px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 1.75rem auto;
-    min-height: calc(100% - 3.5rem);
-}
-
-.modal__content{
+.modal__content {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    transform: scale(0);
-    transition: .2s linear;
+    transform: none !important;
 }
 
-.modal.active .modal__content{
-    transform: scale(1);
-}
-
-.modal__content--top{
+.modal__content--top {
     width: 100%;
-    border-radius: 8px 8px 0 0;
-    background: #26272A;
-    padding: 2.5rem 3rem;
     position: relative;
 }
 
-.modal__content--bottom{
+.modal__content--bottom {
     width: 100%;
     border-radius: 0 0 8px 8px;
-    background: #26272A;
-    padding: 1.5rem 4rem 6rem 4rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    border-top: 1px solid #48494C;
+    border-top: 1px solid #48494c;
 }
 
-.modal__title{
+.modal__title {
     font-size: 2.2rem;
     font-weight: 600;
     color: #fff;
@@ -72,19 +43,19 @@
     padding: 0rem 4rem;
 }
 
-.modal__close{
+.modal__close {
     position: absolute;
     top: 27px;
     right: 30px;
     cursor: pointer;
 }
 
-.modal__text{
+.modal__text {
     font-size: 1.5rem;
     font-weight: 500;
 }
 
-.modal__input{
+.modal__input {
     background: #353639;
     padding: 1.1rem 2rem;
     border-radius: 8px;
@@ -93,33 +64,33 @@
     margin-top: 1.5rem;
 }
 
-.modal__input::placeholder{
-    color: #A3A5A8;
+.modal__input::placeholder {
+    color: #a3a5a8;
 }
 
-.modal__button{
+.modal__button {
     width: 100%;
     margin-top: 2rem;
     color: #fff;
     font-weight: 600;
     border-radius: 8px;
-    padding: 1.2rem 2rem;
-    background: #1868B7;
+    padding: 1.2rem;
+    background: #1868b7;
 }
 
-.modal__button:hover{
-    background: #0C5093;
+.modal__button:hover {
+    background: #0c5093;
 }
 
-.modal__button.confirm{
+.modal__button.confirm {
     background: #44b044;
 }
 
-.modal__button.confirm:hover{
+.modal__button.confirm:hover {
     background: #346736;
 }
 
-.modal__buttons{
+.modal__buttons {
     width: 100%;
     margin-top: 3rem;
     gap: 10px;
@@ -127,7 +98,7 @@
     flex-wrap: wrap;
 }
 
-.button__default{
+.button__default {
     width: 100%;
     color: #fff;
     font-weight: 600;
@@ -137,23 +108,23 @@
     background: #1868b7;
 }
 
-.button__default:hover{
+.button__default:hover {
     background: #104f8f;
 }
 
-.button__default.delete{
+.button__default.delete {
     background: #cc5554;
 }
 
-.button__default.delete:hover{
+.button__default.delete:hover {
     background: #9b3d3d;
 }
 
-.button__default.half{
+.button__default.half {
     width: 48.5%;
 }
 
-.modal__info{
+.modal__info {
     width: 100%;
     border-radius: 5px;
     margin-top: 1.5rem;
@@ -161,7 +132,7 @@
     padding: 1rem;
 }
 
-.modal__info--block{
+.modal__info--block {
     font-size: 1.8rem;
     color: #fff;
     max-height: 150px;
@@ -169,34 +140,38 @@
     line-height: 1.3;
 }
 
-@media(max-width: 768px){
-    .modal__inner{
-		max-width: 90%;
-	}
+.whitelist_forn {
+    width: 100%;
+}
 
-    .modal__title{
+@media (max-width: 768px) {
+    .modal__inner {
+        max-width: 90%;
+    }
+
+    .modal__title {
         font-size: 1.8rem;
     }
 }
-@media(max-width: 480px){
-    .modal__content--bottom{
-        padding: 1.5rem 2rem 4rem 2rem;
+@media (max-width: 480px) {
+    .modal__content--bottom {
+        padding: 0.5rem 1rem 1.5rem 1rem;
     }
 
-    .modal__content--top{
+    .modal__content--top {
         padding: 1.5rem 2rem;
     }
 
-    .modal__close{
+    .modal__close {
         right: 15px;
         top: 15px;
     }
 
-    .modal__title{
+    .modal__title {
         padding: 0rem 2.5rem;
     }
 
-    .button__default.half{
+    .button__default.half {
         width: 100%;
     }
 }

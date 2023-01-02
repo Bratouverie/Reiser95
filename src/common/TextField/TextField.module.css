@@ -1,0 +1,91 @@
+.root {
+    margin-top: 24px !important;
+}
+.root .inputRoot {
+    border: 1px solid #313232;
+    border-radius: 8px;
+    transition: all 200ms ease;
+}
+
+.root.error .inputRoot {
+    border-color: red;
+}
+.root.error .inputLabelRoot,
+.root.error .inputLabelRoot:after {
+    color: red !important;
+}
+.root.hidden {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
+}
+.root .inputFocused {
+    color: #fff;
+}
+.root .inputUnderline::after {
+    border-color: #fff;
+}
+.root .inputUnderline:hover {
+    border-bottom: 0;
+}
+.root .inputLabelFocused {
+    color: #fff;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.root .formHelperTextStyle {
+    color: red;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+.inputRoot.inputFocused {
+    border-color: #fff;
+}
+.inputRoot.multiline {
+    align-items: flex-start;
+    height: 120px;
+}
+.inputRoot .inputBase {
+    -moz-appearance: textfield;
+    width: 100%;
+    font-size: 1.7rem;
+    color: #fff;
+    padding: 1.3rem 1.5rem;
+    background: #313232;
+    border-radius: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: all 200ms ease;
+}
+.inputRoot .inputBase::-webkit-scrollbar {
+    border-radius: 14px;
+    width: 5px;
+}
+.inputRoot .inputBase::-webkit-scrollbar-track {
+    border-radius: 14px;
+}
+.inputRoot .inputBase::-webkit-scrollbar-thumb {
+    border-radius: 28px;
+    background: 19, 19, 46, 0.1;
+}
+.inputRoot .inputBase.styledPlaceholder {
+    font-family: 'Gilroy', sans-serif;
+}
+.inputRoot .inputBase::-webkit-outer-spin-button,
+.inputRoot .inputBase::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.disable {
+    display: none;
+}
+
+.root .inputLabelRoot {
+    color: #fff;
+    font-size: 1.7rem;
+    line-height: 1.7rem;
+    font-family: 'Gilroy', sans-serif;
+}
