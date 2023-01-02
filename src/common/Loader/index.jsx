@@ -1,6 +1,11 @@
+import { cnb } from 'cnbuilder';
 import React from 'react';
-import './index.css';
+import css from './Loader.module.css';
 
-const Loader = ({ className }) => <div className={`${className} loader`}></div>;
+const Loader = ({ className }) => (
+    <div className={cnb(css.clearLoading, css.loadingEffect, className)}>
+        <span></span>
+    </div>
+);
 
 export default React.memo(Loader);

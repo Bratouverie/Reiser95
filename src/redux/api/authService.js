@@ -22,7 +22,7 @@ export const authApi = createApi({
             return headers;
         },
     }),
-    endpoints: builder => ({
+    endpoints: (builder) => ({
         // GET
         getProfile: builder.query({
             query: () => ({
