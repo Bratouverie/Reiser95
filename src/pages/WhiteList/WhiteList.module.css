@@ -1,0 +1,134 @@
+.headerText {
+    color: #fff;
+    font-weight: 600;
+    text-align: center;
+    font-size: 18px;
+}
+
+.beforeTableElement {
+    height: 16px;
+    width: 100%;
+}
+
+.notFoundContainer {
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.cellRoot {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.imageRoot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.userNameWrapper {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.tooltip {
+    left: 10px;
+    font-family: 'Gilroy', sans-serif;
+    font-size: 14px !important;
+    font-weight: 400;
+    line-height: 20px !important;
+    background-color: #515151 !important;
+    border-radius: 8px;
+}
+
+.overflowedTextContainer {
+    max-width: 120px;
+}
+
+.overflowedText {
+    word-wrap: break-word;
+    color: white;
+    word-break: break-all;
+}
+
+.overflowedTextWrap {
+    word-wrap: break-word;
+    color: white;
+    word-break: break-all;
+}
+.tooltipContainer {
+    white-space: pre-wrap;
+}
+.overflowedEllipsis {
+    max-width: 120px;
+    color: white;
+    overflow: hidden;
+    background-color: inherit;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.extraMetadataCounter {
+    padding: 2px 8px 2px 8px;
+    color: white;
+    background: #515151;
+    border-radius: 50px;
+}
+
+.firtsMetaDataElems {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.cellRoot .radioRoot {
+    color: white;
+    padding: 0;
+}
+.cellRoot .radioChecked {
+    color: #00b046 !important;
+}
+
+.confirmIconBox,
+.rejectIconBox {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 200ms ease-in-out;
+}
+
+.confirmIconBox {
+    background-color: #00b046;
+}
+
+.rejectIconBox {
+    background-color: #ff5259;
+}
+
+.buttonsCell {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.confirmIcon,
+.rejectIcon {
+    width: 24px !important;
+    height: 24px !important;
+    color: white;
+}

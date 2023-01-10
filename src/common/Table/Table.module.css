@@ -122,3 +122,24 @@
     align-items: center;
     flex-wrap: nowrap;
 }
+
+.walletCustomChildWrapper {
+    max-width: 120px;
+    word-break: break-all;
+}
+
+.statusCircle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.walletCell {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 1;
+}

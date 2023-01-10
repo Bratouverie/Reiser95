@@ -1,26 +1,33 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-
+import { Grid, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
 import { DIALOG_TYPES } from '../../components/WlModals/const';
 import WLCreationDialog from '../../components/WlModals/WLCreationDialog';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
-
 import { useGetCollectionQuery, useGetFilteredTokensQuery } from '../../redux/api/dataService';
 import {
     useGetCollectionWhiteListQuery,
-    usePostCollectionToWhitelistMutation,
+    useHideWhiteListRequestMutation,
 } from '../../redux/api/ugcService';
 import { onClose, onOpen } from '../../redux/dialogs/aplyToWhitelistDialog';
+import {
+    onClose as onDeletationDialogClose,
+    onOpen as onDeletationDialogOpen,
+} from '../../redux/dialogs/deleteEntityDialog';
 import { normilizeError } from '../../utils/http/normilizeError';
 import { roundInt } from '../../utils/roundInt';
 import TokenItem from './TokenItem';
+import { pagesSelectors } from '../../redux/slices/pages';
+import { WHITE_LIST_APPLICATION_STATUSES } from '../../const/collection/WHITE_LIST_APPLICATION_STATUSES';
 
 import './index.css';
-import { pagesSelectors } from '../../redux/slices/pages';
+import DeleteEntityDialog from '../../components/DeleteEntityDialog/DeleteEntityDialog';
 
 import { CustomSelect } from '../../common/CustomSelect';
 import FilterItem from '../../components/FilterItem';
@@ -117,9 +124,8 @@ const Collection = () => {
 
     const authInfo = useSelector((state) => state.auth);
     const createWLDialog = useSelector((state) => state.aplyToWhitelistDialog);
+    const { isOpen, id: deletedWhiteListId } = useSelector((state) => state.deleteEntityDialog);
     const pages = useSelector(pagesSelectors.selectAll);
-
-    console.log({ pages });
 
     const dispatch = useDispatch();
 
@@ -136,12 +142,9 @@ const Collection = () => {
         data: whiteListApplicationData,
         isLoading: isWhitelistApplicationLoading,
         isSuccess: isWhitelistApplicationSuccess,
+        isError: isWhitelistApplicationFailed,
+        refetch: refetchWhiteListApplication,
     } = useGetCollectionWhiteListQuery({ id }, { skip: !id });
-
-    const [
-        postWhiteList,
-        { isSuccess: isWhitelistSuccessfullyPosted, error: postWhitelistError },
-    ] = usePostCollectionToWhitelistMutation();
 
     const {
         data: collectionTokens,
@@ -158,6 +161,16 @@ const Collection = () => {
         },
     );
 
+    const [
+        hideWhiteListRequest,
+        {
+            isSuccess: isWhiteListHidden,
+            error: whiteListHiddenError,
+            isLoading: isHideWhiteListProccessing,
+            reset,
+        },
+    ] = useHideWhiteListRequestMutation();
+
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
@@ -172,6 +185,7 @@ const Collection = () => {
     }, [pages, collection]);
 
     const onGetToWhitelistHandler = useCallback(() => {
+        console.log('onGetToWhitelistHandler');
         if (!authInfo.isAuth) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
@@ -187,6 +201,20 @@ const Collection = () => {
     const closeCreationDialogHandler = useCallback(() => {
         dispatch(onClose());
     }, []);
+
+    const closeDeletationDialogHandler = useCallback(() => {
+        dispatch(onDeletationDialogClose());
+    }, []);
+
+    const onDeleteHandler = useCallback((id) => {
+        hideWhiteListRequest({ id });
+    }, []);
+
+    const onDeleteWhiteListRequestHandler = useCallback(() => {
+        if (whiteListApplication && whiteListApplication.id) {
+            dispatch(onDeletationDialogOpen(whiteListApplication.id));
+        }
+    }, [whiteListApplication]);
 
     const actionBtn = useMemo(() => {
         if (!whiteListApplication) {
@@ -204,6 +232,42 @@ const Collection = () => {
                 </button>
             );
         }
+
+        if (
+            [WHITE_LIST_APPLICATION_STATUSES.NEW, WHITE_LIST_APPLICATION_STATUSES.RED].includes(
+                whiteListApplication.status,
+            )
+        ) {
+            return (
+                <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                    flexWrap="nowrap"
+                    gap={1}
+                >
+                    <span className="collection__whiteList--addedTitle">Added to WhiteList</span>
+                    <IconButton disableRipple sx={{ padding: 0 }} onClick={onGetToWhitelistHandler}>
+                        <div className="collection__whiteList--editIconBox">
+                            <ModeEditOutlineIcon
+                                classes={{ root: 'collection__whiteList--editIcon' }}
+                            />
+                        </div>
+                    </IconButton>
+                    <IconButton
+                        disableRipple
+                        sx={{ padding: 0 }}
+                        onClick={onDeleteWhiteListRequestHandler}
+                    >
+                        <div className="collection__whiteList--trashIconBox">
+                            <DeleteIcon classes={{ root: 'collection__whiteList--deleteIcon' }} />
+                        </div>
+                    </IconButton>
+                </Grid>
+            );
+        }
+        console.log({ whiteListApplication });
     }, [whiteListApplication]);
 
     useEffect(() => {
@@ -229,6 +293,26 @@ const Collection = () => {
             setWhiteListApplication(whiteListApplicationData);
         }
     }, [whiteListApplicationData, isWhitelistApplicationSuccess]);
+
+    useEffect(() => {
+        if (isWhiteListHidden) {
+            closeDeletationDialogHandler();
+            refetchWhiteListApplication();
+        }
+    }, [isWhiteListHidden]);
+
+    useEffect(() => {
+        if (isWhitelistApplicationFailed && whiteListApplication) {
+            setWhiteListApplication(null);
+        }
+    }, [isWhitelistApplicationFailed, whiteListApplication]);
+
+    useEffect(
+        () => () => {
+            reset();
+        },
+        [],
+    );
 
     if (!collection || !collectionTokens || isWhitelistApplicationLoading || isTokensLoading) {
         return (
@@ -705,7 +789,7 @@ const Collection = () => {
                 </div>
             </div>
 
-            {collectionPage && (
+            {collectionPage && collection && (
                 <WLCreationDialog
                     open={createWLDialog.isOpen}
                     dialogType={
@@ -713,8 +797,20 @@ const Collection = () => {
                             ? collectionPage.application_form
                             : DIALOG_TYPES.PERSONS
                     }
+                    whiteListApplicationData={whiteListApplicationData}
+                    collectionId={collection.id}
                     onClose={closeCreationDialogHandler}
-                    onCreate={() => console.log('create')}
+                    onCreateSuccessfully={refetchWhiteListApplication}
+                />
+            )}
+
+            {isOpen && (
+                <DeleteEntityDialog
+                    open={isOpen}
+                    isDeletationProccessing={isHideWhiteListProccessing}
+                    onClose={closeDeletationDialogHandler}
+                    onDelete={onDeleteHandler}
+                    title={'Are you sure you want to delete WhiteList request?'}
                 />
             )}
         </>

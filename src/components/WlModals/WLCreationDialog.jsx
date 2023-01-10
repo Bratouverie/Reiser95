@@ -7,18 +7,41 @@ import BrandModal from './BrandModal';
 import CarModal from './CarModal';
 import NrcModal from './NrcModal';
 import WatchesModal from './WatchesModal';
-import { usePostCollectionToWhitelistMutation } from '../../redux/api/ugcService';
+import {
+    usePatchCollectionToWhitelistMutation,
+    usePostCollectionToWhitelistMutation,
+} from '../../redux/api/ugcService';
 import { NotificationContext } from '../../context/NotificationContext';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { normilizeError } from '../../utils/http/normilizeError';
 
 const WLCreationDialog = (props) => {
-    const { open, dialogType, onClose, collectionId } = props;
+    const {
+        open,
+        dialogType,
+        onClose,
+        onCreateSuccessfully,
+        whiteListApplicationData,
+        collectionId,
+    } = props;
 
     const [
-        postCollection,
-        { isLoading, isSuccess, error },
+        postWhiteListApplication,
+        {
+            isLoading: isPostWhiteListApplicationLoading,
+            isSuccess: isPostWhiteListApplicationSuccess,
+            error: postWhiteListApplicationError,
+        },
     ] = usePostCollectionToWhitelistMutation();
+
+    const [
+        patchWhiteListApplication,
+        {
+            isLoading: isPatchWhiteListApplicationLoading,
+            isSuccess: isPatchWhiteListApplicationSuccess,
+            error: patchWhiteListApplicationError,
+        },
+    ] = usePatchCollectionToWhitelistMutation();
 
     const {
         actions: { addNotification },
@@ -45,29 +68,38 @@ const WLCreationDialog = (props) => {
 
     const onCreateHandler = useCallback(
         (data) => {
-            console.log({ data });
-            // postCollection({ id: collectionId, data });
+            if (whiteListApplicationData) {
+                patchWhiteListApplication({ id: whiteListApplicationData.id, data });
+            } else {
+                postWhiteListApplication({ id: collectionId, data });
+            }
         },
-        [collectionId],
+        [collectionId, whiteListApplicationData],
     );
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isPostWhiteListApplicationSuccess || isPatchWhiteListApplicationSuccess) {
             addNotification({
                 type: NOTIFICATION_TYPES.SUCCESS,
-                text: 'Collection successfully added to whitelist',
+                text: `Collection successfully ${
+                    isPatchWhiteListApplicationSuccess ? 'edited' : 'added'
+                } to whitelist`,
             });
+            onCreateSuccessfully();
+            onClose();
         }
-    }, [isSuccess]);
+    }, [isPostWhiteListApplicationSuccess, isPatchWhiteListApplicationSuccess]);
 
     useEffect(() => {
-        if (error) {
+        if (postWhiteListApplicationError || patchWhiteListApplicationError) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
-                text: normilizeError(error),
+                text: normilizeError(
+                    postWhiteListApplicationError || patchWhiteListApplicationError,
+                ),
             });
         }
-    }, [error]);
+    }, [postWhiteListApplicationError, patchWhiteListApplicationError]);
 
     return (
         <Dialog
@@ -80,8 +112,11 @@ const WLCreationDialog = (props) => {
             {DialogComponent && (
                 <DialogComponent
                     onClose={onClose}
-                    onCreate={onCreateHandler}
-                    isLoading={isLoading}
+                    onSubmit={onCreateHandler}
+                    whiteListApplicationData={whiteListApplicationData}
+                    isLoading={
+                        isPostWhiteListApplicationLoading || isPatchWhiteListApplicationLoading
+                    }
                 />
             )}
         </Dialog>
