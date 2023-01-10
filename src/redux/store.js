@@ -7,7 +7,11 @@ import blockchainsSlice from './slices/blockchains';
 import tokensSlice from './slices/tokens';
 import collectionsSlice from './slices/collections';
 import packsSlice from './slices/packs';
-import { aplyToWhitelistDialogSlice, deleteEntityDialogSlice } from './dialogs';
+import {
+    aplyToWhitelistDialogSlice,
+    deleteEntityDialogSlice,
+    confirmAplicationDialogSlice,
+} from './dialogs';
 import { authApi } from './api/authService';
 import { dataApi } from './api/dataService';
 import { userApi } from './api/userService';
@@ -43,6 +47,7 @@ export const store = configureStore({
         packs: packsSlice,
         deleteEntityDialog: deleteEntityDialogSlice,
         aplyToWhitelistDialog: aplyToWhitelistDialogSlice,
+        confirmAplicationDialog: confirmAplicationDialogSlice,
         [authApi.reducerPath]: authApi.reducer,
         [dataApi.reducerPath]: dataApi.reducer,
         [userApi.reducerPath]: userApi.reducer,

@@ -4,25 +4,23 @@ import { useSelector } from 'react-redux';
 import Dialog from '../../common/Dialog';
 import Loader from '../../common/Loader';
 
-import css from './DeleteEntityDialog.module.css';
+import css from './ConfirmDialog.module.css';
 
-const DeleteEntityDialog = (props) => {
+const ConfirmDialog = (props) => {
     const {
         open,
         onClose,
         title,
-        deleteBtnText,
+        confirmBtnText,
         isDeletationProccessing = false,
-        onDelete,
+        onConfirm,
     } = props;
 
-    const { id } = useSelector((state) => {
-        return state.deleteEntityDialog;
-    });
+    const { id } = useSelector((state) => state.confirmAplicationDialog);
 
-    const onDeleteHandler = useCallback(() => {
+    const onConfirmHandler = useCallback(() => {
         if (id) {
-            onDelete(id);
+            onConfirm(id);
         }
     }, [id]);
 
@@ -60,11 +58,11 @@ const DeleteEntityDialog = (props) => {
                     <Button
                         variant="contained"
                         size="large"
-                        color="error"
-                        onClick={onDeleteHandler}
-                        className={css.deleteBtn}
+                        color="success"
+                        onClick={onConfirmHandler}
+                        className={css.confirmBtn}
                     >
-                        {deleteBtnText || 'Delete'}
+                        {confirmBtnText || 'Confirm'}
                     </Button>
                 )}
             </Grid>
@@ -72,4 +70,4 @@ const DeleteEntityDialog = (props) => {
     );
 };
 
-export default React.memo(DeleteEntityDialog);
+export default React.memo(ConfirmDialog);

@@ -4,8 +4,8 @@ const INITAL_STATE = {
     isOpen: false,
 };
 
-export const aplyToWhitelistDialogSlice = createSlice({
-    name: 'aplyToWhitelistDialo',
+export const confirmAplicationDialogSlice = createSlice({
+    name: 'confirmAplicationDialog',
     initialState: INITAL_STATE,
     reducers: {
         onOpen: (state, action) => {
@@ -16,6 +16,6 @@ export const aplyToWhitelistDialogSlice = createSlice({
     },
 });
 
-export const { onOpen, onClose } = aplyToWhitelistDialogSlice.actions;
+export const { onOpen, onClose } = confirmAplicationDialogSlice.actions;
 
-export default aplyToWhitelistDialogSlice.reducer;
+export default confirmAplicationDialogSlice.reducer;

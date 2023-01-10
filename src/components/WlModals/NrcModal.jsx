@@ -18,9 +18,9 @@ const schema = Joi.object({
     filed_8: Joi.string().required(),
     filed_9: Joi.string().required(),
     filed_10: Joi.string().required(),
-    filed_11: Joi.string().required(),
-    filed_12: Joi.string().required(),
-    filed_13: Joi.string().required(),
+    description: Joi.string().required(),
+    email: Joi.string().required(),
+    discord_name: Joi.string().required(),
 });
 
 const SIZE_LIST = [
@@ -36,7 +36,7 @@ const SIZE_LIST = [
 ];
 
 const NrcModal = (props) => {
-    const { onClose, onCreate, isLoading } = props;
+    const { onClose, onSubmit, whiteListApplicationData, isLoading } = props;
 
     const { validationResolver } = useValidationResolver(schema);
 
@@ -47,11 +47,12 @@ const NrcModal = (props) => {
         formState: { errors: formErrors },
     } = useForm({
         validationResolver,
+        defaultValues: whiteListApplicationData,
         mode: 'onSubmit',
     });
 
     const handleSubmit = onSubmitForm((data) => {
-        console.log({ data });
+        onSubmit(data);
     });
 
     return (
@@ -159,10 +160,10 @@ const NrcModal = (props) => {
                         <TextField
                             label="Describe story of the bottle"
                             placeholder="e.g. I had a friend that I had not seen for 5 years come to visit me. To celebrate I got a bottle of Jack, which I had been saving for a special occasion. We drank and my friend told me many interesting stories that had happened to him. It was a wonderful memory..."
-                            name="filed_11"
+                            name="description"
                             multiline
-                            inputProps={{ ...register('filed_11', { required: true }) }}
-                            error={formErrors && formErrors['filed_11']}
+                            inputProps={{ ...register('description', { required: true }) }}
+                            error={formErrors && formErrors['description']}
                         />
 
                         <div className="create__item">
@@ -174,16 +175,16 @@ const NrcModal = (props) => {
                         <TextField
                             label="Specify data for feedback"
                             placeholder="Email"
-                            name="filed_12"
-                            inputProps={{ ...register('filed_12', { required: true }) }}
-                            error={formErrors && formErrors['filed_12']}
+                            name="email"
+                            inputProps={{ ...register('email', { required: true }) }}
+                            error={formErrors && formErrors['email']}
                         />
                         <TextField
                             label="Discord name"
                             placeholder="Discord name"
-                            name="filed_13"
-                            inputProps={{ ...register('filed_13', { required: true }) }}
-                            error={formErrors && formErrors['filed_13']}
+                            name="discord_name"
+                            inputProps={{ ...register('discord_name', { required: true }) }}
+                            error={formErrors && formErrors['discord_name']}
                         />
 
                         <div className="modal__buttons">

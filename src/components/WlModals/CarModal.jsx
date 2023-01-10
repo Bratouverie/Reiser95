@@ -18,13 +18,13 @@ const schema = Joi.object({
     filed_8: Joi.string().required(),
     filed_9: Joi.string().required(),
     filed_10: Joi.string().required(),
-    filed_11: Joi.string().required(),
-    filed_12: Joi.string().required(),
-    filed_13: Joi.string().required(),
+    description: Joi.string().required(),
+    email: Joi.string().required(),
+    discord_name: Joi.string().required(),
 });
 
 const CarModal = (props) => {
-    const { onClose, onCreate, isLoading } = props;
+    const { onClose, onSubmit, whiteListApplicationData, isLoading } = props;
 
     const { validationResolver } = useValidationResolver(schema);
 
@@ -34,11 +34,12 @@ const CarModal = (props) => {
         formState: { errors: formErrors },
     } = useForm({
         validationResolver,
+        defaultValues: whiteListApplicationData,
         mode: 'onSubmit',
     });
 
     const handleSubmit = onSubmitForm((data) => {
-        console.log({ data });
+        onSubmit(data);
     });
 
     return (
@@ -136,10 +137,10 @@ const CarModal = (props) => {
                         <TextField
                             label="Describe story of the car"
                             placeholder="e.g. The battery in my car ran out. My phone also ran out. I went to the nearest house to call. A beautiful girl opened the door for me. We met and started dating. Then we got married. A miracle? Thank you Tesla!"
-                            name="filed_11"
+                            name="description"
                             multiline
-                            inputProps={{ ...register('filed_11', { required: true }) }}
-                            error={formErrors && formErrors['filed_11']}
+                            inputProps={{ ...register('description', { required: true }) }}
+                            error={formErrors && formErrors['description']}
                         />
                         <div className="create__item">
                             <p className="create__item--title">
@@ -151,17 +152,17 @@ const CarModal = (props) => {
                         <TextField
                             label="Specify data for feedback"
                             placeholder="Email"
-                            name="filed_12"
-                            inputProps={{ ...register('filed_12', { required: true }) }}
-                            error={formErrors && formErrors['filed_12']}
+                            name="email"
+                            inputProps={{ ...register('email', { required: true }) }}
+                            error={formErrors && formErrors['email']}
                         />
 
                         <TextField
                             label="Discord name"
                             placeholder="Discord name"
-                            name="filed_13"
-                            inputProps={{ ...register('filed_13', { required: true }) }}
-                            error={formErrors && formErrors['filed_13']}
+                            name="discord_name"
+                            inputProps={{ ...register('discord_name', { required: true }) }}
+                            error={formErrors && formErrors['fidiscord_nameled_13']}
                         />
 
                         <div className="modal__buttons">

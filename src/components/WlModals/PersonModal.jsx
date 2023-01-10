@@ -8,12 +8,12 @@ import { useValidationResolver } from '../../hooks/useValidationResolver';
 import './index.css';
 
 const schema = Joi.object({
-    filed_1: Joi.string().required(),
-    filed_2: Joi.string().required(),
+    email: Joi.string().required(),
+    discord_name: Joi.string().required(),
 });
 
 const PersonModal = (props) => {
-    const { onClose, onCreate, isLoading } = props;
+    const { onClose, onSubmit, whiteListApplicationData, isLoading } = props;
 
     const { validationResolver } = useValidationResolver(schema);
 
@@ -23,11 +23,12 @@ const PersonModal = (props) => {
         formState: { errors: formErrors },
     } = useForm({
         validationResolver,
+        defaultValues: whiteListApplicationData,
         mode: 'onSubmit',
     });
 
     const handleSubmit = onSubmitForm((data) => {
-        console.log({ data });
+        onSubmit(data);
     });
 
     return (
@@ -54,17 +55,17 @@ const PersonModal = (props) => {
                         <TextField
                             label="Specify data for feedback"
                             placeholder="Email"
-                            name="filed_1"
-                            inputProps={{ ...register('filed_1', { required: true }) }}
-                            error={formErrors && formErrors['filed_1']}
+                            name="email"
+                            inputProps={{ ...register('email', { required: true }) }}
+                            error={formErrors && formErrors['email']}
                         />
 
                         <TextField
                             label="Discord name"
                             placeholder="Discord name"
-                            name="filed_2"
-                            inputProps={{ ...register('filed_2', { required: true }) }}
-                            error={formErrors && formErrors['filed_2']}
+                            name="discord_name"
+                            inputProps={{ ...register('discord_name', { required: true }) }}
+                            error={formErrors && formErrors['discord_name']}
                         />
 
                         <div className="modal__buttons">
