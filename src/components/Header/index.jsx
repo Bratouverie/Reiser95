@@ -151,6 +151,8 @@ const Header = ({ isAdminPage = false }) => {
                                                     to={`/${page.url}`}
                                                     className="header__admin--nav--drop--link"
                                                 >
+                                                    <img src="/assets/img/car.svg" alt="icon" className="header__admin--nav--drop--icon" />
+
                                                     {page.name}
                                                 </Link>
                                             ))}
@@ -203,7 +205,9 @@ const Header = ({ isAdminPage = false }) => {
                                 </nav>
                             )}
 
-                            <AuthElements setActive={setWalletMenu} menu={menu} setMenu={setMenu} />
+                            {isAdminPage
+                            ? <AuthElements setActive={setWalletMenu} menu={menuAdmin} setMenu={setMenuAdmin} />
+                            : <AuthElements setActive={setWalletMenu} menu={menu} setMenu={setMenu} />}
                         </div>
                     </div>
                 </div>
@@ -212,7 +216,7 @@ const Header = ({ isAdminPage = false }) => {
             {isAdminPage ? (
                 <MenuMobileAdmin active={menuAdmin} setActive={setMenuAdmin} />
             ) : (
-                <MenuMobile active={menu} setActive={setMenu} />
+                <MenuMobile active={menu} setActive={setMenu} setActiveConnect={setWalletMenu} />
             )}
 
             <WalletMenu active={walletMenu} setActive={setWalletMenu} />

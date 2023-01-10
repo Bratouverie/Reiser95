@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FilterItem = ({title, value = "", elements}) => {
+const FilterItem = ({title, value = "", elements, filter = false}) => {
     const [open, setOpen] = React.useState(true);
 
     return (
@@ -20,6 +20,16 @@ const FilterItem = ({title, value = "", elements}) => {
             </div>
 
             {open && <div className="collection__filter--box--values">
+                {filter && <div className="collection__search--inner">
+                    <input type="text" className="input header__search" placeholder="Filter" />
+
+                    <img
+                        src="/assets/img/search.svg"
+                        alt="search"
+                        className="header__search--icon"
+                    />
+                </div>}
+
                 {elements.map((data, key) => (
                     <div className="collection__filter--box--value">
                         <input type="checkbox" className="checkbox" id={`${key}_${data.text}`} />

@@ -75,7 +75,15 @@ const TokenItem = (props) => {
                     backgroundPosition: 'center',
                 }}
                 className="collection__item--img--inner"
-            ></Link>
+            >
+                <div className="collection__item--chain">
+                    <img src="/assets/img/eth-black.svg" alt="eth" className="collection__item--chain--icon" />
+                </div>
+
+                <div className="collection__item--video">
+                    <img src="/assets/img/video.svg" alt="video" className="collection__item--video--icon" />
+                </div>
+            </Link>
 
             <div className="collection__item--data--inner">
                 <p className="collection__item--title">{token.name}</p>
@@ -85,7 +93,7 @@ const TokenItem = (props) => {
                 </p>
 
                 <p className="collection__item--button--text">
-                    Investor&rsquo;s royalty {roundInt({ num: Number(token.investor_royalty) })}%
+                    Investor fee: {roundInt({ num: Number(token.investor_royalty) })}%
                 </p>
 
                 <div className="collection__button--hidden">

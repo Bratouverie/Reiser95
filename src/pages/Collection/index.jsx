@@ -15,6 +15,7 @@ import TokenItem from './TokenItem';
 
 import {CustomSelect} from '../../common/CustomSelect';
 import FilterItem from '../../components/FilterItem';
+import set from 'date-fns/esm/set/index';
 
 // collection type example
 // {
@@ -68,9 +69,18 @@ const filterData = [
     },
     {
         text: "Minted"
+    }
+]
+
+const filterData2 = [
+    {
+        text: "Male 1"
     },
     {
-        text: "Status 3"
+        text: "Male 2"
+    },
+    {
+        text: "Male 3"
     }
 ]
 
@@ -78,7 +88,18 @@ const Collection = () => {
     const { id } = useParams();
     const [fullDesc, setFullDesc] = React.useState(false);
     const [filter, setFilter] = React.useState("price");
-    const [filterActive, setFilterActive] = React.useState(true);
+    const [filterActive, setFilterActive] = React.useState(false);
+    const [sortActive, setSortActive] = React.useState(false);
+    const [search, setSearch] = React.useState("");
+    const [social, setSocial] = React.useState(false);
+
+    const changeSearch = (e) => {
+        setSearch(e.target.value);
+    }
+
+    const emptySearch = () => {
+        setSearch("");
+    }
 
     const filterChenge = value => {
         setFilter(value);
@@ -151,8 +172,52 @@ const Collection = () => {
             ></div>
 
             <div className="collection">
+                <div className="collection__social--mobile">
+                    <a href="#" className="collection__social--share">
+                        <img src="/assets/img/share.svg" alt="share" />
+                    </a>
+
+                    <div className="collection__dots--inner">
+                        <img src="/assets/img/dots.svg" alt="dots" className="collection__social--dots" onClick={() => setSocial(prev => !prev)} />
+
+                        {social && <div className="collection__dots--social">
+                            <p className="collection__dots--title">
+                                Links
+                            </p>
+
+                            <a href="#" className="collection__dots--link">
+                                <img src="/assets/img/insta.svg" alt="insta" className="collection__dots--link--icon" />
+
+                                Instagram
+                            </a>
+
+                            <a href="#" className="collection__dots--link">
+                                <img src="/assets/img/opensea.svg" alt="opensea" className="collection__dots--link--icon" />
+
+                                OpenSea
+                            </a>
+
+                            <a href="#" className="collection__dots--link">
+                                <img src="/assets/img/discord.svg" alt="Discord" className="collection__dots--link--icon" />
+
+                                Discord
+                            </a>
+
+                            <a href="#" className="collection__dots--link">
+                                <img src="/assets/img/twitter.svg" alt="Twitter" className="collection__dots--link--icon" />
+
+                                Twitter
+                            </a>
+                        </div>}
+                    </div>
+                </div>
+
                 <div className="container">
                     <div className="collection__inner">
+                        <div className="collection__chain">
+                            <img src="/assets/img/eth-black.svg" alt="icon" className="collection__chain--icon" />
+                        </div>
+
                         <div className="collection__avatar--inner">
                             <img
                                 src={collection.logo}
@@ -167,7 +232,7 @@ const Collection = () => {
                             <div className="collection__social--inner">
                                 <a
                                     href={collection.link_twitter || ''}
-                                    className="collection__social--link default__hover"
+                                    className="collection__social--link"
                                 >
                                     <img
                                         src="/assets/img/twitter.svg"
@@ -178,7 +243,7 @@ const Collection = () => {
 
                                 <a
                                     href={collection.link_opensea || ''}
-                                    className="collection__social--link default__hover"
+                                    className="collection__social--link"
                                 >
                                     <img
                                         src="/assets/img/opensea.svg"
@@ -189,7 +254,7 @@ const Collection = () => {
 
                                 <a
                                     href={collection.link_instagram || ''}
-                                    className="collection__social--link default__hover"
+                                    className="collection__social--link"
                                 >
                                     <img
                                         src="/assets/img/insta.svg"
@@ -200,7 +265,7 @@ const Collection = () => {
 
                                 <a
                                     href={collection.link_medium || ''}
-                                    className="collection__social--link default__hover"
+                                    className="collection__social--link"
                                 >
                                     <img
                                         src="/assets/img/discord.svg"
@@ -217,7 +282,7 @@ const Collection = () => {
                                     {roundInt({ num: Number(collection.volume_troded_count) })} ETH
                                 </h3>
 
-                                <p className="collection__data--text">volume traded</p>
+                                <p className="collection__data--text">total volume</p>
                             </div>
 
                             <div className="collection__data--item">
@@ -248,26 +313,45 @@ const Collection = () => {
                         <div className="collection__desc--inner">
                             <p className={`collection__desc${fullDesc ? " full" : ""}`}>{collection.description}</p>
 
-                            <button className="button collection__desc--full" onClick={() => setFullDesc(prev => !prev)}>
+                            <div className="collection__desc--full" onClick={() => setFullDesc(prev => !prev)}>
                                 See {fullDesc ? "less" : "more"}
 
                                 <img src="/assets/img/arrow-top.svg" alt="arrow" className={`collection__desc--full--icon${fullDesc ? " full" : ""}`} />
-                            </button>
+                            </div>
                         </div>
 
                         <div className="collection__filter--content">
                             <button className="button collection__filter--button" onClick={() => setFilterActive(prev => !prev)}>
                                 <img src="/assets/img/filter.svg" alt="filter" className="collection__filter--icon" />
+
+                                <p className="collection__filter--button--text">
+                                    Filters
+                                </p>
                             </button>
 
-                            <div className="header__search--inner">
-                                <input type="text" className="input header__search" placeholder="Search" />
+                            <button className="button collection__sort--button" onClick={() => setSortActive(prev => !prev)}>
+                                <img src="/assets/img/sort.svg" alt="sort" className="collection__filter--icon" />
+
+                                <p className="collection__sort--button--text">
+                                    Sort
+                                </p>
+                            </button>
+
+                            <div className="collection__search--inner">
+                                <input type="text" className="input header__search" placeholder="Search by token name" value={search} onChange={changeSearch} />
 
                                 <img
                                     src="/assets/img/search.svg"
                                     alt="search"
                                     className="header__search--icon"
                                 />
+
+                                {search && <img
+                                    src="/assets/img/cross.svg"
+                                    alt="cross"
+                                    className="header__search--remove"
+                                    onClick={emptySearch}
+                                />}
                             </div>
 
                             <div className="collection__filter--order">
@@ -303,8 +387,68 @@ const Collection = () => {
 
                         <div className="collection__content">
                             {filterActive && <div className="collection__filter--box">
-                                <FilterItem title="Status" value="10" elements={filterData} />
-                                <FilterItem title="Position" value="8" elements={filterData} />
+                                <div className="collection__filter--title--box">
+                                    <p className="collection__filter--title">
+                                        Filters
+                                    </p>
+
+                                    <img src="/assets/img/cross2.svg" alt="cross" className="collection__filter--title--cross" onClick={() => setFilterActive(prev => !prev)} />
+                                </div>
+
+                                <FilterItem title="Status" value="2" elements={filterData} />
+                                <FilterItem title="Character 1" value="3" elements={filterData2} filter />
+
+                                <div className="collection__filter--buttons">
+                                    <button className="button collection__filter--button--filter">
+                                        Clear all
+                                    </button>
+
+                                    <button className="button collection__filter--button--filter blue__button">
+                                        Done
+                                    </button>
+                                </div>
+                            </div>}
+
+                            {sortActive && <div className="collection__sort--box">
+                                <div className="collection__filter--title--box">
+                                    <p className="collection__filter--title">
+                                        Sort by
+                                    </p>
+
+                                    <img src="/assets/img/cross2.svg" alt="cross" className="collection__filter--title--cross" onClick={() => setSortActive(prev => !prev)} />
+                                </div>
+
+                                <div className="collection__sort--content">
+                                    <div className="collection__sort--item">
+                                        <input type="radio" className="radio" name="sort" id="sort1" />
+
+                                        <label htmlFor="sort1" className="collection__sort--item--label">
+                                            Recently listed
+                                        </label>
+                                    </div>
+
+                                    <div className="collection__sort--item">
+                                        <input type="radio" className="radio" name="sort" id="sort2" />
+
+                                        <label htmlFor="sort2" className="collection__sort--item--label">
+                                            Recently booked
+                                        </label>
+                                    </div>
+
+                                    <div className="collection__sort--item">
+                                        <input type="radio" className="radio" name="sort" id="sort3" />
+
+                                        <label htmlFor="sort3" className="collection__sort--item--label">
+                                            Recently minted
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div className="collection__filter--buttons">
+                                    <button className="button collection__sort--button--filter blue__button">
+                                        Done
+                                    </button>
+                                </div>
                             </div>}
 
                             <div className="collection__content--preitems">
@@ -320,6 +464,30 @@ const Collection = () => {
                                     <p className="collection__items--value">
                                         {collectionTokens.results ? collectionTokens.results.length : 0} items
                                     </p>
+                                </div>
+
+                                <div className="collection__filter--active">
+                                    <div className="collection__filter--active--content">
+                                        <button className="button collection__filter--active--item">
+                                            <p className="collection__filter--active--item--text">
+                                                1st ten
+                                            </p>
+
+                                            <img src="/assets/img/cross2.svg" alt="cross" className="collection__filter--active--item--delete" />
+                                        </button>
+
+                                        <button className="button collection__filter--active--item">
+                                            <p className="collection__filter--active--item--text">
+                                                2nd ten
+                                            </p>
+
+                                            <img src="/assets/img/cross2.svg" alt="cross" className="collection__filter--active--item--delete" />
+                                        </button>
+                                    </div>
+
+                                    <button className="button collection__filter--clear">
+                                        Clear All
+                                    </button>
                                 </div>
 
                                 <div className={`collection__content--items${filterActive ? " active" : ""}`}>

@@ -2,54 +2,6 @@
 	font-size: 10px;
 }
 
-/* @font-face{
-    font-family: 'Gilroy';
-    font-weight: 100;
-    src: url('./assets/fonts/gilroyThin.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 200;
-    src: url('./assets/fonts/gilroyUltralight.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 300;
-    src: url('./assets/fonts/gilroyThin.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 400;
-    src: url('./assets/fonts/gilroyRegular.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 500;
-    src: url('./assets/fonts/gilroyMedium.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 600;
-    src: url('./assets/fonts/gilroySemibold.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 700;
-    src: url('./assets/fonts/gilroyBold.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 900;
-    src: url('./assets/fonts/gilroyBlack.ttf');
-} */
-
 /* Новые шрифты */
 @font-face{
     font-family: 'Checkbrand';
@@ -82,7 +34,8 @@ body{
 	font-size: 1.6rem;
 	font-family: 'Checkbrand', sans-serif;
 	background: #161717;
-	margin-top: 5.1rem;
+	margin-top: 6.2rem;
+	letter-spacing: 0.04em;
 
 }
 ::-webkit-scrollbar {
@@ -240,6 +193,16 @@ input::-webkit-inner-spin-button{
 }
 
 /* Адаптив */
+@media(max-width: 1800px){
+	.container{
+		max-width: 1550px;
+	}
+}
+@media(max-width: 1600px){
+	.container{
+		max-width: 1220px;
+	}
+}
 @media(max-width: 1260px){
 	.container{
 		max-width: 1180px;
@@ -257,7 +220,8 @@ input::-webkit-inner-spin-button{
 }
 @media(max-width: 768px){
 	.container{
-		max-width: 90%;
+		max-width: 100%;
+		padding: 0rem 1.2rem;
 	}
 
 	.default__padding{
