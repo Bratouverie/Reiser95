@@ -205,7 +205,11 @@ const Collection = () => {
                     flexWrap="nowrap"
                     gap={1}
                 >
-                    <span className="collection__whiteList--addedTitle">Added to WhiteList</span>
+                    <div className="collection__applicationStatus_container">
+                        <span className="collection__whiteList--addedTitle">
+                            Added to WhiteList
+                        </span>
+                    </div>
                     <IconButton disableRipple sx={{ padding: 0 }} onClick={onGetToWhitelistHandler}>
                         <div className="collection__whiteList--editIconBox">
                             <ModeEditOutlineIcon
@@ -225,7 +229,32 @@ const Collection = () => {
                 </Grid>
             );
         }
-        console.log({ whiteListApplication });
+
+        if ([WHITE_LIST_APPLICATION_STATUSES.WHITE].includes(whiteListApplication.status)) {
+            return (
+                <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                    flexWrap="nowrap"
+                    gap={1}
+                >
+                    <div className="collection__applicationStatus_container">
+                        <span className="collection__whiteList--addedTitle">Whitelisted</span>
+                    </div>
+                    <IconButton
+                        disableRipple
+                        sx={{ padding: 0 }}
+                        onClick={onDeleteWhiteListRequestHandler}
+                    >
+                        <div className="collection__whiteList--trashIconBox">
+                            <DeleteIcon classes={{ root: 'collection__whiteList--deleteIcon' }} />
+                        </div>
+                    </IconButton>
+                </Grid>
+            );
+        }
     }, [whiteListApplication]);
 
     useEffect(() => {

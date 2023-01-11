@@ -658,7 +658,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: 8px;
     background-color: white;
     cursor: pointer;
     transition: background-color 200ms ease-in-out;
@@ -670,14 +670,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
+    border-radius: 8px;
     background-color: white;
     cursor: pointer;
     transition: background-color 200ms ease-in-out;
 }
 
 .collection__whiteList--addedTitle {
-    color: #43cc53;
+    color: white;
     font-weight: 600;
 }
 
@@ -698,4 +698,16 @@
     width: 24px !important;
     height: 24px !important;
     color: black;
+}
+
+.collection__applicationStatus_container {
+    background: #0082e6;
+    color: white;
+    height: 36px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 8px;
 }
