@@ -1,19 +1,35 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-
+import { Grid, IconButton } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import CenteredContainer from '../../common/CenteredContainer';
 import Loader from '../../common/Loader';
+import { DIALOG_TYPES } from '../../components/WlModals/const';
+import WLCreationDialog from '../../components/WlModals/WLCreationDialog';
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
-
 import { useGetCollectionQuery, useGetFilteredTokensQuery } from '../../redux/api/dataService';
+import {
+    useGetCollectionWhiteListQuery,
+    useHideWhiteListRequestMutation,
+} from '../../redux/api/ugcService';
+import { onClose, onOpen } from '../../redux/dialogs/aplyToWhitelistDialog';
+import {
+    onClose as onDeletationDialogClose,
+    onOpen as onDeletationDialogOpen,
+} from '../../redux/dialogs/deleteEntityDialog';
 import { normilizeError } from '../../utils/http/normilizeError';
 import { roundInt } from '../../utils/roundInt';
+import TokenItem from './TokenItem';
+import { pagesSelectors } from '../../redux/slices/pages';
+import { WHITE_LIST_APPLICATION_STATUSES } from '../../const/collection/WHITE_LIST_APPLICATION_STATUSES';
 
 import './index.css';
-import TokenItem from './TokenItem';
+import DeleteEntityDialog from '../../components/DeleteEntityDialog/DeleteEntityDialog';
 
-import {CustomSelect} from '../../common/CustomSelect';
+import { CustomSelect } from '../../common/CustomSelect';
 import FilterItem from '../../components/FilterItem';
 import set from 'date-fns/esm/set/index';
 
@@ -65,45 +81,53 @@ import set from 'date-fns/esm/set/index';
 
 const filterData = [
     {
-        text: "Booked"
+        text: 'Booked',
     },
     {
-        text: "Minted"
-    }
-]
+        text: 'Minted',
+    },
+];
 
 const filterData2 = [
     {
-        text: "Male 1"
+        text: 'Male 1',
     },
     {
-        text: "Male 2"
+        text: 'Male 2',
     },
     {
-        text: "Male 3"
-    }
-]
+        text: 'Male 3',
+    },
+];
+const DIALOG_TYPES_ARR = Object.values(DIALOG_TYPES);
 
 const Collection = () => {
     const { id } = useParams();
     const [fullDesc, setFullDesc] = React.useState(false);
-    const [filter, setFilter] = React.useState("price");
+    const [filter, setFilter] = React.useState('price');
     const [filterActive, setFilterActive] = React.useState(false);
     const [sortActive, setSortActive] = React.useState(false);
-    const [search, setSearch] = React.useState("");
+    const [search, setSearch] = React.useState('');
     const [social, setSocial] = React.useState(false);
 
     const changeSearch = (e) => {
         setSearch(e.target.value);
-    }
+    };
 
     const emptySearch = () => {
-        setSearch("");
-    }
+        setSearch('');
+    };
 
-    const filterChenge = value => {
+    const filterChenge = (value) => {
         setFilter(value);
     };
+
+    const authInfo = useSelector((state) => state.auth);
+    const createWLDialog = useSelector((state) => state.aplyToWhitelistDialog);
+    const { isOpen, id: deletedWhiteListId } = useSelector((state) => state.deleteEntityDialog);
+    const pages = useSelector(pagesSelectors.selectAll);
+
+    const dispatch = useDispatch();
 
     const { data: collection, error: getCollectionError, isLoading } = useGetCollectionQuery(
         {
@@ -113,6 +137,14 @@ const Collection = () => {
             skip: !id,
         },
     );
+
+    const {
+        data: whiteListApplicationData,
+        isLoading: isWhitelistApplicationLoading,
+        isSuccess: isWhitelistApplicationSuccess,
+        error: whitelistApplicationError,
+        refetch: refetchWhiteListApplication,
+    } = useGetCollectionWhiteListQuery({ id }, { skip: !id });
 
     const {
         data: collectionTokens,
@@ -129,9 +161,142 @@ const Collection = () => {
         },
     );
 
+    const [
+        hideWhiteListRequest,
+        {
+            isSuccess: isWhiteListHidden,
+            error: whiteListHiddenError,
+            isLoading: isHideWhiteListProccessing,
+            reset,
+        },
+    ] = useHideWhiteListRequestMutation();
+
     const {
         actions: { addNotification },
     } = useContext(NotificationContext);
+
+    const [whiteListApplication, setWhiteListApplication] = useState(null);
+
+    const collectionPage = useMemo(() => {
+        if (collection && collection.page && pages && pages.length > 0) {
+            return pages.find((p) => p.id === collection.page) || null;
+        }
+        return null;
+    }, [pages, collection]);
+
+    const onGetToWhitelistHandler = useCallback(() => {
+        if (!authInfo.isAuth) {
+            addNotification({
+                type: NOTIFICATION_TYPES.ERROR,
+                text: 'Authorize through your wallet to get items to whitelist',
+            });
+
+            return;
+        }
+
+        dispatch(onOpen(id));
+    }, [authInfo.isAuth, id]);
+
+    const closeCreationDialogHandler = useCallback(() => {
+        dispatch(onClose());
+    }, []);
+
+    const closeDeletationDialogHandler = useCallback(() => {
+        dispatch(onDeletationDialogClose());
+    }, []);
+
+    const onDeleteHandler = useCallback((id) => {
+        hideWhiteListRequest({ id });
+    }, []);
+
+    const onDeleteWhiteListRequestHandler = useCallback(() => {
+        if (whiteListApplication && whiteListApplication.id) {
+            dispatch(onDeletationDialogOpen(whiteListApplication.id));
+        }
+    }, [whiteListApplication]);
+
+    const actionBtn = useMemo(() => {
+        if (!whiteListApplication) {
+            return (
+                <button
+                    className="button collection__get default__hover"
+                    onClick={onGetToWhitelistHandler}
+                >
+                    <img
+                        src="/assets/img/star.svg"
+                        alt="star"
+                        className="collection__button--icon"
+                    />
+                    Get on WhiteList
+                </button>
+            );
+        }
+
+        if (
+            [WHITE_LIST_APPLICATION_STATUSES.NEW, WHITE_LIST_APPLICATION_STATUSES.RED].includes(
+                whiteListApplication.status,
+            )
+        ) {
+            return (
+                <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                    flexWrap="nowrap"
+                    gap={1}
+                >
+                    <div className="collection__applicationStatus_container">
+                        <span className="collection__whiteList--addedTitle">
+                            Added to WhiteList
+                        </span>
+                    </div>
+                    <IconButton disableRipple sx={{ padding: 0 }} onClick={onGetToWhitelistHandler}>
+                        <div className="collection__whiteList--editIconBox">
+                            <ModeEditOutlineIcon
+                                classes={{ root: 'collection__whiteList--editIcon' }}
+                            />
+                        </div>
+                    </IconButton>
+                    <IconButton
+                        disableRipple
+                        sx={{ padding: 0 }}
+                        onClick={onDeleteWhiteListRequestHandler}
+                    >
+                        <div className="collection__whiteList--trashIconBox">
+                            <DeleteIcon classes={{ root: 'collection__whiteList--deleteIcon' }} />
+                        </div>
+                    </IconButton>
+                </Grid>
+            );
+        }
+
+        if ([WHITE_LIST_APPLICATION_STATUSES.WHITE].includes(whiteListApplication.status)) {
+            return (
+                <Grid
+                    container
+                    direction="row"
+                    justifyContent="flex-end"
+                    alignItems="center"
+                    flexWrap="nowrap"
+                    gap={1}
+                >
+                    <div className="collection__applicationStatus_container">
+                        <span className="collection__whiteList--addedTitle">Whitelisted</span>
+                    </div>
+                    <IconButton
+                        disableRipple
+                        sx={{ padding: 0 }}
+                        onClick={onDeleteWhiteListRequestHandler}
+                    >
+                        <div className="collection__whiteList--trashIconBox">
+                            <DeleteIcon classes={{ root: 'collection__whiteList--deleteIcon' }} />
+                        </div>
+                    </IconButton>
+                </Grid>
+            );
+        }
+    }, [whiteListApplication]);
 
     useEffect(() => {
         if (getCollectionError) {
@@ -151,7 +316,34 @@ const Collection = () => {
         }
     }, [getTokensError]);
 
-    if (!collection || !collectionTokens) {
+    useEffect(() => {
+        if (isWhitelistApplicationSuccess && whiteListApplicationData) {
+            console.log('setApplication');
+            setWhiteListApplication(whiteListApplicationData);
+        }
+    }, [whiteListApplicationData, isWhitelistApplicationSuccess]);
+
+    useEffect(() => {
+        if (isWhiteListHidden) {
+            closeDeletationDialogHandler();
+            refetchWhiteListApplication();
+        }
+    }, [isWhiteListHidden]);
+
+    useEffect(() => {
+        if (whitelistApplicationError && whiteListApplication) {
+            setWhiteListApplication(null);
+        }
+    }, [whitelistApplicationError, whiteListApplication]);
+
+    useEffect(
+        () => () => {
+            reset();
+        },
+        [],
+    );
+
+    if (!collection || !collectionTokens || isWhitelistApplicationLoading || isTokensLoading) {
         return (
             <CenteredContainer>
                 <Loader />
@@ -178,44 +370,65 @@ const Collection = () => {
                     </a>
 
                     <div className="collection__dots--inner">
-                        <img src="/assets/img/dots.svg" alt="dots" className="collection__social--dots" onClick={() => setSocial(prev => !prev)} />
+                        <img
+                            src="/assets/img/dots.svg"
+                            alt="dots"
+                            className="collection__social--dots"
+                            onClick={() => setSocial((prev) => !prev)}
+                        />
 
-                        {social && <div className="collection__dots--social">
-                            <p className="collection__dots--title">
-                                Links
-                            </p>
+                        {social && (
+                            <div className="collection__dots--social">
+                                <p className="collection__dots--title">Links</p>
 
-                            <a href="#" className="collection__dots--link">
-                                <img src="/assets/img/insta.svg" alt="insta" className="collection__dots--link--icon" />
+                                <a href="#" className="collection__dots--link">
+                                    <img
+                                        src="/assets/img/insta.svg"
+                                        alt="insta"
+                                        className="collection__dots--link--icon"
+                                    />
+                                    Instagram
+                                </a>
 
-                                Instagram
-                            </a>
+                                <a href="#" className="collection__dots--link">
+                                    <img
+                                        src="/assets/img/opensea.svg"
+                                        alt="opensea"
+                                        className="collection__dots--link--icon"
+                                    />
+                                    OpenSea
+                                </a>
 
-                            <a href="#" className="collection__dots--link">
-                                <img src="/assets/img/opensea.svg" alt="opensea" className="collection__dots--link--icon" />
+                                <a href="#" className="collection__dots--link">
+                                    <img
+                                        src="/assets/img/discord.svg"
+                                        alt="Discord"
+                                        className="collection__dots--link--icon"
+                                    />
+                                    Discord
+                                </a>
 
-                                OpenSea
-                            </a>
-
-                            <a href="#" className="collection__dots--link">
-                                <img src="/assets/img/discord.svg" alt="Discord" className="collection__dots--link--icon" />
-
-                                Discord
-                            </a>
-
-                            <a href="#" className="collection__dots--link">
-                                <img src="/assets/img/twitter.svg" alt="Twitter" className="collection__dots--link--icon" />
-
-                                Twitter
-                            </a>
-                        </div>}
+                                <a href="#" className="collection__dots--link">
+                                    <img
+                                        src="/assets/img/twitter.svg"
+                                        alt="Twitter"
+                                        className="collection__dots--link--icon"
+                                    />
+                                    Twitter
+                                </a>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <div className="container">
                     <div className="collection__inner">
                         <div className="collection__chain">
-                            <img src="/assets/img/eth-black.svg" alt="icon" className="collection__chain--icon" />
+                            <img
+                                src="/assets/img/eth-black.svg"
+                                alt="icon"
+                                className="collection__chain--icon"
+                            />
                         </div>
 
                         <div className="collection__avatar--inner">
@@ -311,34 +524,60 @@ const Collection = () => {
                         </div>
 
                         <div className="collection__desc--inner">
-                            <p className={`collection__desc${fullDesc ? " full" : ""}`}>{collection.description}</p>
+                            <p className={`collection__desc${fullDesc ? ' full' : ''}`}>
+                                {collection.description}
+                            </p>
 
-                            <div className="collection__desc--full" onClick={() => setFullDesc(prev => !prev)}>
-                                See {fullDesc ? "less" : "more"}
-
-                                <img src="/assets/img/arrow-top.svg" alt="arrow" className={`collection__desc--full--icon${fullDesc ? " full" : ""}`} />
+                            <div
+                                className="collection__desc--full"
+                                onClick={() => setFullDesc((prev) => !prev)}
+                            >
+                                See {fullDesc ? 'less' : 'more'}
+                                <img
+                                    src="/assets/img/arrow-top.svg"
+                                    alt="arrow"
+                                    className={`collection__desc--full--icon${
+                                        fullDesc ? ' full' : ''
+                                    }`}
+                                />
                             </div>
                         </div>
 
                         <div className="collection__filter--content">
-                            <button className="button collection__filter--button" onClick={() => setFilterActive(prev => !prev)}>
-                                <img src="/assets/img/filter.svg" alt="filter" className="collection__filter--icon" />
+                            <button
+                                className="button collection__filter--button"
+                                onClick={() => setFilterActive((prev) => !prev)}
+                            >
+                                <img
+                                    src="/assets/img/filter.svg"
+                                    alt="filter"
+                                    className="collection__filter--icon"
+                                />
 
-                                <p className="collection__filter--button--text">
-                                    Filters
-                                </p>
+                                <p className="collection__filter--button--text">Filters</p>
                             </button>
 
-                            <button className="button collection__sort--button" onClick={() => setSortActive(prev => !prev)}>
-                                <img src="/assets/img/sort.svg" alt="sort" className="collection__filter--icon" />
+                            <button
+                                className="button collection__sort--button"
+                                onClick={() => setSortActive((prev) => !prev)}
+                            >
+                                <img
+                                    src="/assets/img/sort.svg"
+                                    alt="sort"
+                                    className="collection__filter--icon"
+                                />
 
-                                <p className="collection__sort--button--text">
-                                    Sort
-                                </p>
+                                <p className="collection__sort--button--text">Sort</p>
                             </button>
 
                             <div className="collection__search--inner">
-                                <input type="text" className="input header__search" placeholder="Search by token name" value={search} onChange={changeSearch} />
+                                <input
+                                    type="text"
+                                    className="input header__search"
+                                    placeholder="Search by token name"
+                                    value={search}
+                                    onChange={changeSearch}
+                                />
 
                                 <img
                                     src="/assets/img/search.svg"
@@ -346,23 +585,25 @@ const Collection = () => {
                                     className="header__search--icon"
                                 />
 
-                                {search && <img
-                                    src="/assets/img/cross.svg"
-                                    alt="cross"
-                                    className="header__search--remove"
-                                    onClick={emptySearch}
-                                />}
+                                {search && (
+                                    <img
+                                        src="/assets/img/cross.svg"
+                                        alt="cross"
+                                        className="header__search--remove"
+                                        onClick={emptySearch}
+                                    />
+                                )}
                             </div>
 
                             <div className="collection__filter--order">
                                 <CustomSelect
                                     optionsList={[
-                                        {value: "price", name: "Price low to high"},
-                                        {value: "recently", name: "Recently listed"},
-                                        {value: "recentlyBook", name: "Recently booked"},
-                                        {value: "recentlyMint", name: "Recently minted"},
-                                        {value: "rare", name: "Most rare"},
-                                        {value: "soon", name: "Ending soon"}
+                                        { value: 'price', name: 'Price low to high' },
+                                        { value: 'recently', name: 'Recently listed' },
+                                        { value: 'recentlyBook', name: 'Recently booked' },
+                                        { value: 'recentlyMint', name: 'Recently minted' },
+                                        { value: 'rare', name: 'Most rare' },
+                                        { value: 'soon', name: 'Ending soon' },
                                     ]}
                                     value={filter}
                                     placeholder="Select filter"
@@ -372,97 +613,150 @@ const Collection = () => {
 
                             <div className="collection__filter--view">
                                 <button className="button collection__filter--view--item active">
-                                    <img src="/assets/img/view1.svg" alt="view" className="collection__filter--view--icon" />
+                                    <img
+                                        src="/assets/img/view1.svg"
+                                        alt="view"
+                                        className="collection__filter--view--icon"
+                                    />
                                 </button>
 
                                 <button className="button collection__filter--view--item">
-                                    <img src="/assets/img/view2.svg" alt="view" className="collection__filter--view--icon" />
+                                    <img
+                                        src="/assets/img/view2.svg"
+                                        alt="view"
+                                        className="collection__filter--view--icon"
+                                    />
                                 </button>
                             </div>
-
-                            <button className="button collection__get">
-                                Get on whitelist
-                            </button>
+                            {actionBtn}
                         </div>
 
                         <div className="collection__content">
-                            {filterActive && <div className="collection__filter--box">
-                                <div className="collection__filter--title--box">
-                                    <p className="collection__filter--title">
-                                        Filters
-                                    </p>
+                            {filterActive && (
+                                <div className="collection__filter--box">
+                                    <div className="collection__filter--title--box">
+                                        <p className="collection__filter--title">Filters</p>
 
-                                    <img src="/assets/img/cross2.svg" alt="cross" className="collection__filter--title--cross" onClick={() => setFilterActive(prev => !prev)} />
-                                </div>
-
-                                <FilterItem title="Status" value="2" elements={filterData} />
-                                <FilterItem title="Character 1" value="3" elements={filterData2} filter />
-
-                                <div className="collection__filter--buttons">
-                                    <button className="button collection__filter--button--filter">
-                                        Clear all
-                                    </button>
-
-                                    <button className="button collection__filter--button--filter blue__button">
-                                        Done
-                                    </button>
-                                </div>
-                            </div>}
-
-                            {sortActive && <div className="collection__sort--box">
-                                <div className="collection__filter--title--box">
-                                    <p className="collection__filter--title">
-                                        Sort by
-                                    </p>
-
-                                    <img src="/assets/img/cross2.svg" alt="cross" className="collection__filter--title--cross" onClick={() => setSortActive(prev => !prev)} />
-                                </div>
-
-                                <div className="collection__sort--content">
-                                    <div className="collection__sort--item">
-                                        <input type="radio" className="radio" name="sort" id="sort1" />
-
-                                        <label htmlFor="sort1" className="collection__sort--item--label">
-                                            Recently listed
-                                        </label>
+                                        <img
+                                            src="/assets/img/cross2.svg"
+                                            alt="cross"
+                                            className="collection__filter--title--cross"
+                                            onClick={() => setFilterActive((prev) => !prev)}
+                                        />
                                     </div>
 
-                                    <div className="collection__sort--item">
-                                        <input type="radio" className="radio" name="sort" id="sort2" />
+                                    <FilterItem title="Status" value="2" elements={filterData} />
+                                    <FilterItem
+                                        title="Character 1"
+                                        value="3"
+                                        elements={filterData2}
+                                        filter
+                                    />
 
-                                        <label htmlFor="sort2" className="collection__sort--item--label">
-                                            Recently booked
-                                        </label>
-                                    </div>
+                                    <div className="collection__filter--buttons">
+                                        <button className="button collection__filter--button--filter">
+                                            Clear all
+                                        </button>
 
-                                    <div className="collection__sort--item">
-                                        <input type="radio" className="radio" name="sort" id="sort3" />
-
-                                        <label htmlFor="sort3" className="collection__sort--item--label">
-                                            Recently minted
-                                        </label>
+                                        <button className="button collection__filter--button--filter blue__button">
+                                            Done
+                                        </button>
                                     </div>
                                 </div>
+                            )}
 
-                                <div className="collection__filter--buttons">
-                                    <button className="button collection__sort--button--filter blue__button">
-                                        Done
-                                    </button>
+                            {sortActive && (
+                                <div className="collection__sort--box">
+                                    <div className="collection__filter--title--box">
+                                        <p className="collection__filter--title">Sort by</p>
+
+                                        <img
+                                            src="/assets/img/cross2.svg"
+                                            alt="cross"
+                                            className="collection__filter--title--cross"
+                                            onClick={() => setSortActive((prev) => !prev)}
+                                        />
+                                    </div>
+
+                                    <div className="collection__sort--content">
+                                        <div className="collection__sort--item">
+                                            <input
+                                                type="radio"
+                                                className="radio"
+                                                name="sort"
+                                                id="sort1"
+                                            />
+
+                                            <label
+                                                htmlFor="sort1"
+                                                className="collection__sort--item--label"
+                                            >
+                                                Recently listed
+                                            </label>
+                                        </div>
+
+                                        <div className="collection__sort--item">
+                                            <input
+                                                type="radio"
+                                                className="radio"
+                                                name="sort"
+                                                id="sort2"
+                                            />
+
+                                            <label
+                                                htmlFor="sort2"
+                                                className="collection__sort--item--label"
+                                            >
+                                                Recently booked
+                                            </label>
+                                        </div>
+
+                                        <div className="collection__sort--item">
+                                            <input
+                                                type="radio"
+                                                className="radio"
+                                                name="sort"
+                                                id="sort3"
+                                            />
+
+                                            <label
+                                                htmlFor="sort3"
+                                                className="collection__sort--item--label"
+                                            >
+                                                Recently minted
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div className="collection__filter--buttons">
+                                        <button className="button collection__sort--button--filter blue__button">
+                                            Done
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>}
+                            )}
 
                             <div className="collection__content--preitems">
                                 <div className="collection__content--info">
                                     <div className="collection__content--update">
                                         <button className="button collection__content--update--button">
-                                            <img src="/assets/img/reload.svg" alt="reload" className="collection__content--update--icon" />
+                                            <img
+                                                src="/assets/img/reload.svg"
+                                                alt="reload"
+                                                className="collection__content--update--icon"
+                                            />
                                         </button>
 
-                                        <p className="collection__content--update--text">Updated 2m ago</p>
+                                        <p className="collection__content--update--text">
+                                            Updated 2m ago
+                                        </p>
                                     </div>
 
                                     <p className="collection__items--value">
-                                        {collectionTokens.results ? collectionTokens.results.length : 0} items
+                                        {collectionTokens.results
+                                            ? collectionTokens.results.length
+                                            : 0}{' '}
+                                        items
                                     </p>
                                 </div>
 
@@ -473,7 +767,11 @@ const Collection = () => {
                                                 1st ten
                                             </p>
 
-                                            <img src="/assets/img/cross2.svg" alt="cross" className="collection__filter--active--item--delete" />
+                                            <img
+                                                src="/assets/img/cross2.svg"
+                                                alt="cross"
+                                                className="collection__filter--active--item--delete"
+                                            />
                                         </button>
 
                                         <button className="button collection__filter--active--item">
@@ -481,7 +779,11 @@ const Collection = () => {
                                                 2nd ten
                                             </p>
 
-                                            <img src="/assets/img/cross2.svg" alt="cross" className="collection__filter--active--item--delete" />
+                                            <img
+                                                src="/assets/img/cross2.svg"
+                                                alt="cross"
+                                                className="collection__filter--active--item--delete"
+                                            />
                                         </button>
                                     </div>
 
@@ -490,9 +792,16 @@ const Collection = () => {
                                     </button>
                                 </div>
 
-                                <div className={`collection__content--items${filterActive ? " active" : ""}`}>
-                                    {!collectionTokens.results || !collectionTokens.results.length ? (
-                                        <div className="collection__items--none">No items to display</div>
+                                <div
+                                    className={`collection__content--items${
+                                        filterActive ? ' active' : ''
+                                    }`}
+                                >
+                                    {!collectionTokens.results ||
+                                    !collectionTokens.results.length ? (
+                                        <div className="collection__items--none">
+                                            No items to display
+                                        </div>
                                     ) : (
                                         <>
                                             {collectionTokens.results.map((t) => (
@@ -506,6 +815,34 @@ const Collection = () => {
                     </div>
                 </div>
             </div>
+
+            {collectionPage && collection && (
+                <WLCreationDialog
+                    open={createWLDialog.isOpen}
+                    dialogType={
+                        DIALOG_TYPES_ARR.includes(collectionPage.application_form)
+                            ? collectionPage.application_form
+                            : DIALOG_TYPES.PERSONS
+                    }
+                    whiteListApplicationData={
+                        whitelistApplicationError ? null : whiteListApplicationData
+                    }
+                    collectionId={collection.id}
+                    onClose={closeCreationDialogHandler}
+                    onCreateSuccessfully={refetchWhiteListApplication}
+                />
+            )}
+
+            {isOpen && (
+                <DeleteEntityDialog
+                    open={isOpen}
+                    isDeletationProccessing={isHideWhiteListProccessing}
+                    onDeleteSuccessfully={refetchWhiteListApplication}
+                    onClose={closeDeletationDialogHandler}
+                    onDelete={onDeleteHandler}
+                    title={'Are you sure you want to delete WhiteList request?'}
+                />
+            )}
         </>
     );
 };

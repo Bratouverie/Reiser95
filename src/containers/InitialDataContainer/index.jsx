@@ -1,3 +1,4 @@
+import { cnb } from 'cnbuilder';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CenteredContainer from '../../common/CenteredContainer';
@@ -7,7 +8,7 @@ import { useGetPagesQuery } from '../../redux/api/dataService';
 
 const InitialDataContainer = ({ children }) => {
     const dispatch = useDispatch();
-    const autn = useSelector(state => state.auth);
+    const autn = useSelector((state) => state.auth);
 
     const { isLoading: isPagesLoading } = useGetPagesQuery();
 

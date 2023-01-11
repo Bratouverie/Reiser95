@@ -1,28 +1,33 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, forwardRef } from 'react';
 import { ONLY_NUMBERS_REGEX_ONLY_G } from '../../const/regExp';
 
 export const INPUT_TYPE = {
     NUMERIC: 'numeric',
 };
 
-const Input = ({
-    title,
-    text,
-    placeholder,
-    value,
-    setValue,
-    required = false,
-    half = false,
-    textarea = false,
-    isLink = false,
-    type,
-    maxValue,
-    name,
-    className,
-    inputProps,
-}) => {
+const Input = forwardRef((props, _ref) => {
+    const {
+        title,
+        text,
+        placeholder,
+        value,
+        setValue,
+        required = false,
+        half = false,
+        textarea = false,
+        isLink = false,
+        type,
+        maxValue,
+        name,
+        className,
+        inputProps,
+    } = props;
+
     const onInputChange = useCallback(
-        e => {
+        (e) => {
+            if (!setValue) {
+                return;
+            }
             if (type !== INPUT_TYPE.NUMERIC) {
                 setValue(e.target.value);
                 return;
@@ -41,7 +46,9 @@ const Input = ({
 
     return (
         <div className={className || `create__item${half ? ' half' : ''}`}>
-            {title && <p className={`create__item--title${required ? ' required' : ''}`}>{title}</p>}
+            {title && (
+                <p className={`create__item--title${required ? ' required' : ''}`}>{title}</p>
+            )}
 
             {text && <p className="create__item--text">{text}</p>}
 
@@ -68,6 +75,8 @@ const Input = ({
             )}
         </div>
     );
-};
+});
 
-export default Input;
+Input.displayName = 'Input';
+
+export default React.memo(Input);

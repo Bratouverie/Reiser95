@@ -7,10 +7,15 @@ import blockchainsSlice from './slices/blockchains';
 import tokensSlice from './slices/tokens';
 import collectionsSlice from './slices/collections';
 import packsSlice from './slices/packs';
-import deleteEntityDialogSlice from './dialogs/deleteEntityDialog';
+import {
+    aplyToWhitelistDialogSlice,
+    deleteEntityDialogSlice,
+    confirmAplicationDialogSlice,
+} from './dialogs';
 import { authApi } from './api/authService';
 import { dataApi } from './api/dataService';
 import { userApi } from './api/userService';
+import { ugcApi } from './api/ugcService';
 
 const REFRESH_AUTH_INTERVAL_IN_MS = 5 * 60 * 1000;
 
@@ -41,10 +46,13 @@ export const store = configureStore({
         collections: collectionsSlice,
         packs: packsSlice,
         deleteEntityDialog: deleteEntityDialogSlice,
+        aplyToWhitelistDialog: aplyToWhitelistDialogSlice,
+        confirmAplicationDialog: confirmAplicationDialogSlice,
         [authApi.reducerPath]: authApi.reducer,
         [dataApi.reducerPath]: dataApi.reducer,
         [userApi.reducerPath]: userApi.reducer,
+        [ugcApi.reducerPath]: ugcApi.reducer,
     },
-    middleware: getDefaultMiddleware =>
+    middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().prepend(listenerMiddleware.middleware),
 });

@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import Preloader from '../../common/Preloader';
 import PageItem from '../../components/PageItem';
 import { USER_ROLES } from '../../const/users/USER_ROLES';
 import UserRow from './UserRow';
@@ -15,14 +14,16 @@ import DeleteEntityDialog from '../../components/DeleteEntityDialog/DeleteEntity
 import NOTIFICATION_TYPES from '../../const/notifications/NOTIFICATION_TYPES';
 import { NotificationContext } from '../../context/NotificationContext';
 import { onClose, onOpen } from '../../redux/dialogs/deleteEntityDialog';
-
-import './index.css';
 import { normilizeError } from '../../utils/http/normilizeError';
 import { EDIT_PAGE_PAGE } from '../../const/http/CLIENT_URLS';
+import CenteredContainer from '../../common/CenteredContainer';
+import Loader from '../../common/Loader';
+
+import './index.css';
 
 const ControlPanel = () => {
-    const auth = useSelector(state => state.auth);
-    const { isOpen, id: deletedPageId } = useSelector(state => state.deleteEntityDialog);
+    const auth = useSelector((state) => state.auth);
+    const { isOpen, id: deletedPageId } = useSelector((state) => state.deleteEntityDialog);
 
     const dispatch = useDispatch();
     const navigator = useNavigate();
@@ -55,18 +56,18 @@ const ControlPanel = () => {
     const [pages, setPages] = useState([]);
 
     const onNewAdminCreateStateChange = useCallback(() => {
-        setIsNewAdminCreating(p => !p);
+        setIsNewAdminCreating((p) => !p);
     }, []);
 
     const onNewModerCreate = useCallback(() => {
-        setIsNewModeratorCreating(p => !p);
+        setIsNewModeratorCreating((p) => !p);
     }, []);
 
-    const onDeleteHandler = useCallback(id => {
+    const onDeleteHandler = useCallback((id) => {
         hidePage({ id, isHide: true });
     }, []);
 
-    const onDeletePage = useCallback(id => {
+    const onDeletePage = useCallback((id) => {
         dispatch(onOpen(id));
     }, []);
 
@@ -77,28 +78,28 @@ const ControlPanel = () => {
     const postSaveCallback = useCallback((role, wallet) => {
         if (role === USER_ROLES.ADMIN) {
             onNewAdminCreateStateChange();
-            setAdmins(p => [...p, wallet]);
+            setAdmins((p) => [...p, wallet]);
             return;
         }
 
         if (role === USER_ROLES.MODERATOR) {
             onNewModerCreate();
-            setModerators(p => [...p, wallet]);
+            setModerators((p) => [...p, wallet]);
         }
     }, []);
 
     const postDeleteCallback = useCallback((role, wallet) => {
         if (role === USER_ROLES.ADMIN) {
-            setAdmins(p => p.filter(w => w !== wallet));
+            setAdmins((p) => p.filter((w) => w !== wallet));
             return;
         }
 
         if (role === USER_ROLES.MODERATOR) {
-            setModerators(p => p.filter(w => w !== wallet));
+            setModerators((p) => p.filter((w) => w !== wallet));
         }
     }, []);
 
-    const onEditPage = useCallback(url => {
+    const onEditPage = useCallback((url) => {
         navigator(EDIT_PAGE_PAGE({ url }));
     }, []);
 
@@ -114,7 +115,7 @@ const ControlPanel = () => {
 
     useEffect(() => {
         if (isSuccess && deletedPageId) {
-            setPages(p => p.filter(a => a.id !== deletedPageId));
+            setPages((p) => p.filter((a) => a.id !== deletedPageId));
 
             closeDialogHandler();
             resetDeletationState();
@@ -156,7 +157,11 @@ const ControlPanel = () => {
         isModeratorsLoading ||
         isPagesLoading
     ) {
-        return <Preloader />;
+        return (
+            <CenteredContainer>
+                <Loader />
+            </CenteredContainer>
+        );
     }
 
     return (
@@ -190,7 +195,7 @@ const ControlPanel = () => {
 
                             <p className="control__text m0">Enter super admin wallet address:</p>
 
-                            {superAdmins.map(sa => (
+                            {superAdmins.map((sa) => (
                                 <UserRow key={sa} wallet={sa} role={USER_ROLES.SUPER_ADMIN} />
                             ))}
                         </div>
@@ -202,7 +207,7 @@ const ControlPanel = () => {
 
                             <p className="control__text m0">Enter Admin wallet address:</p>
 
-                            {admins.map(sa => (
+                            {admins.map((sa) => (
                                 <UserRow
                                     key={sa}
                                     wallet={sa}
@@ -235,7 +240,7 @@ const ControlPanel = () => {
 
                             <p className="control__text m0">Enter Moderator wallet address:</p>
 
-                            {moderators.map(sa => (
+                            {moderators.map((sa) => (
                                 <UserRow
                                     key={sa}
                                     wallet={sa}
@@ -273,7 +278,7 @@ const ControlPanel = () => {
                             ) : (
                                 <>
                                     {pages.length > 0 ? (
-                                        pages.map(page => (
+                                        pages.map((page) => (
                                             <PageItem
                                                 key={page.id}
                                                 name={page.name}

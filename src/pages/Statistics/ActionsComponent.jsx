@@ -5,11 +5,11 @@ import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 
 import css from './Statistics.module.css';
 
-const ActionsComponent = props => {
+const ActionsComponent = (props) => {
     const { id, onEdit, onDelete } = props;
 
     const onEditUserHandler = useCallback(
-        e => {
+        (e) => {
             e.stopPropagation();
             e.preventDefault();
             onEdit(id);
@@ -18,7 +18,7 @@ const ActionsComponent = props => {
     );
 
     const onDeleteUserHandler = useCallback(
-        e => {
+        (e) => {
             e.stopPropagation();
             e.preventDefault();
             onDelete(id);

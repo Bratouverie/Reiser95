@@ -6,10 +6,10 @@ import Select from '@mui/material/Select';
 
 import './index.css';
 
-const CustomSelect = props => {
+const CustomSelect = (props) => {
     const { optionsList, value, placeholder, onChange } = props;
 
-    const onChangeHandler = useCallback(e => {
+    const onChangeHandler = useCallback((e) => {
         onChange(e.target.value);
     }, []);
 
@@ -53,7 +53,7 @@ const CustomSelect = props => {
                 label={placeholder}
                 onChange={onChangeHandler}
             >
-                {optionsList.map(o => (
+                {optionsList.map((o) => (
                     <MenuItem key={o.value} value={o.value}>
                         {o.name}
                     </MenuItem>

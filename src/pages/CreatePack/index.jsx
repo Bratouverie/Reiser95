@@ -488,7 +488,7 @@ const CreatePack = (props) => {
                         setUnlockable={setUnlockable}
                         unlockableContent={unlockableContent}
                         setUnlockableContent={setUnlockableContent}
-                    />{' '}
+                    />
                     <div className="create__button--content">
                         <div className="create__button--wrapper">
                             {isLoading || isPackUpdatingProccessing ? (

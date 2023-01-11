@@ -1,0 +1,124 @@
+.root {
+    margin-top: 10px !important;
+}
+.root .inputRoot {
+    border: 2px solid #5a5a5a;
+    border-radius: 8px;
+    transition: all 200ms ease;
+}
+
+.root.error .inputRoot {
+    border-color: red;
+}
+.root.error .inputLabelRoot,
+.root.error .inputLabelRoot:after {
+    color: red !important;
+}
+.root.hidden {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
+}
+.root .inputFocused {
+    color: #fff;
+}
+.root .inputUnderline::after {
+    border-color: #fff;
+}
+.root .inputUnderline:hover {
+    border-bottom: 0;
+}
+.root .inputLabelFocused {
+    color: #fff;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.root .formHelperTextStyle {
+    color: red;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+.inputRoot.inputFocused {
+    border-color: #fff;
+}
+.inputRoot.multiline {
+    padding: 0;
+    align-items: flex-start;
+    height: 115px;
+    color: #fff;
+    font-size: 1.7rem;
+    background: #313232;
+    line-height: 1.7rem;
+    font-family: 'Gilroy', sans-serif;
+    border: 2px solid #5a5a5a;
+    overflow-y: auto;
+}
+.inputRoot .inputBase {
+    -moz-appearance: textfield;
+    width: 100%;
+    font-size: 1.7rem;
+    color: #fff;
+    padding: 1.3rem 1.5rem;
+    background: #313232;
+    border-radius: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    /* border: 2px solid #5a5a5a; */
+    transition: all 200ms ease;
+}
+.inputRoot .inputBase::-webkit-scrollbar {
+    border-radius: 14px;
+    width: 5px;
+}
+.inputRoot .inputBase::-webkit-scrollbar-track {
+    border-radius: 14px;
+}
+.inputRoot .inputBase::-webkit-scrollbar-thumb {
+    border-radius: 28px;
+    background: 19, 19, 46, 0.1;
+}
+.inputRoot .inputBase.styledPlaceholder {
+    font-family: 'Gilroy', sans-serif;
+}
+.inputRoot .inputBase::-webkit-outer-spin-button,
+.inputRoot .inputBase::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.disable {
+    display: none !important;
+}
+
+.root .inputLabelRoot {
+    color: #fff;
+    font-size: 1.7rem;
+    line-height: 1.7rem;
+    font-family: 'Gilroy', sans-serif;
+}
+
+.errorLabel {
+    color: red !important;
+}
+
+.CustomSelectRoot {
+    color: #fff !important;
+    font-size: 16px !important;
+    color: #fff !important;
+    font-weight: 400 !important;
+    background: #313232 !important;
+    border-radius: 6px !important;
+    padding: 1.6rem 1.5rem !important;
+    min-height: 0 !important;
+    border-color: #5a5a5a;
+}
+
+.placeholder {
+    color: #ffffff9b;
+}
+
+.menuItemRootSelected {
+    background: #313232;
+}

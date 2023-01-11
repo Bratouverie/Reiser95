@@ -1,10 +1,9 @@
-import { cnb } from 'cnbuilder';
 import React from 'react';
 import { OverflowTooltip } from '../../OverflowTooltip';
 
 import css from '../Table.module.css';
 
-const WithOverflowWrapperCell = props => {
+const WithOverflowWrapperCell = (props) => {
     const { value, classes } = props;
 
     return (

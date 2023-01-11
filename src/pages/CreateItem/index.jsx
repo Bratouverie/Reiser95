@@ -250,4 +250,4 @@ const CreateItem = () => {
     );
 };
 
-export default CreateItem;
+export default React.memo(CreateItem);
