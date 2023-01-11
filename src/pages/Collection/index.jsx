@@ -142,7 +142,7 @@ const Collection = () => {
         data: whiteListApplicationData,
         isLoading: isWhitelistApplicationLoading,
         isSuccess: isWhitelistApplicationSuccess,
-        isError: isWhitelistApplicationFailed,
+        error: whitelistApplicationError,
         refetch: refetchWhiteListApplication,
     } = useGetCollectionWhiteListQuery({ id }, { skip: !id });
 
@@ -185,7 +185,6 @@ const Collection = () => {
     }, [pages, collection]);
 
     const onGetToWhitelistHandler = useCallback(() => {
-        console.log('onGetToWhitelistHandler');
         if (!authInfo.isAuth) {
             addNotification({
                 type: NOTIFICATION_TYPES.ERROR,
@@ -220,7 +219,7 @@ const Collection = () => {
         if (!whiteListApplication) {
             return (
                 <button
-                    className="button collection__get--whitelist default__hover"
+                    className="button collection__get default__hover"
                     onClick={onGetToWhitelistHandler}
                 >
                     <img
@@ -319,6 +318,7 @@ const Collection = () => {
 
     useEffect(() => {
         if (isWhitelistApplicationSuccess && whiteListApplicationData) {
+            console.log('setApplication');
             setWhiteListApplication(whiteListApplicationData);
         }
     }, [whiteListApplicationData, isWhitelistApplicationSuccess]);
@@ -331,10 +331,10 @@ const Collection = () => {
     }, [isWhiteListHidden]);
 
     useEffect(() => {
-        if (isWhitelistApplicationFailed && whiteListApplication) {
+        if (whitelistApplicationError && whiteListApplication) {
             setWhiteListApplication(null);
         }
-    }, [isWhitelistApplicationFailed, whiteListApplication]);
+    }, [whitelistApplicationError, whiteListApplication]);
 
     useEffect(
         () => () => {
@@ -628,8 +628,6 @@ const Collection = () => {
                                     />
                                 </button>
                             </div>
-
-                            <button className="button collection__get">Get on whitelist</button>
                             {actionBtn}
                         </div>
 
@@ -826,7 +824,9 @@ const Collection = () => {
                             ? collectionPage.application_form
                             : DIALOG_TYPES.PERSONS
                     }
-                    whiteListApplicationData={whiteListApplicationData}
+                    whiteListApplicationData={
+                        whitelistApplicationError ? null : whiteListApplicationData
+                    }
                     collectionId={collection.id}
                     onClose={closeCreationDialogHandler}
                     onCreateSuccessfully={refetchWhiteListApplication}
@@ -837,6 +837,7 @@ const Collection = () => {
                 <DeleteEntityDialog
                     open={isOpen}
                     isDeletationProccessing={isHideWhiteListProccessing}
+                    onDeleteSuccessfully={refetchWhiteListApplication}
                     onClose={closeDeletationDialogHandler}
                     onDelete={onDeleteHandler}
                     title={'Are you sure you want to delete WhiteList request?'}

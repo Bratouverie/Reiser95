@@ -6,16 +6,14 @@
 }
 
 .collection__avatar--inner {
-    width: 134px;
-    height: 134px;
-    border-radius: 50%;
+    width: 145px;
+    height: 145px;
+    border-radius: 7px;
     overflow: hidden;
-    border: 1px solid #fff;
-    position: absolute;
-    left: 0;
-    top: 100%;
-    transform: translateY(-50%);
-    background: linear-gradient(180deg, #fec83d, #ff9c43 84.93%);
+    background: #fff;
+    margin-top: -12rem;
+    position: relative;
+    padding: 4px;
 }
 
 .collection__avatar {
