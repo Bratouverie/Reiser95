@@ -1,4 +1,9 @@
-import React from "react";
+import React, { useCallback } from 'react';
+import { ONLY_NUMBERS_REGEX_ONLY_G } from '../../const/regExp';
+
+export const INPUT_TYPE = {
+    NUMERIC: 'numeric',
+};
 
 const Input = ({
     title,
@@ -9,34 +14,53 @@ const Input = ({
     required = false,
     half = false,
     textarea = false,
-    inputName,
+    isLink = false,
+    type,
+    maxValue,
+    name,
+    className,
+    inputProps,
 }) => {
-    const onInputChange = (e) => {
-        setValue(e.target.value);
-    };
+    const onInputChange = useCallback(
+        e => {
+            if (type !== INPUT_TYPE.NUMERIC) {
+                setValue(e.target.value);
+                return;
+            }
+
+            const value = e.currentTarget.value.match(ONLY_NUMBERS_REGEX_ONLY_G);
+
+            const valueStr = value && value.join('');
+
+            if (Number(valueStr) < maxValue) {
+                setValue(valueStr);
+            }
+        },
+        [type],
+    );
 
     return (
-        <div className={`create__item${half ? " half" : ""}`}>
-            <p className={`create__item--title${required ? " required" : ""}`}>
-                {title}
-            </p>
+        <div className={className || `create__item${half ? ' half' : ''}`}>
+            {title && <p className={`create__item--title${required ? ' required' : ''}`}>{title}</p>}
 
             {text && <p className="create__item--text">{text}</p>}
 
             {textarea ? (
                 <textarea
-                    name={inputName}
+                    {...inputProps}
+                    name={name}
                     type="text"
                     className="input create__item--textarea"
                     placeholder={placeholder}
                     value={value}
                     onChange={onInputChange}
-                ></textarea>
+                />
             ) : (
                 <input
-                    name={inputName}
-                    type="text"
-                    className="input create__item--input"
+                    {...inputProps}
+                    name={name}
+                    type={isLink ? '' : 'text'}
+                    className={`input create__item${isLink ? '--link' : ''}--input`}
                     placeholder={placeholder}
                     value={value}
                     onChange={onInputChange}

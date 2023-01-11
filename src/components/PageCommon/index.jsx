@@ -3,33 +3,32 @@ import React from 'react';
 import api from '../../api';
 
 const PageCommon = () => {
-    const [name, setName] = React.useState("");
-    const [number, setNumber] = React.useState("");
-    const [url, setUrl] = React.useState("");
-    const [banner, setBanner] = React.useState("");
-    const [title1, setTitle1] = React.useState("");
-    const [description, setDescription] = React.useState("");
-    const [title2, setTitle2] = React.useState("");
+    const [name, setName] = React.useState('');
+    const [number, setNumber] = React.useState('');
+    const [url, setUrl] = React.useState('');
+    const [banner, setBanner] = React.useState('');
+    const [title1, setTitle1] = React.useState('');
+    const [description, setDescription] = React.useState('');
+    const [title2, setTitle2] = React.useState('');
     const [progress, setProgress] = React.useState(false);
 
     const createPage = () => {
         setProgress(true);
         let formData = new FormData();
-        formData.append("name", name);
-        formData.append("number", parseInt(number));
-        formData.append("url", url);
-        formData.append("banner", banner);
-        formData.append("title_1", title1);
-        formData.append("description", description);
-        formData.append("title_2", title2);
+        formData.append('name', name);
+        formData.append('number', parseInt(number));
+        formData.append('url', url);
+        formData.append('banner', banner);
+        formData.append('title_1', title1);
+        formData.append('description', description);
+        formData.append('title_2', title2);
 
-        api.post("page/", formData)
-            .then((data) => {
-                alert("Page created!");
-                console.log(data);
+        api.post('page/', formData)
+            .then(data => {
+                alert('Page created!');
             })
-            .catch((e) => {
-                alert("Please fill all inputs");
+            .catch(e => {
+                alert('Please fill all inputs');
                 console.log(e);
             })
             .finally(() => {
@@ -44,8 +43,7 @@ const PageCommon = () => {
                     <h2 className="title left">Create Page</h2>
 
                     <p className="text left">
-                        The created Page will be available for management in the
-                        Control Panel.
+                        The created Page will be available for management in the Control Panel.
                     </p>
 
                     <div className="create__content">
@@ -130,6 +128,6 @@ const PageCommon = () => {
             </div>
         </div>
     );
-}
+};
 
 export default PageCommon;

@@ -1,0 +1,124 @@
+.tablewWrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+.tableContainer {
+    border-radius: 16px;
+    height: 100%;
+    max-width: 1440px;
+    overflow: hidden;
+}
+
+.table {
+    height: 100%;
+}
+.controllerArrows {
+    display: flex;
+    padding: 0;
+}
+.headerRow {
+    border: none;
+    padding: 16px 20px 16px 20px;
+    min-height: 55px;
+    padding-left: 30px !important;
+    padding-right: 30px !important;
+    margin-bottom: 4px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tableRow {
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.tableRow:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.tableBody {
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    padding-left: 20px;
+    padding-right: 10px;
+    border-right: 3px solid transparent;
+    scrollbar-gutter: stable;
+}
+
+.tableBody::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.6);
+    border-right: 3px solid transparent;
+}
+
+.bodyCellText {
+    font-size: 16px;
+    font-weight: 500;
+    max-width: 120px;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cellWrapper {
+    height: 100%;
+    padding: 5px;
+}
+
+.pagination {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    max-width: 1440px;
+    overflow: hidden;
+}
+
+.pagination .paginationToolbar {
+    padding-right: 35px;
+    width: 100%;
+}
+
+.paginatorWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.rowHoverEffect {
+    cursor: pointer;
+}
+
+.centeredContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overflowWrapper {
+    word-wrap: break-word;
+    color: white;
+    word-break: break-all;
+}
+
+.nameOverflowWrapper {
+    max-width: 120px;
+}
+.withImgCell {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}

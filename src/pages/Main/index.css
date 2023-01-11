@@ -95,7 +95,7 @@
     width: 100%;
     margin-top: 2.5rem;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
     grid-gap: 10px;
 }
 
@@ -173,7 +173,7 @@
     margin-top: 2.5rem;
     display: grid;
     grid-gap: 25px;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
 }
 
 .main__three--content{

@@ -1,0 +1,40 @@
+.container {
+    display: flex;
+    width: 290px;
+    min-width: 290px;
+    margin-left: 40px;
+    justify-content: flex-end;
+    flex-wrap: nowrap;
+}
+
+.navList {
+    flex-wrap: nowrap;
+}
+.navList svg {
+    width: 16px !important;
+    height: 16px !important;
+}
+
+.page {
+    width: 36px;
+    height: 36px;
+    color: white !important;
+    font-size: 16px !important;
+    font-family: 'Gilroy', sans-serif !important;
+    font-weight: 400 !important;
+}
+
+.button {
+    background-color: white !important;
+    cursor: pointer;
+}
+
+.button:hover {
+    background: rgba(255, 255, 255, 0.665) !important;
+}
+
+.selected {
+    font-weight: 500 !important;
+    color: #fec83d !important;
+    background-color: transparent;
+}

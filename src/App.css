@@ -2,52 +2,29 @@
 	font-size: 10px;
 }
 
+/* Новые шрифты */
 @font-face{
-    font-family: 'Gilroy';
-    font-weight: 100;
-    src: url('./assets/fonts/gilroyThin.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 200;
-    src: url('./assets/fonts/gilroyUltralight.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 300;
-    src: url('./assets/fonts/gilroyThin.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
+    font-family: 'Checkbrand';
     font-weight: 400;
     src: url('./assets/fonts/gilroyRegular.ttf');
 }
 
 @font-face{
-    font-family: 'Gilroy';
+    font-family: 'Checkbrand';
     font-weight: 500;
     src: url('./assets/fonts/gilroyMedium.ttf');
 }
 
 @font-face{
-    font-family: 'Gilroy';
+    font-family: 'Checkbrand';
     font-weight: 600;
     src: url('./assets/fonts/gilroySemibold.ttf');
 }
 
 @font-face{
-    font-family: 'Gilroy';
+    font-family: 'Checkbrand';
     font-weight: 700;
     src: url('./assets/fonts/gilroyBold.ttf');
-}
-
-@font-face{
-    font-family: 'Gilroy';
-    font-weight: 900;
-    src: url('./assets/fonts/gilroyBlack.ttf');
 }
 
 body{
@@ -55,9 +32,22 @@ body{
 	padding: 0;
 	overflow-x: hidden;
 	font-size: 1.6rem;
-	font-family: 'Gilroy', sans-serif;
-	background: #101010;
-	margin-top: 7rem;
+	font-family: 'Checkbrand', sans-serif;
+	background: #161717;
+	margin-top: 6.2rem;
+	letter-spacing: 0.04em;
+
+}
+::-webkit-scrollbar {
+	border-radius: 14px;
+	width: 8px;
+}
+::-webkit-scrollbar-track {
+	border-radius: 14px;
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 28px;
+	background: #535454;
 }
 
 *,
@@ -69,7 +59,7 @@ body{
 a, button, input, textarea, select{
 	transition: .2s linear;
 	font-size: 1.6rem;
-	font-family: 'Gilroy', sans-serif;
+	font-family: 'Checkbrand', sans-serif;
 	padding: 0;
 }
 
@@ -119,12 +109,12 @@ input::-webkit-inner-spin-button{
 }
 
 .input::placeholder{
-	color: #000;
+	color: #fff;
 }
 
 .container{
 	width: 100%;
-	max-width: 1240px;
+	max-width: 1780px;
 	margin: 0 auto;
 }
 
@@ -134,10 +124,10 @@ input::-webkit-inner-spin-button{
 
 .title{
 	width: 100%;
-    color: #e5e8eb;
+    color: #fff;
     text-align: center;
     font-weight: 600;
-    font-size: 4rem;
+    font-size: 3rem;
 }
 
 .bold{
@@ -198,7 +188,21 @@ input::-webkit-inner-spin-button{
 	margin-top: 1.5rem;
 }
 
+.default__button{
+	color: #fff;
+}
+
 /* Адаптив */
+@media(max-width: 1800px){
+	.container{
+		max-width: 1550px;
+	}
+}
+@media(max-width: 1600px){
+	.container{
+		max-width: 1220px;
+	}
+}
 @media(max-width: 1260px){
 	.container{
 		max-width: 1180px;
@@ -216,7 +220,8 @@ input::-webkit-inner-spin-button{
 }
 @media(max-width: 768px){
 	.container{
-		max-width: 90%;
+		max-width: 100%;
+		padding: 0rem 1.2rem;
 	}
 
 	.default__padding{

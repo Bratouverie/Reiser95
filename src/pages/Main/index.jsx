@@ -2,15 +2,43 @@ import React from "react";
 
 import "./index.css";
 
+import PersonModal from '../../components/WlModals/PersonModal';
+import BrandModal from '../../components/WlModals/BrandModal';
+import WatchesModal from '../../components/WlModals/WatchesModal';
+import AlcoModal from '../../components/WlModals/AlcoModal';
+import CarModal from '../../components/WlModals/CarModal';
+import NrcModal from '../../components/WlModals/NrcModal';
+
 const Main = () => {
+    const [person, setPerson] = React.useState(false);
+    const [brand, setBrand] = React.useState(false);
+    const [watches, setWatches] = React.useState(false);
+    const [alco, setAlco] = React.useState(false);
+    const [car, setCar] = React.useState(false);
+    const [nrc, setNrc] = React.useState(false);
+
     return (
         <section className="main">
+            <PersonModal active={person} setActive={setPerson} />
+            <BrandModal active={brand} setActive={setBrand} />
+            <WatchesModal active={watches} setActive={setWatches} />
+            <AlcoModal active={alco} setActive={setAlco} />
+            <CarModal active={car} setActive={setCar} />
+            <NrcModal active={nrc} setActive={setNrc} />
+
             <div className="main__banner">
                 <img src="/assets/img/main-img.jpg" alt="banner" className="main__banner--img" />
             </div>
 
             <div className="container">
                 <div className="main__inner">
+                    <button className="button default__button" onClick={() => setPerson(true)}>Person</button>
+                    <button className="button default__button" onClick={() => setBrand(true)}>Brand</button>
+                    <button className="button default__button" onClick={() => setWatches(true)}>Watches</button>
+                    <button className="button default__button" onClick={() => setAlco(true)}>Alco</button>
+                    <button className="button default__button" onClick={() => setCar(true)}>Car</button>
+                    <button className="button default__button" onClick={() => setNrc(true)}>NRC</button>
+
                     <h1 className="main__title">CHECKBRANDCOM</h1>
 
                     <p className="main__subtitle">Minting Platform</p>

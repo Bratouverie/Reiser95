@@ -1,12 +1,43 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { cnb } from 'cnbuilder';
+import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { useGetFilteredCollectionQuery } from '../../redux/api/dataService';
 
-const ImgBlockItem = ({ path, id, alt = "img" }) => {
+import './index.css';
+
+const ImgBlockItem = ({ path, id, alt = 'img' }) => {
+    const { data: collections, isLoading: isCollectionsLoading } = useGetFilteredCollectionQuery(
+        {
+            accountId: id,
+            page: 1,
+            pageSize: 1000,
+        },
+        { skip: !id },
+    );
+
+    // TODO: set accountId when accaunts page will be created
+    const firstCollectionId = useMemo(() => {
+        if (!collections || !collections.results || collections.results.length === 0) {
+            return null;
+        }
+
+        return collections.results[0].id;
+    }, [collections, id]);
+
+    if (isCollectionsLoading) {
+        return null;
+    }
+
     return (
-        <Link to={`/collection/${id}`} className="imgblock__item">
+        <Link
+            to={`/collection/${firstCollectionId}`}
+            className={cnb('imgblock__item', {
+                ['disabled-link']: !firstCollectionId,
+            })}
+        >
             <img src={path} alt={alt} className="imgblock__item--img" />
         </Link>
     );
 };
 
-export default ImgBlockItem;
+export default React.memo(ImgBlockItem);

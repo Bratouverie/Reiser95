@@ -1,0 +1,30 @@
+.trashIconBox {
+    margin-right: 5px;
+}
+
+.trashIconBox,
+.editIconBox {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: white;
+    cursor: pointer;
+    transition: background-color 200ms ease-in-out;
+}
+
+.trashIconBox:hover {
+    background-color: rgba(255, 255, 255, 0.665);
+}
+.editIconBox:hover {
+    background-color: rgba(255, 255, 255, 0.665);
+}
+
+.trashIcon,
+.editIcon {
+    width: 18px !important;
+    height: 18px !important;
+    color: black;
+}
